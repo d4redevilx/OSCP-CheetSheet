@@ -1409,7 +1409,7 @@ Los miembros del grupo **Backup Operators** tienen dos privilegios principales:
 
 ###### Explotación
 
-Extraer el archiov **SAM**:
+Extraer el archivo **SAM**:
 
 Usar herramientas como `reg.exe` para exportar el archivo SAM y SYSTEM:
 
@@ -1442,7 +1442,7 @@ impacket-secrestsdump -sam sam -system system local
 pypykatz registry --sam sam system
 ```
 
-##### Extracción del Archivo ntds.dit en un Controlador de Dominio
+##### Extracción del archivo ntds.dit en un Controlador de Dominio
 
 A diferencia de la explotación en sistemas independientes, en un Controlador de Dominio (DC), necesitamos acceder al archivo **ntds.dit** para extraer los hashes de contraseñas, junto con el archivo SYSTEM. Sin embargo, el archivo **ntds.dit** presenta un desafío importante: mientras el Controlador de Dominio está en funcionamiento, este archivo está siempre en uso, lo que impide su copia directa mediante métodos convencionales.
 
