@@ -1378,7 +1378,7 @@ Una vez generado el archivo `shell.msi`, debemos transferirlo a la máquina obje
 El la máquina atacante nos ponemos en escucha con netcat por el puerto indicado, en este caso `4444`.
 
 ```bash
-rlwrap nc -lnvp 444
+rlwrap nc -lnvp 4444
 ```
 
 ###### 4. Ejecutar el Paquete MSI en el Objetivo
