@@ -875,8 +875,7 @@ nxc rpd <RHOST> -u <USER> -p <PASSWORD> --res <RESOLUTION>
 ffuf -c -u http://<RHOST>/FUZZ -w <WORDLIST> -t 20
 ffuf -c -u http://<RHOST>/FUZZ -mc all --fs <NUMBER> -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt
 ffuf -c -u http://<RHOST>/FUZZ -mc all --fw <NUMBER> -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt
-ffuf -c -u http://<RHOST>/FUZZ -mc 200,204,301,302,307,401 -w /usr/share/wordlists/dirb/common.txt  -o ffuf_scan.txt
-ffuf -c -u http://<RHOST>/FUZZ -w /usr/share/wordlists/seclists/Fuzzing/4-digits-0000-9999.txt -u http://<RHOST>/files/file_FUZZ.zip
+ffuf -c -u http://<RHOST>/FUZZ -mc 200,204,301,302,307,401 -w /usr/share/wordlists/dirb/common.txt -o ffuf_scan.txt
 ffuf -c -u http://<RHOST>/FUZZ -recursion -w /usr/share/wordlists/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt -e .php,.txt,.html,.cgi,.bkp,.zip
 
 # Fuzzing a través de proxychains
