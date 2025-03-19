@@ -1779,6 +1779,8 @@ Varias herramientas y técnicas aprovechan SeImpersonatePrivilege y SeAssignPrim
 
 > *Windows 10 compilación 1809 - Windows Server 2016*
 
+> https://github.com/ohpe/juicy-potato
+
 JuicyPotato es una herramienta de explotación diseñada para abusar de los privilegios SeImpersonate o SeAssignPrimaryToken en sistemas Windows. Estos privilegios, comúnmente asignados a cuentas de servicio, permiten a un proceso suplantar tokens de seguridad de otros usuarios. JuicyPotato aprovecha esta capacidad mediante ataques de reflexión DCOM/NTLM, engañando a un proceso que se ejecuta con privilegios de SYSTEM para que se conecte a un servicio controlado por el atacante. Una vez establecida la conexión, el atacante puede robar el token de SYSTEM y utilizarlo para ejecutar código con privilegios elevados.
 
 Sin embargo, esta herramienta tiene limitaciones: funciona en versiones de Windows hasta Windows Server 2016 y Windows 10, compilación 1809.
@@ -1831,10 +1833,6 @@ Explicación:
 > https://github.com/antonioCoco/RogueWinRM
 
 **RogueWinRM** es una técnica de explotación que permite la escalada de privilegios en sistemas Windows aprovechando el servicio WinRM (Windows Remote Management). A diferencia de JuicyPotato, que se basa en la reflexión DCOM/NTLM, RogueWinRM abusa del servicio WinRM para ejecutar código con privilegios de SYSTEM. Esta técnica es particularmente útil en entornos donde JuicyPotato no funciona, como en Windows Server 2019 y versiones más recientes de Windows 10.
-
-**¿Por qué RogueWinRM es efectivo en versiones más recientes?**
-
-En versiones más recientes de Windows, como Windows Server 2019 y Windows 10 (compilaciones posteriores a 1809), Microsoft implementó parches y medidas de seguridad que mitigaron los ataques basados en DCOM/NTLM (como JuicyPotato). Sin embargo, RogueWinRM sigue siendo efectivo porque explota un vector diferente: el servicio WinRM, que a menudo está habilitado por defecto en servidores para permitir la administración remota.
 
 ```powershell
 .\RogueWinRM.exe -p "C:\temp\payload.exe"
