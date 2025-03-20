@@ -2020,10 +2020,10 @@ icacls.exe "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup"
 ```
 
 - Si `BUILTIN\Users` tiene el privilegio `(F)`, podemos agregar un payload en esa ruta.
-- Usamos msfvenom para generar una revese shell
+- Usamos `msfvenom` para generar una revese shell
 - Colocamos la reverse shell en la carpeta
-- Iniciamos un lisetenr con Netcat
-- Espere a que un administrador inicie sesión
+- Iniciamos un listener con Netcat
+- Espere a que un Administrador inicie sesión
 
 ##### GUI Apps
 
