@@ -2033,6 +2033,42 @@ Por ejemplo: MS-Paint
 
 - Archivo > Abrir -> Ingresar `file://C:/Windows/System32/cmd.exe`
 
+##### SeDebugPrivilege
+
+SeDebugPrivilege es un potente privilegio de Windows que permite al usuario depurar e interactuar con cualquier proceso que se esté ejecutando en el sistema, incluso aquellos que se ejecutan como SYSTEM. Este privilegio está diseñado principalmente para que desarrolladores y administradores depuren aplicaciones, pero puede explotarse para escalar privilegios.
+
+Ejecutando el comando `whoami /priv`, podemos comprobar si el usuario actual tiene el privilegio SeDebugPrivilege. Si aparece en la lista, este privilegio puede usarse para abusar y acceder a ciertos procesos sensibles del sistema como LSASS o escalar privilegios inyectando código malicioso en estos procesos.
+
+Si un usuario tiene SeDebugPrivilege , puede explotarlo para interactuar con procesos con privilegios elevados, especialmente aquellos que se ejecutan como SYSTEM. Al acceder a estos procesos, un atacante puede extraer información confidencial, como credenciales o contraseñas, u obtener el control total del sistema.
+
+###### Volcado de LSASS para extraer credenciales
+
+El Servicio del Subsistema de Autoridad de Seguridad Local (LSASS) se encarga de aplicar la política de seguridad en el sistema, gestionar los cambios de contraseña y validar el inicio de sesión de los usuarios. LSASS almacena las credenciales en memoria y, si SeDebugPrivilege está habilitado, se puede volcar para extraerlas.
+
+Pasos para explotar el volcado de LSASS:
+
+1. Utilizamos el binario de [Procdump](https://docs.microsoft.com/en-us/sysinternals/downloads/procdump) de la [suite SysInternals](https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite):
+
+    `procdump.exe -accepteula -ma lsass.exe lsass.dmp`
+
+Explicación:
+
+2. `-ma`: Captura un volcado de memoria completo del lsass.exe proceso.
+    `-lsass.dmp`: El archivo de volcado de salida que luego se puede analizar para extraer credenciales.
+
+Analizar el dump con Mimikatz :
+
+```powershell
+mimikatz # sekurlsa::minidump lsass.dmp
+mimikatz # sekurlsa::logonpasswords
+```
+
+Explicación:
+
+    `sekurlsa::minidump`: Carga el archivo volcado.
+    `sekurlsa::logonpasswords` Extrae credenciales del volcado.
+
+
 ###  9.2. <a name='linux-2'></a>Linux
 
 ##  10. <a name='active-directory'></a>Active Directory
