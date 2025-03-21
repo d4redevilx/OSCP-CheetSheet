@@ -2036,7 +2036,7 @@ Explicación:
 - `/f:text`: Esta opción específica el formato de la salida. En este caso, solicitamos la salida en texto plano.
 - `| Select-String "/user"`: Esta parte del comando envía la salida al cmdlet `Select-String`, que filtra los ressultados para incluir solo líneas que contiene la cadena `/user`. Esto es particularmente útil para identificar entradas de registro relacionadas con las acciones de la cuenta de registro.
 
-###### Salida de muestra
+###### Salida de ejemplo
 
 El comando puede producir un resultado similar al siguiente:
 
