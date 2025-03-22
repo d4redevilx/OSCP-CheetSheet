@@ -2184,12 +2184,26 @@ Ejemplo:
 icacls C:\Windows\System32\drivers\etc\hosts /grant /<username>:F
 ```
 
-- `/grant` Otorga control total ( F) sobre el archivo al usuario especificado.
+- `/grant` Otorga control total (F) sobre el archivo al usuario especificado.
 
 3. **Modificar o acceder al archivo**:
 
 Tras obtener control total, podemos editar, eliminar o acceder al archivo según sea necesario.
 Por ejemplo, podemos modificar archivos confidenciales del sistema como `hosts`, o incluso reemplazar ejecutables del sistema por otros maliciosos para obtener privilegios de nivel de SYSTEM.
+
+Algunos archivos locales de interés pueden incluir:
+
+```powershell
+c:\inetpub\wwwwroot\web.config
+%WINDIR%\repair\sam
+%WINDIR%\repair\system
+%WINDIR%\repair\software, %WINDIR%\repair\security
+%WINDIR%\system32\config\SecEvent.Evt
+%WINDIR%\system32\config\default.sav
+%WINDIR%\system32\config\security.sav
+%WINDIR%\system32\config\software.sav
+%WINDIR%\system32\config\system.sav
+```
 
 ###### Toma de propiedad de las claves de registro
 
