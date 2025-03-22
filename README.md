@@ -98,7 +98,6 @@ Apuntes para la certicación OSCP.
         * 8.3.3. [Enter-PSSession](#enter-pssession)
         * 8.3.4. [NetExec](#netexec-4)
         * 8.3.5. [Evil-WinRM](#evil-winrm)
-    * 8.4. [WMI](#wmi)
 * 9. [Escalación de Privilegios](#escalación-de-privilegios)
     * 9.1. [Windows](#windows-2)
         * 9.1.1. [Enumeración](#enumeración-1)
@@ -1265,8 +1264,6 @@ Una vez instalado, podemos usar `evil-winrm` para conectarse a una máquina Wind
 ```bash
 evil-winrm -i 192.168.56.10 -u elliot -p Password123
 ```
-
-###  8.4. <a name='wmi'></a>WMI
 
 ##  9. <a name='escalación-de-privilegios'></a>Escalación de Privilegios
 
