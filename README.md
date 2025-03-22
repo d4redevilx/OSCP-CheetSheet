@@ -1097,7 +1097,7 @@ Diferentes utilidades para las operaciones de transferencia de archivos en Linux
 ####  8.1.1. <a name='xfreerdp-1'></a>xfreerdp
 
 ```bash
-xfreerdp /u:'<USER>' /p:'<PASSWORD>' /d:inlanefreight.local /v:192.168.56.10 /dynamic-resolution /drive:.,linux /bpp:8 /compression -themes -wallpaper /clipboard /audio-mode:0 /auto-reconnect -glyph-cache
+xfreerdp /u:'<USER>' /p:'<PASSWORD>' /d:hacklab.local /v:192.168.56.10 /dynamic-resolution /drive:.,linux /bpp:8 /compression -themes -wallpaper /clipboard /audio-mode:0 /auto-reconnect -glyph-cache
 ```
 
 Parámetros:
@@ -1236,14 +1236,14 @@ DC01
 
 ####  8.3.3. <a name='enter-pssession'></a>Enter-PSSession
 
-Podemos usar el Cmdlet `Enter-PSSession` para un shell interactivo usando PowerShell Remoting. Este cmdlet nos permite iniciar una sesión interactiva con la computadora remota, ya sea utilizando una sesión creada con `New-PSSession`, especificando credenciales explícitas, o aprovechando la sesión actual donde se ejecuta el comando. Por ejemplo, reutilicemos el `$sessionSRV02` variable que creamos anteriormente. Especificando el `Enter-PSSession` y la variable nos dará un mensaje interactivo de PowerShell en la computadora remota, lo que nos permite ejecutar comandos como si nos registraran directamente.
+Podemos usar el Cmdlet `Enter-PSSession` para un shell interactivo usando PowerShell Remoting. Este cmdlet nos permite iniciar una sesión interactiva con la computadora remota, ya sea utilizando una sesión creada con `New-PSSession`, especificando credenciales explícitas, o aprovechando la sesión actual donde se ejecuta el comando. Por ejemplo, reutilicemos el `$sessionMS02` variable que creamos anteriormente. Especificando el `Enter-PSSession` y la variable nos dará un mensaje interactivo de PowerShell en la computadora remota, lo que nos permite ejecutar comandos como si nos registraran directamente.
 
 ```powershell
 PS C:\Temp> $username = "HACKLAB.LOCAL\elliot"
 PS C:\Temp> $password = "Password123"
 PS C:\Temp> $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
 PS C:\Temp> $credential = New-Object System.Management.Automation.PSCredential ($username, $securePassword)
-PS C:\Temp> $sessionMS02 = New-PSSession -ComputerName SRV02 -Credential $credential
+PS C:\Temp> $sessionMS02 = New-PSSession -ComputerName MS02 -Credential $credential
 PS C:\Temp> Enter-PSSession $sessionMS02
 [MS02]: PS C:\Users\elliot\Documents>
 ```
