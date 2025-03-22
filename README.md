@@ -2168,7 +2168,7 @@ Ejemplo:
 takeown /F C:\Windows\System32\drivers\etc\hosts
 ```
 
-Este comando cambia la propiedad del archivo especificado a la cuenta del uusario actual.
+Este comando cambia la propiedad del archivo especificado a la cuenta del usuario actual.
 
 2. **Conceder control total sobre el archivo**:
 
@@ -2221,7 +2221,7 @@ También podemos utilizar `SeTakeOwnershipPrivilege` para modificar la propiedad
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "<key>" -Value "<value>"
     ```
 
-    Esto cambia la propiedad de la clave, lo que le permite modificar la configuración de inicio u otras configuraciones críticas.
+    Esto cambia la propiedad de la clave, lo que permite modificar la configuración de inicio u otras configuraciones críticas.
 
 2. **Modificar permisos**:
 
