@@ -2931,7 +2931,7 @@ A continuación, se describe el proceso para explotar un contenedor LXD/LXC con 
     - Esto permite iniciar sesión como `root` en el host.
     - También podemos asignar permisos SUID al binario bash de `/mnt/bin/bash`.
 
-##### Docker
+##### Escalación de Privilegios - Docker
 
 Si somos miembros del grupo `docker`, podemos escalar nuestros privilegios a `root`.
 
