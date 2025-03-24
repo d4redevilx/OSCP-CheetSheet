@@ -113,12 +113,13 @@ Apuntes para la certicación OSCP.
         * 10.2.2. [Escalación de Privilegios](#escalación-de-privilegios-2)
     * 10.3. [Técnicas de explotación de trabajos Cron](#técnicas-de-explotación-de-trabajos-cron)
 * 11. [Active Directory](#active-directory)
-    * 11.1. [Escalación de privilegios](#escalación-de-privilegios-3)
-        * 11.1.1. [Grupos Privilegiados](#grupos-privilegiados)
-    * 11.2. [Kerberos](#kerberos)
-    * 11.3. [Explotación](#explotación)
-    * 11.4. [Movimiento Lateral](#movimiento-lateral-1)
-    * 11.5. [Post Explotación](#post-explotación)
+    * 11.1. [PowerShell para gestionar Active Directory](#powershell-para-gestionar-active-directory)
+    * 11.2. [Escalación de privilegios](#escalación-de-privilegios-3)
+        * 11.2.1. [Grupos Privilegiados](#grupos-privilegiados)
+    * 11.3. [Kerberos](#kerberos)
+    * 11.4. [Explotación](#explotación)
+    * 11.5. [Movimiento Lateral](#movimiento-lateral-1)
+    * 11.6. [Post Explotación](#post-explotación)
 * 12. [Herramientas y Recursos](#herramientas-y-recursos)
     * 12.1. [Pivoting](#pivoting-1)
     * 12.2. [Information Gathering](#information-gathering-1)
@@ -3197,25 +3198,229 @@ Si un script con SUID (ejecución como root) importa un módulo y:
     ```bash
     sudo PYTHONPATH=/tmp/ /usr/bin/python /home/elliot/script.py
     ```
+##### Grupo `adm`
+
+Los miembros del grupo `adm` pueden leer todos los archivos de logs ubicados en `/var/log`.
+
+##### Grupo `disk`
+
+Los miembros de este grupo tiene acceso completo dentro `/dev` como `/dev/sda`.
 
 ##  11. <a name='active-directory'></a>Active Directory
 
-###  11.1. <a name='escalación-de-privilegios-3'></a>Escalación de privilegios
+###  11.1. <a name='powershell-para-gestionar-active-directory'></a>PowerShell para gestionar Active Directory
 
-####  11.1.1. <a name='grupos-privilegiados'></a>Grupos Privilegiados
+Listado de Cmdlets utiles para realizar operaciones y enumeración básica en Active Directory.
+
+#### Importar módulo de Active Directory
+
+Para utilizar la mayoria de los Cmdlets listados a continuación, debemos importar en primer lugar el modulo `ActiveDirectory`.
+
+```powershell
+Import-Module ActiveDirectory
+```
+
+#### Sistema
+
+##### Obtener Variables de entorno
+
+```powershell
+Get-ChildItem Env:
+```
+##### Obtener funciones en el scope de Powershell
+
+```powershell
+Get-Command -CommandType Function
+```
+##### Obtener una lista de los modulos de PowerShell cargados
+
+```powershell
+Get-Module
+```
+
+##### Listar comandos para un módulo específico
+
+```powershell
+Get-Command -Module ActiveDirectory
+```
+
+##### Obtener información del Dominio
+
+```powershell
+Get-ADDomain
+```
+
+##### Obtener ayuda de un cmd-let
+
+```powershell
+Get-Help <cmd-let>
+```
+
+##### Obtener el estado actual de Windows Defender
+
+```powershell
+Get-MpComputerStatus
+```
+
+##### Obtener AppLockerPolicy
+
+```powershell
+Get-AppLockerPolicy -Effective | select -ExpandProperty RuleCollections
+```
+
+#### Usuarios
+
+##### Crear un nuevo usuario
+
+```powershell
+New-ADUser -Name "NombreUsuario" -SamAccountName "NombreUsuario" -UserPrincipalName "NombreUsuario@dominio.local" -AccountPassword (ConvertTo-SecureString -AsPlainText "Contraseña" -Force)
+```
+
+##### Filtrar por un nombre de usuario especifico
+
+```powershell
+Get-ADUser -Filter * | Where-Object {$_.SamAccountName -eq "NombreUsuario"}
+```
+
+En este comando:
+
+- `Get-ADUser -Filter *` obtiene todos los usuarios de Active Directory.
+
+- `Where-Object` se utiliza para filtrar los resultados.
+
+- `{}` delimita el script de bloque para la condición de filtro.
+
+- `$_` representa el objeto actual en el pipeline (en este caso, cada usuario obtenido por Get-ADUser).
+
+- `.SamAccountName` es la propiedad que contiene el nombre de usuario.
+
+- `-eq "NombreUsuario"` es el operador de igualdad para comparar el valor de la propiedad SamAccountName con el nombre de usuario que deseas buscar.
+
+##### Filtrar por un usuario donde el campo ServicePrincipalName sea distinto de null
+
+```powershell
+Get-ADUser -Filter {ServicePrincipalName -ne "$null"} -Properties ServicePrincipalName
+```
+
+##### Crear un nuevo usuario asignado algunos atributos
+
+```powershell
+New-ADUser -Name "first last" -Accountpassword (Read-Host -AsSecureString "Super$ecurePassword!") -Enabled $true -OtherAttributes @{'title'="Analyst";'mail'="f.last@domain.local"}
+```
+
+##### Agregar un usuario a un grupo específico
+
+```powershell
+Add-ADGroupMember -Identity "NombreGrupo" -Members "NombreUsuario"
+```
+
+##### Cambiar la contraseña de un usuario
+
+```powershell
+Set-ADAccountPassword -Identity "NombreUsuario" -NewPassword (ConvertTo-SecureString -AsPlainText "NuevaContraseña" -Force) -Reset
+```
+
+##### Obtener los grupos del un usuario
+```powershell
+$user = Get-ADUser -Identity "NombreUsuario"
+$groups = Get-ADPrincipalGroupMembership -Identity $user
+$groups | Select-Object -ExpandProperty Name
+```
+
+##### Quitar un usuario de un grupo
+```powershell
+Remove-ADGroupMember -Identity "NombreGrupo" -Members "NombreUsuario"
+```
+
+##### Deshabilitar una cuenta de usuario
+```powershell
+Disable-ADAccount -Identity "NombreUsuario"
+```
+
+##### Habilitar una cuenta de usuario
+```powershell
+Enable-ADAccount -Identity "NombreUsuario"
+```
+
+##### Desbloquear una cuenta de usuario
+```powershell
+Unlock-ADAccount -Identity "NombreUsuario"
+```
+
+##### Obtener información detallada de un usuario
+```powershell
+Get-ADUser -Identity "NombreUsuario" -Properties *
+```
+
+#### Grupos
+
+##### Crear un nuevo grupo
+```powershell
+New-ADGroup -Name "NombreGrupo" -GroupCategory Security -GroupScope Global -DisplayName "Nombre Descriptivo del Grupo" -Description "Descripción del Grupo"
+```
+
+##### Listar los miembros de un grupo
+```powershell
+Get-ADGroupMember -Identity "NombreGrupo" | Select-Object Name, SamAccountName
+```
+
+##### Obtener información detallada de un grupo
+```powershell
+Get-ADGroup -Identity "NombreGrupo" -Properties *
+```
+
+##### Renombrar un grupo
+```powershell
+Rename-ADObject -Identity "CN=NombreGrupo,OU=Origen,DC=dominio,DC=com" -NewName "NuevoNombreGrupo"
+```
+##### Eliminar un grupo
+```powershell
+Remove-ADGroup -Identity "NombreGrupo"
+```
+
+##### Listar los grupos
+```powershell
+Get-ADGroup -Filter * | select name
+```
+
+##### Obtener una lista de todos los grupos en una OU específica
+```powershell
+Get-ADGroup -Filter * -SearchBase "OU=NombreOU,DC=dominio,DC=com"
+```
+
+##### Obtener una lista de todos los miembros de un grupo
+```powershell
+Get-ADGroupMember -Identity "NombreGrupo"
+```
+#### Trusts (Confianzas)
+
+##### Verificar las relaciones de confianza de dominio
+
+```powershell
+Get-ADTrust -Filter *
+```
+Este cmdlet imprimirá las relaciones de confianza que tenga el dominio. Podemos determinar si son confianzas dentro de nuestro bosque o con dominios de otros bosques, el tipo de confianza, la dirección de la confianza y el nombre del dominio con el que está la relación.
+
+#### Computadoras
+#### Unidades Organizativas
+#### GPO (Group Policy Object)
+
+###  11.2. <a name='escalación-de-privilegios-3'></a>Escalación de privilegios
+
+####  11.2.1. <a name='grupos-privilegiados'></a>Grupos Privilegiados
 
 ##### Account Operators
 ##### Server Operators
 ##### DnsAdmins
 ##### Backup Operators
 
-###  11.2. <a name='kerberos'></a>Kerberos
+###  11.3. <a name='kerberos'></a>Kerberos
 
-###  11.3. <a name='explotación'></a>Explotación
+###  11.4. <a name='explotación'></a>Explotación
 
-###  11.4. <a name='movimiento-lateral-1'></a>Movimiento Lateral
+###  11.5. <a name='movimiento-lateral-1'></a>Movimiento Lateral
 
-###  11.5. <a name='post-explotación'></a>Post Explotación
+###  11.6. <a name='post-explotación'></a>Post Explotación
 
 ##  12. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
 
