@@ -11,9 +11,9 @@ Apuntes para la certicación OSCP.
         * 1.1.1. [Crunch](#crunch)
         * 1.1.2. [Escapar de una Restricted Shell](#escapar-de-una-restricted-shell)
     * 1.2. [Windows](#windows)
+        * 1.2.1. [Habilitar WinRM](#habilitar-winrm)
+        * 1.2.2. [ Habilitar RDP](#-habilitar-rdp)
 * 2. [Docker](#docker)
-        * 2.1. [Habilitar WinRM](#habilitar-winrm)
-        * 2.2. [Habilitar RDP](#habilitar-rdp)
 * 3. [Information Gathering](#information-gathering)
     * 3.1. [Fping](#fping)
         * 3.1.1. [Identificación de hosts](#identificación-de-hosts)
@@ -182,6 +182,19 @@ os.execute('/bin/sh')
 
 ###  1.2. <a name='windows'></a>Windows
 
+####  1.2.1. <a name='habilitar-winrm'></a>Habilitar WinRM
+
+```powershell
+winrm quickconfig
+```
+
+####  1.2.2. <a name='-habilitar-rdp'></a> Habilitar RDP
+
+```powershell
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+netsh advfirewall firewall set rule group="remote desktop" new enable=yes
+```
+
 ##  2. <a name='docker'></a>Docker
 
 ```bash
@@ -199,19 +212,6 @@ docker logs  <id_container> # Muestra el log del contenedor
 docker login                # Permite iniciar sesión en dockerhub
 docker build                # Construye una imágen a partir de un Dockerfile
 docker network              # Permite crear una red
-```
-
-####  2.1. <a name='habilitar-winrm'></a>Habilitar WinRM
-
-```powershell
-winrm quickconfig
-```
-
-####  2.2. <a name='habilitar-rdp'></a>Habilitar RDP
-
-```powershell
-reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
-netsh advfirewall firewall set rule group="remote desktop" new enable=yes
 ```
 
 ##  3. <a name='information-gathering'></a>Information Gathering
