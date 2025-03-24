@@ -3416,7 +3416,7 @@ Este cmdlet imprimirá las relaciones de confianza que tenga el dominio. Podemos
 
 ###  11.3. <a name='kerberos'></a>Kerberos
 
-![Kerberos](./img/kerberos.webp)
+![Kerberos](./img/kerberos.png)
 
 ###  11.4. <a name='explotación'></a>Explotación
 
