@@ -9,9 +9,11 @@ Apuntes para la certicación OSCP.
 * 1. [Comandos](#comandos)
     * 1.1. [Linux](#linux)
     * 1.2. [Crunch](#crunch)
-    * 1.3. [Windows](#windows)
-        * 1.3.1. [Habilitar WinRM](#habilitar-winrm)
-        * 1.3.2. [Habilitar RDP](#habilitar-rdp)
+    * 1.3. [Escapar de una Restricted Shell](#escapar-de-una-restricted-shell)
+    * 1.4. [Windows](#windows)
+    * 1.5. [Docker](#docker)
+        * 1.5.1. [Habilitar WinRM](#habilitar-winrm)
+        * 1.5.2. [Habilitar RDP](#habilitar-rdp)
 * 2. [Information Gathering](#information-gathering)
     * 2.1. [Fping](#fping)
         * 2.1.1. [Identificación de hosts](#identificación-de-hosts)
@@ -109,6 +111,7 @@ Apuntes para la certicación OSCP.
     * 9.2. [Linux](#linux-2)
         * 9.2.1. [Enumeración](#enumeración-2)
         * 9.2.2. [Escalación de Privilegios](#escalación-de-privilegios-2)
+    * 9.3. [Técnicas de explotación de trabajos Cron](#técnicas-de-explotación-de-trabajos-cron)
 * 10. [Active Directory](#active-directory)
     * 10.1. [Escalación de privilegios](#escalación-de-privilegios-3)
         * 10.1.1. [Grupos Privilegiados](#grupos-privilegiados)
@@ -142,7 +145,7 @@ Apuntes para la certicación OSCP.
 crunch 6 6 -t Lab%%% > wordlist
 ```
 
-### Escapar de una Restricted Shell
+###  1.3. <a name='escapar-de-una-restricted-shell'></a>Escapar de una Restricted Shell
 
 ```bash
 ssh user@10.0.0.3 -t "/bin/sh"
@@ -177,15 +180,34 @@ exec "/bin/sh"
 os.execute('/bin/sh')
 ```
 
-###  1.3. <a name='windows'></a>Windows
+###  1.4. <a name='windows'></a>Windows
 
-####  1.3.1. <a name='habilitar-winrm'></a>Habilitar WinRM
+###  1.5. <a name='docker'></a>Docker
+
+```bash
+docker run                  # Corre un commando dentro de un contenedor a partir de una imágen
+docker run -d               # Corre un commando dentro de un contenedor a partir de una  imágen en background (-d detached)).
+docker exec                 # Ejecuta un comando dentro de un contenedor que se encuentra corriendo.
+docker pull                 # Descarga una imágen
+docker push                 # Sube una imágen
+docker tag                  # Agrega un tag (etiqueta) a una imágen
+docker images               # Lista las imagenes
+docker ps                   # Lista los contenedores
+docker start <id_container> # Inicializa un contenedor
+docker stop  <id_container> # Detiene un contenedor
+docker logs  <id_container> # Muestra el log del contenedor
+docker login                # Permite iniciar sesión en dockerhub
+docker build                # Construye una imágen a partir de un Dockerfile
+docker network              # Permite crear una red
+```
+
+####  1.5.1. <a name='habilitar-winrm'></a>Habilitar WinRM
 
 ```powershell
 winrm quickconfig
 ```
 
-####  1.3.2. <a name='habilitar-rdp'></a>Habilitar RDP
+####  1.5.2. <a name='habilitar-rdp'></a>Habilitar RDP
 
 ```powershell
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
@@ -2796,7 +2818,7 @@ Para ver los trabajos cron de todo el sistema, podemos verificar los archivos en
 
 ###### Explotación de tareas cron
 
-### Técnicas de explotación de trabajos Cron
+###  9.3. <a name='técnicas-de-explotación-de-trabajos-cron'></a>Técnicas de explotación de trabajos Cron
 
 | Técnica                          | Descripción                                                                                   |
 |----------------------------------|-----------------------------------------------------------------------------------------------|
