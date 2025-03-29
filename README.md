@@ -84,6 +84,9 @@ Apuntes para la certicación OSCP.
         * 6.2.3. [Configurar proxy en la máquina del atacante](#configurar-proxy-en-la-máquina-del-atacante)
         * 6.2.4. [Configurar el agente en la máquina víctima](#configurar-el-agente-en-la-máquina-víctima)
         * 6.2.5. [Configurar la sesión](#configurar-la-sesión)
+    * 6.3. [SSH Tunneling](#ssh-tunneling)
+        * 6.3.1. [Local Port Forwarding](#local-port-forwarding)
+        * 6.3.2. [Dynamic Port Forwarding](#dynamic-port-forwarding)
 * 7. [Passwords Attacks](#passwords-attacks)
 * 8. [Transferencia de Archivos](#transferencia-de-archivos)
     * 8.1. [Windows](#windows-1)
@@ -114,6 +117,14 @@ Apuntes para la certicación OSCP.
     * 10.3. [Técnicas de explotación de trabajos Cron](#técnicas-de-explotación-de-trabajos-cron)
 * 11. [Active Directory](#active-directory)
     * 11.1. [PowerShell para gestionar Active Directory](#powershell-para-gestionar-active-directory)
+        * 11.1.1. [Importar módulo de Active Directory](#importar-módulo-de-active-directory)
+        * 11.1.2. [Sistema](#sistema)
+        * 11.1.3. [Usuarios](#usuarios)
+        * 11.1.4. [Grupos](#grupos)
+        * 11.1.5. [Trusts (Confianzas)](#trusts-(confianzas))
+        * 11.1.6. [Computadoras](#computadoras)
+        * 11.1.7. [Unidades Organizativas](#unidades-organizativas)
+        * 11.1.8. [GPO (Group Policy Object)](#gpo-(group-policy-object))
     * 11.2. [Escalación de privilegios](#escalación-de-privilegios-3)
         * 11.2.1. [Grupos Privilegiados](#grupos-privilegiados)
     * 11.3. [Kerberos](#kerberos)
@@ -1152,9 +1163,9 @@ sudo ip r add 172.16.1.0/24 dev ligolo
 [Agent : user@target] » listener_add --addr <RHOST>:<LPORT> --to <LHOST>:<LPORT> --tcp
 ```
 
-### SSH Tunneling
+###  6.3. <a name='ssh-tunneling'></a>SSH Tunneling
 
-#### Local Port Forwarding
+####  6.3.1. <a name='local-port-forwarding'></a>Local Port Forwarding
 
 ![SSH Tunneling](./img/Pivoting.png)
 
@@ -1168,7 +1179,7 @@ ssh -N -L 0.0.0.0:4455:172.16.50.10:445 <user>@10.10.100.20
 
 En este caso, el puerto que queremos redireccionar es el `445` de la  máquina Windows **SHARES**.
 
-#### Dynamic Port Forwarding
+####  6.3.2. <a name='dynamic-port-forwarding'></a>Dynamic Port Forwarding
 
 ![SSH Tunneling](./img/Pivoting.png)
 
@@ -3388,7 +3399,7 @@ uid=0(root) gid=0(root) groups=0(root)
 
 Listado de Cmdlets utiles para realizar operaciones y enumeración básica en Active Directory.
 
-#### Importar módulo de Active Directory
+####  11.1.1. <a name='importar-módulo-de-active-directory'></a>Importar módulo de Active Directory
 
 Para utilizar la mayoria de los Cmdlets listados a continuación, debemos importar en primer lugar el modulo `ActiveDirectory`.
 
@@ -3396,7 +3407,7 @@ Para utilizar la mayoria de los Cmdlets listados a continuación, debemos import
 Import-Module ActiveDirectory
 ```
 
-#### Sistema
+####  11.1.2. <a name='sistema'></a>Sistema
 
 ##### Obtener Variables de entorno
 
@@ -3444,7 +3455,7 @@ Get-MpComputerStatus
 Get-AppLockerPolicy -Effective | select -ExpandProperty RuleCollections
 ```
 
-#### Usuarios
+####  11.1.3. <a name='usuarios'></a>Usuarios
 
 ##### Crear un nuevo usuario
 
@@ -3528,7 +3539,7 @@ Unlock-ADAccount -Identity "NombreUsuario"
 Get-ADUser -Identity "NombreUsuario" -Properties *
 ```
 
-#### Grupos
+####  11.1.4. <a name='grupos'></a>Grupos
 
 ##### Crear un nuevo grupo
 ```powershell
@@ -3568,7 +3579,7 @@ Get-ADGroup -Filter * -SearchBase "OU=NombreOU,DC=dominio,DC=com"
 ```powershell
 Get-ADGroupMember -Identity "NombreGrupo"
 ```
-#### Trusts (Confianzas)
+####  11.1.5. <a name='trusts-(confianzas)'></a>Trusts (Confianzas)
 
 ##### Verificar las relaciones de confianza de dominio
 
@@ -3577,9 +3588,9 @@ Get-ADTrust -Filter *
 ```
 Este cmdlet imprimirá las relaciones de confianza que tenga el dominio. Podemos determinar si son confianzas dentro de nuestro bosque o con dominios de otros bosques, el tipo de confianza, la dirección de la confianza y el nombre del dominio con el que está la relación.
 
-#### Computadoras
-#### Unidades Organizativas
-#### GPO (Group Policy Object)
+####  11.1.6. <a name='computadoras'></a>Computadoras
+####  11.1.7. <a name='unidades-organizativas'></a>Unidades Organizativas
+####  11.1.8. <a name='gpo-(group-policy-object)'></a>GPO (Group Policy Object)
 
 ###  11.2. <a name='escalación-de-privilegios-3'></a>Escalación de privilegios
 
