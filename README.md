@@ -1156,7 +1156,7 @@ sudo ip r add 172.16.1.0/24 dev ligolo
 
 #### Local Port Forwarding
 
-![SSH Tunneling](./img/pivoting.png)
+![SSH Tunneling](./img/Pivoting.png)
 
 ##### Máquina WEB
 
@@ -1170,7 +1170,7 @@ En este caso, el puerto que queremos redireccionar es el `445` de la  máquina W
 
 #### Dynamic Port Forwarding
 
-![SSH Tunneling](./img/pivoting.png)
+![SSH Tunneling](./img/Pivoting.png)
 
 ##### Máquina WEB
 
