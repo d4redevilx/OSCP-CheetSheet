@@ -1096,6 +1096,8 @@ Windows
 - Mapea 8888 MS01 a 80 Kali
 ####  6.1.3. <a name='socat'></a>Socat
 
+Port Forwarding
+
 ```bash
 ./socat tcp-listen:2222,fork,reuseaddr tcp:10.10.10.5:8000 &
 ```
@@ -1148,6 +1150,42 @@ sudo ip r add 172.16.1.0/24 dev ligolo
 
 ```bash
 [Agent : user@target] » listener_add --addr <RHOST>:<LPORT> --to <LHOST>:<LPORT> --tcp
+```
+
+### SSH Tunneling
+
+#### Local Port Forwarding
+
+![SSH Tunneling](./img/pivoting.png)
+
+##### Máquina WEB
+
+Desde la máquina web realizamos el Port Forwarding con SSH.
+
+```bash
+ssh -N -L 0.0.0.0:4455:172.16.50.10:445 <user>@10.10.100.20
+```
+
+En este caso, el puerto que queremos redireccionar es el `445` de la  máquina Windows **SHARES**.
+
+#### Dynamic Port Forwarding
+
+![SSH Tunneling](./img/pivoting.png)
+
+##### Máquina WEB
+
+```bash
+ssh -N -D 0.0.0.0:9999 <user>@10.10.100.20
+```
+
+##### Atacante
+
+Agregamos la conexión al proxy en el archivo `proxychains4.conf` (Kali) en Parrot es `proxychains.conf`.
+
+```bash
+vim /etc/proxychains4.conf
+socks5 192.168.50.10 9999
+proxychains smbclient -p 4455 //172.16.50.10/<SHARE> -U <USERNAME> --password=<PASSWORD>
 ```
 
 ##  7. <a name='passwords-attacks'></a>Passwords Attacks
@@ -1460,8 +1498,8 @@ net group "Domain Controllers" /domain # Listar cuentas de PC de controladores d
 ##### Red
 
 ```powershell
-ifconfig
-ifconfig /all
+ipconfig
+ipconfig /all
 route print
 arp -a
 netstat -ano
@@ -1506,6 +1544,8 @@ net view \\172.16.0.1 /all
 Buscamos información sensible.
 
 ```powershell
+where /R C:\ bash.exe # Realiza una búsqueda del archivo (en este caso del binario bash.exe) en el sistema
+
 Get-History
 (Get-PSReadlineOption).HistorySavePath
 type C:\Users\%username%\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
