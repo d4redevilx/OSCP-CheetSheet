@@ -1,7 +1,7 @@
 ![alt=OSCP](./img/oscp-banner.png)
 
 # OSCP (Offensive Security Certified Professional) CheetSheet
-Apuntes para la certicación OSCP.
+Apuntes para la certificación OSCP.
 
 # Tabla de Contenido
 
