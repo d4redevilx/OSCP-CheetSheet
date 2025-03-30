@@ -62,7 +62,7 @@ Apuntes para la certicación OSCP.
     * 4.5. [SNMP (161 - UDP)](#snmp-(161---udp))
     * 4.6. [RDP (3389)](#rdp-(3389))
         * 4.6.1. [xfreerdp](#xfreerdp)
-    * 4.7. [Netexec](#netexec-3)
+        * 4.6.2. [Netexec](#netexec-3)
 * 5. [Web](#web)
     * 5.1. [Enumeración](#enumeración)
         * 5.1.1. [Fuff](#fuff)
@@ -81,12 +81,18 @@ Apuntes para la certicación OSCP.
     * 6.2. [Ligolo-ng](#ligolo-ng)
         * 6.2.1. [Descargar el Proxy y el Agente](#descargar-el-proxy-y-el-agente)
         * 6.2.2. [Preparar las interfaces para el tunel](#preparar-las-interfaces-para-el-tunel)
-        * 6.2.3. [Configurar proxy en la máquina del atacante](#configurar-proxy-en-la-máquina-del-atacante)
+        * 6.2.3. [Configurar proxy en Kali](#configurar-proxy-en-kali)
         * 6.2.4. [Configurar el agente en la máquina víctima](#configurar-el-agente-en-la-máquina-víctima)
         * 6.2.5. [Configurar la sesión](#configurar-la-sesión)
     * 6.3. [SSH Tunneling](#ssh-tunneling)
         * 6.3.1. [Local Port Forwarding](#local-port-forwarding)
         * 6.3.2. [Dynamic Port Forwarding](#dynamic-port-forwarding)
+        * 6.3.3. [Remote Dynamic Port Forwarding](#remote-dynamic-port-forwarding)
+        * 6.3.4. [Remote Dynamic Port Forwarding](#remote-dynamic-port-forwarding-1)
+        * 6.3.5. [sshuttle](#sshuttle)
+        * 6.3.6. [ssh.exe](#ssh.exe)
+        * 6.3.7. [Plink](#plink)
+        * 6.3.8. [Netsh](#netsh)
 * 7. [Passwords Attacks](#passwords-attacks)
 * 8. [Transferencia de Archivos](#transferencia-de-archivos)
     * 8.1. [Windows](#windows-1)
@@ -945,7 +951,7 @@ xfreerdp /v:<RHOST> /u:<USERNAME> /d:<DOMAIN> /pth:'<HASH>' /dynamic-resolution 
 xfreerdp /v:<RHOST> /dynamic-resolution +clipboard /tls-seclevel:0 -sec-nla
 rdesktop <RHOST>
 ```
-###  4.7. <a name='netexec-3'></a>Netexec
+####  4.6.2. <a name='netexec-3'></a>Netexec
 
 ```bash
 # Si NLA está deshabilitado, le permitirá tomar una captura de pantalla del mensaje de inicio de sesión
@@ -1137,7 +1143,7 @@ sudo ip tuntap add user $(whoami) mode tun ligolo
 sudo ip link set ligolo up
 ```
 
-####  6.2.3. <a name='configurar-proxy-en-la-máquina-del-atacante'></a>Configurar proxy en Kali
+####  6.2.3. <a name='configurar-proxy-en-kali'></a>Configurar proxy en Kali
 
 ```bash
 ./proxy -laddr <LHOST>:443 -selfcert
@@ -1199,7 +1205,7 @@ socks5 192.168.50.10 9999
 proxychains smbclient -p 4455 //172.16.50.10/<SHARE> -U <USERNAME> --password=<PASSWORD>
 ```
 
-#### Remote Dynamic Port Forwarding
+####  6.3.3. <a name='remote-dynamic-port-forwarding'></a>Remote Dynamic Port Forwarding
 
 ![Remote Dynamic Port Forwarding](./img/remote_dynamic_port_forwarding.png)
 
@@ -1225,7 +1231,7 @@ ssh -N -R 127.0.0.1:2345:10.10.100.20:5432 kali@192.168.50.10
 psql -h 127.0.0.1 -p 2345 -U postgres
 ```
 
-#### Remote Dynamic Port Forwarding
+####  6.3.4. <a name='remote-dynamic-port-forwarding-1'></a>Remote Dynamic Port Forwarding
 
 ![Remote Dynamic Port Forwarding](./img/remote_dynamic_port_forwarding.png)
 
@@ -1248,7 +1254,7 @@ socks5 127.0.0.1 9998 # agregar esta linea
 proxychains nmap -vvv -sT --top-ports=20 -Pn -n 10.10.100.20
 ```
 
-#### sshuttle
+####  6.3.5. <a name='sshuttle'></a>sshuttle
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -1273,7 +1279,7 @@ sshuttle -r <user>@192.168.100.10:2222 10.10.100.0/24 172.16.50.0/24
 smbclient -L //172.16.50.10/ -U <user> --password=<password>
 ```
 
-#### ssh.exe
+####  6.3.6. <a name='ssh.exe'></a>ssh.exe
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -1310,7 +1316,7 @@ socks5 127.0.0.1 9998  # agregar esta linea
 proxychains psql -h 10.10.100.20 -U postgres
 ```
 
-#### Plink
+####  6.3.7. <a name='plink'></a>Plink
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -1342,7 +1348,7 @@ ss -tulpn
 xfreerdp /u:<USERNAME> /p:<PASSWORD> /v:127.0.0.1:9833
 ```
 
-#### Netsh
+####  6.3.8. <a name='netsh'></a>Netsh
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
