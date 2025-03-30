@@ -137,6 +137,8 @@ Apuntes para la certificación OSCP.
         * 11.1.6. [Computadoras](#computadoras)
         * 11.1.7. [Unidades Organizativas](#unidades-organizativas)
         * 11.1.8. [GPO (Group Policy Object)](#gpo-(group-policy-object))
+        * 11.1.9. [Unidades Organizativas](#unidades-organizativas-1)
+        * 11.1.10. [GPO (Group Policy Object)](#gpo-(group-policy-object)-1)
     * 11.2. [Escalación de privilegios](#escalación-de-privilegios-3)
         * 11.2.1. [Grupos Privilegiados](#grupos-privilegiados)
     * 11.3. [Kerberos](#kerberos)
@@ -3793,8 +3795,153 @@ Get-ADTrust -Filter *
 Este cmdlet imprimirá las relaciones de confianza que tenga el dominio. Podemos determinar si son confianzas dentro de nuestro bosque o con dominios de otros bosques, el tipo de confianza, la dirección de la confianza y el nombre del dominio con el que está la relación.
 
 ####  11.1.6. <a name='computadoras'></a>Computadoras
+
+##### Obtener información detallada de un equipo
+
+```powershell
+Get-ADComputer -Identity "NombreEquipo" -Properties *
+```
+
+##### Obtener una lista de todos los equipos en un dominio
+
+```powershell
+Get-ADComputer -Filter *
+```
+
+##### Obtener información detallada de un equipo específico
+
+```powershell
+Get-ADComputer -Identity "NombreEquipo" -Properties *
+```
+
+##### Crear un nuevo objeto de equipo en Active Directory
+
+```powershell
+New-ADComputer -Name "NombreEquipo" -Path "OU=NombreOU,DC=dominio,DC=com"
+```
+
+##### Cambiar el nombre de un equipo en Active Directory
+
+```powershell
+Rename-ADObject -Identity "CN=NombreEquipo,OU=Origen,DC=dominio,DC=com" -NewName "NuevoNombreEquipo"
+```
+
+##### Deshabilitar una cuenta de equipo
+
+```powershell
+Disable-ADAccount -Identity "NombreEquipo"
+```
+
+##### Habilitar una cuenta de equipo
+
+```powershell
+Enable-ADAccount -Identity "NombreEquipo"
+```
+##### Eliminar un objeto de equipo de Active Directory
+
+```powershell
+Remove-ADComputer -Identity "NombreEquipo"
+```
+
 ####  11.1.7. <a name='unidades-organizativas'></a>Unidades Organizativas
+
+##### Crear una nueva Unidad Organizativa
+
+```powershell
+New-ADOrganizationalUnit -Name "NombreOU" -Path "OU=ParentOU,DC=dominio,DC=com"
+```
+
+##### Mover un objeto (usuario, grupo, etc.) a una OU diferente
+
+```powershell
+Move-ADObject -Identity "CN=NombreObjeto,OU=Origen,DC=dominio,DC=com" -TargetPath "OU=Destino,DC=dominio,DC=com"
+```
+
+##### Obtener una lista de todas las unidades organizativas
+
+```powershell
+Get-ADOrganizationalUnit -Filter *
+```
+
+##### Mover un equipo a una unidad organizativa diferente
+
+```powershell
+Move-ADObject -Identity "CN=NombreEquipo,OU=Origen,DC=dominio,DC=com" -TargetPath "OU=Destino,DC=dominio,DC=com"
+```
+
 ####  11.1.8. <a name='gpo-(group-policy-object)'></a>GPO (Group Policy Object)
+
+##### Obtener una lista de todas las GPO
+
+```powershell
+Get-GPO -All
+```
+
+##### Obtener una lista de todas las GPO en un dominio específico
+
+```powershell
+Get-GPO -All -Domain "NombreDominio"
+```
+##### Crear una nueva GPO
+
+```powershell
+New-GPO -Name "NombreGPO"
+```
+##### Cambiar el nombre de una GPO
+
+```powershell
+Rename-GPO -Name "NombreActualGPO" -NewName "NuevoNombreGPO"
+```
+##### Copiar una GPO
+
+```powershell
+Copy-GPO -SourceName "NombreGPOOrigen" -TargetName "NombreGPODestino"
+```
+##### Eliminar una GPO
+
+```powershell
+Remove-GPO -Name "NombreGPO"
+```
+##### Obtener la configuración de una GPO
+
+```powershell
+Get-GPOReport -Name "NombreGPO" -ReportType XML
+```
+##### Establecer la configuración de una GPO
+
+```powershell
+Set-GPRegistryValue -Name "NombreGPO" -Key "HKEY_CURRENT_USER\Software\Ejemplo" -ValueName "Ejemplo" -Type String -Value "ValorEjemplo"
+```
+#####
+```powershell
+
+```
+##### Enlace de una GPO a una OU específica
+
+```powershell
+New-GPLink -Name "NombreGPO" -Target "OU=NombreOU,DC=dominio,DC=com"
+```
+##### Desenlace de una GPO de una OU específica
+
+```powershell
+Remove-GPLink -Name "NombreGPO" -Target "OU=NombreOU,DC=dominio,DC=com"
+```
+##### Realizar una copia de seguridad y restauración de una GPO
+
+Para realizar una copia de seguridad:
+
+```powershell
+Backup-GPO -Name "NombreGPO" -Path "C:\Ruta\Backup"
+```
+
+Para restaurar desde una copia de seguridad:
+
+```powershell
+Restore-GPO -Name "NombreGPO" -Path "C:\Ruta\Backup"
+```
+
+####  11.1.9. <a name='unidades-organizativas-1'></a>Unidades Organizativas
+####  11.1.10. <a name='gpo-(group-policy-object)-1'></a>GPO (Group Policy Object)
 
 ###  11.2. <a name='escalación-de-privilegios-3'></a>Escalación de privilegios
 
