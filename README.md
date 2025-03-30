@@ -1256,7 +1256,7 @@ proxychains nmap -vvv -sT --top-ports=20 -Pn -n 10.10.100.20
 | WEB                 | 192.168.100.10 |
 | WINDOWS JUMP SERVER | 192.168.100.20 |
 | DATABASE            | 10.10.100.20   |
-| WINDWOS - SHARES    | 172.16.50.10   |
+| WINDOWS - SHARES    | 172.16.50.10   |
 
 *KALI -> WEB -> INTERNAL NETWORK*
 
@@ -1281,7 +1281,7 @@ smbclient -L //172.16.50.10/ -U <user> --password=<password>
 | WEB                 | 192.168.100.10 |
 | WINDOWS JUMP SERVER | 192.168.100.20 |
 | DATABASE            | 10.10.100.20   |
-| WINDWOS - SHARES    | 172.16.50.10   |
+| WINDOWS - SHARES    | 172.16.50.10   |
 
 *KALI <- FIREWALL <- WINDOWS JUMP SERVER -> INTERNAL NETWORK*
 
@@ -1318,7 +1318,7 @@ proxychains psql -h 10.10.100.20 -U postgres
 | WEB                 | 192.168.100.10 |
 | WINDOWS JUMP SERVER | 192.168.100.20 |
 | DATABASE            | 10.10.100.20   |
-| WINDWOS - SHARES    | 172.16.50.10   |
+| WINDOWS - SHARES    | 172.16.50.10   |
 
 *KALI <- FIREWALL <- WINDOWS JUMP SERVER*
 
@@ -1350,7 +1350,7 @@ xfreerdp /u:<USERNAME> /p:<PASSWORD> /v:127.0.0.1:9833
 | WEB                 | 192.168.100.10 |
 | WINDOWS JUMP SERVER | 192.168.100.20 |
 | DATABASE            | 10.10.100.20   |
-| WINDWOS - SHARES    | 172.16.50.10   |
+| WINDOWS - SHARES    | 172.16.50.10   |
 
 
 *KALI <- FIREWALL <- WINDOWS JUMP SERVER -> DATABASE*
