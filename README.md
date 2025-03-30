@@ -1203,7 +1203,7 @@ proxychains smbclient -p 4455 //172.16.50.10/<SHARE> -U <USERNAME> --password=<P
 
 ![Remote Dynamic Port Forwarding](./img/remote_dynamic_port_forwarding.png)
 
-KALI <-> FIREWALL <-> WEB > DATABASE > SHARES
+*KALI <-> FIREWALL <-> WEB > DATABASE > SHARES*
 
 
 ##### Kali
@@ -1229,7 +1229,7 @@ psql -h 127.0.0.1 -p 2345 -U postgres
 
 ![Remote Dynamic Port Forwarding](./img/remote_dynamic_port_forwarding.png)
 
-KALI <- FIREWALL <- WEB -> INTERNAL NETWORK
+*KALI <- FIREWALL <- WEB -> INTERNAL NETWORK*
 
 ##### Máquina Web
 
@@ -1252,11 +1252,11 @@ proxychains nmap -vvv -sT --top-ports=20 -Pn -n 10.10.100.20
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
-| LHOST               | 192.168.50.10  |
-| APPLICATION SERVER  | 192.168.100.10 |
+| KALI                | 192.168.50.10  |
+| WEB                 | 192.168.100.10 |
 | WINDOWS JUMP SERVER | 192.168.100.20 |
-| DATABASE SERVER     | 10.10.100.20   |
-| WINDOWS HOST        | 172.16.50.10   |
+| DATABASE            | 10.10.100.20   |
+| WINDWOS - SHARES    | 172.16.50.10   |
 
 *KALI -> WEB -> INTERNAL NETWORK*
 
@@ -1277,11 +1277,11 @@ smbclient -L //172.16.50.10/ -U <user> --password=<password>
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
-| LHOST               | 192.168.50.10  |
-| APPLICATION SERVER  | 192.168.100.10 |
+| KALI                | 192.168.50.10  |
+| WEB                 | 192.168.100.10 |
 | WINDOWS JUMP SERVER | 192.168.100.20 |
-| DATABASE SERVER     | 10.10.100.20   |
-| WINDOWS HOST        | 172.16.50.10   |
+| DATABASE            | 10.10.100.20   |
+| WINDWOS - SHARES    | 172.16.50.10   |
 
 *KALI <- FIREWALL <- WINDOWS JUMP SERVER -> INTERNAL NETWORK*
 
@@ -1314,11 +1314,11 @@ proxychains psql -h 10.10.100.20 -U postgres
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
-| LHOST               | 192.168.50.10  |
-| APPLICATION SERVER  | 192.168.100.10 |
+| KALI                | 192.168.50.10  |
+| WEB                 | 192.168.100.10 |
 | WINDOWS JUMP SERVER | 192.168.100.20 |
-| DATABASE SERVER     | 10.10.100.20   |
-| WINDOWS HOST        | 172.16.50.10   |
+| DATABASE            | 10.10.100.20   |
+| WINDWOS - SHARES    | 172.16.50.10   |
 
 *KALI <- FIREWALL <- WINDOWS JUMP SERVER*
 
@@ -1346,11 +1346,11 @@ xfreerdp /u:<USERNAME> /p:<PASSWORD> /v:127.0.0.1:9833
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
-| LHOST               | 192.168.50.10  |
-| APPLICATION SERVER  | 192.168.100.10 |
+| KALI                | 192.168.50.10  |
+| WEB                 | 192.168.100.10 |
 | WINDOWS JUMP SERVER | 192.168.100.20 |
-| DATABASE SERVER     | 10.10.100.20   |
-| WINDOWS HOST        | 172.16.50.10   |
+| DATABASE            | 10.10.100.20   |
+| WINDWOS - SHARES    | 172.16.50.10   |
 
 
 *KALI <- FIREWALL <- WINDOWS JUMP SERVER -> DATABASE*
