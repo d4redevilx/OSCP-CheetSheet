@@ -4130,6 +4130,125 @@ A continuación se muestra un resumen de los mensajes siguiendo la secuencia de 
 
 ![Kerberos Flow](./img/kerberos_flow.png)
 
+#### AS-REPRoasting
+
+**AS-REPRoasting** es uno de los ataques más básicos contra Kerberos y tiene como objetivo cuentas sin **preautenticación habilitada**. Aunque es poco común en entornos bien configurados, es uno de los pocos ataques de Kerberos que **no requiere autenticación previa**.  
+
+El único dato que el atacante necesita es el **nombre de usuario** de la víctima, algo que puede obtener mediante técnicas de **enumeración**. Con esta información, el atacante envía una solicitud **AS_REQ** (Authentication Service Request) al **KDC** (Key Distribution Center), haciéndose pasar por el usuario.  
+
+Dado que la preautenticación está deshabilitada, el **KDC** responde con un **AS_REP**, que incluye datos cifrados con una clave derivada de la **contraseña del usuario**. El atacante puede capturar este mensaje y realizar un **ataque de fuerza bruta o cracking offline** para recuperar la contraseña.
+
+##### ¿Cómo funciona?  
+
+Las solicitudes de **Ticket Granting Ticket (TGT)** en Kerberos están cifradas utilizando la **marca de tiempo actual (timestamp)** y una clave derivada de la **contraseña del usuario**. Cuando el **Controlador de Dominio (DC)** recibe esta solicitud, intenta descifrarla para verificar que la contraseña utilizada es correcta. Si la autenticación es exitosa, el **KDC** emite un **TGT** al usuario mediante un mensaje **AS-REP**, junto con una **clave de sesión** cifrada con la contraseña del usuario.  
+
+Si una cuenta tiene la **preautenticación deshabilitada**, un atacante puede solicitar un **TGT** sin necesidad de credenciales previas. En este caso, el **KDC** enviará un **AS-REP** con el **TGT cifrado**, que el atacante puede capturar y luego descifrar offline utilizando herramientas como **Hashcat** o **John the Ripper** para recuperar la contraseña del usuario.  
+
+En resumen, cualquier cuenta con la opción **"No requiere Kerberos Preauthentication"** habilitada es vulnerable a este ataque, permitiendo a un atacante obtener su **TGT** y descifrarlo fuera de línea.
+
+##### Desde Linux
+
+Se puede utilizar el script [GetNPUsers.py](https://github.com/SecureAuthCorp/impacket/blob/master/examples/GetNPUsers.py) de Impacket para recolectar mensajes AS_REP sin pre-autenticacin desde una máquina Linux. Los siguientes comandos permiten utilizar una lista de usuarios o dadas una credenciales, realizar una consulta LDAP para obtener usuarios sobre los que realizar el ataque:
+
+> **AS-REPRoasting** es similar a **Kerberoasting**, pero en lugar de atacar las respuestas **TGS-REP**, se dirige a las respuestas **AS-REP**.
+
+```bash
+impacket-GetNPUsers -usersfile ad_users.txt hacklab.local/ -dc-ip 192.168.56.10 -format hashcat -outputfile hashes.asreproast
+```
+
+##### Desde Windows
+
+Podemos usar Rubeus para llevar a cabo este ataque desde una máquina Windows:
+
+```powershell
+.\Rubeus.exe asreproast /format:hashcat /outfile:hashes.asreproast
+```
+###### Crackeando el ASP_REP
+
+```bash
+hashcat -m 18200 --force -a 0 hashes.asreproast rockyou.txt
+```
+
+```bash
+john --wordlist=rockyou.txt hashes.asreproast
+```
+
+##### Mitigación del ataque AS-REP Roast
+
+- Habilitar la preautenticación Kerberos:
+
+    - En PowerShell, podemos uitilizar el cmdlet Set-ADUser -KerberosEncryptionType None para verificar y ajustar la configuración.
+
+    - En Active Directory Users and Computers (ADUC), en la sección de propiedades del usuario, seleccionar la pestaña "Cuenta" y asegúrarse de que la opción "No requerir preautenticación Kerberos" no esté marcada.
+
+- Utilizar contraseñas robustas.
+
+- Revisión de políticas de seguridad.
+
+#### Kerberoasting  
+
+> Un **Service Principal Name (SPN)** es un identificador único de una instancia de servicio. Los SPN son utilizados por la autenticación Kerberos para asociar una instancia de servicio con una cuenta de inicio de sesión de servicio.  
+> — [MSDN](https://docs.microsoft.com/windows/desktop/AD/service-principal-names)  
+
+> A diferencia del **AS-REP Roasting**, que no requiere credenciales previas, en **Kerberoasting** es necesario contar con credenciales válidas en el dominio. Esto puede ser un usuario en texto claro, un hash NTLM, una shell con contexto de usuario de dominio o acceso a nivel **SYSTEM** en un equipo unido al dominio.  
+
+##### ¿Qué es Kerberoasting?  
+
+**Kerberoasting** es un ataque dirigido a **cuentas de servicio** en **Active Directory**, que permite a un atacante descifrar contraseñas fuera de línea. A diferencia de **AS-REP Roasting**, este ataque **requiere autenticación previa** en el dominio, es decir, el atacante necesita acceso con una cuenta de usuario, aunque sea de **bajo privilegio**, o un sistema dentro de la red del dominio.  
+
+Cuando un servicio se registra en Active Directory, se le asigna un **Service Principal Name (SPN)**, que actúa como alias para una cuenta de servicio real. Esta información incluye el **nombre del servidor, el puerto y el hash de la contraseña de la cuenta de servicio**. Idealmente, estas cuentas deberían tener contraseñas seguras con mecanismos de **auto-rotación**, pero en la práctica, **muchos SPN están asociados a cuentas de usuario en lugar de cuentas de servicio**, debido a configuraciones deficientes o falta de soporte por parte de algunos proveedores.  
+
+Si una cuenta de servicio tiene una contraseña débil, un atacante puede explotar esta vulnerabilidad. **Cualquier usuario del dominio puede solicitar un Ticket Granting Service (TGS) para cualquier servicio registrado en el dominio**. Una vez recibido el **TGS**, el atacante puede extraerlo y descifrarlo offline, utilizando herramientas como **Hashcat** o **John the Ripper**, para intentar recuperar la contraseña de la cuenta asociada al servicio.  
+
+##### Implicaciones de seguridad  
+
+Durante una **prueba de penetración**, si se detecta un **SPN vinculado a una cuenta de usuario**, pero su contraseña no se puede descifrar, el hallazgo suele considerarse de **baja gravedad**. Sin embargo, si la contraseña es débil, en el futuro podría ser vulnerable a ataques de fuerza bruta. El propósito de este hallazgo es educar al cliente sobre los riesgos asociados y la importancia de asegurar correctamente estas cuentas.
+
+##### Desde Linux
+
+Con una máquina Linux, se pueden obtener todos los TGS’s utilizando el script [GetUserSPNs.py](https://github.com/SecureAuthCorp/impacket/blob/master/examples/GetUserSPNs.py) de impacket. Con el siguiente comando se puede llevar a cabo el ataque y salvar los TGS’s descubiertos:
+
+```bash
+impacket-GetUserSPNs hacklab.local/pparker:Password123 -dc-ip 192.168.56.10 -request -outputfile hashes.kerberoast
+```
+
+##### Desde Windows
+
+Del mismo modo, se puede realizar el ataque de Kerberoasting desde Windows con varias herramientas como Rubeus.
+
+```powershell
+.\Rubeus.exe kerberoast /creduser:hacklab.local\pparker /credpassword:Password123 /outfile:hashes.kerberoast
+```
+
+##### Crackeando los TGS's
+
+Utilizamos `hashcat` para romper el hash y recuperar la contraseña de la cuenta de servicio.
+
+| Modo    | Descripción                                           |
+| ------- | ----------------------------------------------------- |
+| `13100` | Kerberos 5 TGS-REP etype 23 (RC4)                     |
+| `19600` | Kerberos 5 TGS-REP etype 17 (AES128-CTS-HMAC-SHA1-96) |
+| `19700` | Kerberos 5 TGS-REP etype 18 (AES256-CTS-HMAC-SHA1-96) |
+| `18200` | Kerberos 5, etype 23, AS-REP                          |
+
+```bash
+hashcat -m 13100 hashes.kerberoast /usr/share/wordlists/rockyou.txt
+```
+
+John The Ripper
+
+```bash
+john --format=krb5tgs --wordlist=/usr/share/wordlists/rockyou.txt hashes.kerberoast
+```
+
+##### Mitigación del ataque Kerberoasting
+
+- Utilizar contraseñas robustas.
+
+- Privilegios mínimos: Otorgar a los usuarios únicamente los privilegios necesarios para realizar sus tareas específicas y restringir cualquier privilegio adicional que no sea esencial para evitar posibles riesgos de seguridad. Este enfoque ayuda a reducir la superficie de ataque y a limitar el impacto de posibles violaciones de seguridad.
+
+- No ejecutar las cuentas de Servicio como Administrador del Dominio.
+
 ###  11.5. <a name='movimiento-lateral-1'></a>Movimiento Lateral
 
 ###  11.6. <a name='post-explotación'></a>Post Explotación
