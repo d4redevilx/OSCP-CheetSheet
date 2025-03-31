@@ -137,12 +137,21 @@ Apuntes para la certificación OSCP.
         * 11.1.6. [Computadoras](#computadoras)
         * 11.1.7. [Unidades Organizativas](#unidades-organizativas)
         * 11.1.8. [GPO (Group Policy Object)](#gpo-(group-policy-object))
-        * 11.1.9. [Unidades Organizativas](#unidades-organizativas-1)
-        * 11.1.10. [GPO (Group Policy Object)](#gpo-(group-policy-object)-1)
-    * 11.2. [Escalación de privilegios](#escalación-de-privilegios-3)
-        * 11.2.1. [Grupos Privilegiados](#grupos-privilegiados)
-    * 11.3. [Kerberos](#kerberos)
-    * 11.4. [Explotación](#explotación)
+    * 11.2. [Enumeración](#enumeración-3)
+        * 11.2.1. [Kerbrute](#kerbrute)
+        * 11.2.2. [Password Spraying](#password-spraying)
+        * 11.2.3. [BloodHound](#bloodhound)
+        * 11.2.4. [ldapsearch](#ldapsearch)
+        * 11.2.5. [ldapdomaindump](#ldapdomaindump)
+    * 11.3. [Grupos Privilegiados](#grupos-privilegiados)
+        * 11.3.1. [Account Operators](#account-operators)
+        * 11.3.2. [Server Operators](#server-operators)
+        * 11.3.3. [DnsAdmins](#dnsadmins)
+        * 11.3.4. [Backup Operators](#backup-operators)
+    * 11.4. [Kerberos](#kerberos)
+        * 11.4.1. [¿Qué es Kerberos?](#¿qué-es-kerberos?)
+        * 11.4.2. [AS-REPRoasting](#as-reproasting)
+        * 11.4.3. [Kerberoasting](#kerberoasting)
     * 11.5. [Movimiento Lateral](#movimiento-lateral-1)
     * 11.6. [Post Explotación](#post-explotación)
 * 12. [Herramientas y Recursos](#herramientas-y-recursos)
@@ -152,7 +161,7 @@ Apuntes para la certificación OSCP.
     * 12.4. [Bases de datos](#bases-de-datos)
     * 12.5. [Passwords Attacks](#passwords-attacks-1)
     * 12.6. [Wordlists](#wordlists)
-    * 12.7. [Escalación de Privilegios](#escalación-de-privilegios-4)
+    * 12.7. [Escalación de Privilegios](#escalación-de-privilegios-3)
     * 12.8. [Recursos y Blogs](#recursos-y-blogs)
 
 <!-- vscode-markdown-toc-config
@@ -3937,11 +3946,11 @@ Para restaurar desde una copia de seguridad:
 Restore-GPO -Name "NombreGPO" -Path "C:\Ruta\Backup"
 ```
 
-### Enumeración
+###  11.2. <a name='enumeración-3'></a>Enumeración
 
 Si no tenemos un usuario con el que empezar las pruebas (que suele ser el caso), tendremos que encontrar una manera de establecer un punto de apoyo en el dominio, ya sea obteniendo credenciales en texto claro o un hash de contraseña NTLM para un usuario, un shell SYSTEM en un host unido al dominio, o un shell en el contexto de una cuenta de usuario de dominio. Obtener un usuario válido con credenciales es crítico en las primeras etapas de una prueba de penetración interna. Este acceso (incluso al nivel más bajo) abre muchas oportunidades para realizar enumeraciones e incluso ataques.
 
-#### Kerbrute
+####  11.2.1. <a name='kerbrute'></a>Kerbrute
 
 [Kerbrute](https://github.com/ropnop/kerbrute) puede ser una opción más sigilosa para la enumeración de cuentas de dominio. Se aprovecha del hecho de que los fallos de pre-autenticación Kerberos a menudo no activan registros o alertas. Utilizaremos Kerbrute junto con las listas de usuarios como pueden ser **jsmith.txt** o **jsmith2.txt** de [Insidetrust](https://github.com/insidetrust/statistically-likely-usernames). Este repositorio contiene muchas listas de usuarios diferentes que pueden ser extremadamente útiles cuando se intenta enumerar usuarios cuando se comienza desde una perspectiva no autenticada. Podemos apuntar Kerbrute al DC y alimentarlo con una lista de palabras. La herramienta es rápida, y se nos proporcionarán resultados que nos permitirán saber si las cuentas encontradas son válidas o no, lo cual es un gran punto de partida para lanzar ataques como el de Password Spraying.
 
@@ -3960,7 +3969,7 @@ kerbrute bruteuser --d HACKLAB.LOCAL -dc 192.168.56.10 jsmith.txt thomas.brown
 Otras herramientas a tener en cuenta son [RPCClient](#426-rpcclient) y [Enum4Linux](#424-enum4linux).
 
 
-#### Password Spraying
+####  11.2.2. <a name='password-spraying'></a>Password Spraying
 
 Otro aspecto destacable es el ataque conocido como Password Spraying. Para contextualizar, imaginemos que disponemos de unas credenciales como `thomas.brown:MySup3erPass123!`. Una táctica común en este escenario es conectarse al Protocolo de Llamada a Procedimientos Remotos (RPC) - para extraer una lista de todos los usuarios del dominio. Esta lista se guarda en un archivo, por ejemplo users.txt, y luego se proporciona como entrada a herramientas como el propio netexec, junto con la contraseña antes mencionada. Este proceso permite intentar el acceso a múltiples cuentas del dominio, aprovechando la débil seguridad de la contraseña utilizada.
 
@@ -3976,7 +3985,7 @@ nxc smb 192.168.56.10 -u users.txt -p passwords.txt --continue-on-success --no-b
 
 El argumento `--no-bruteforce` se emplea para evitar la prueba de todas las contraseñas disponibles para cada usuario, en su lugar, se prueba el usuario de la línea 1 con la contraseña de la línea 1, el usuario de la línea 2 con la contraseña de la línea 2, y así sucesivamente.
 
-#### BloodHound
+####  11.2.3. <a name='bloodhound'></a>BloodHound
 
 ##### Opción 1
 
@@ -4019,7 +4028,7 @@ Otra alternativa es utilizar [SharpHound.exe](https://github.com/SpecterOps/Bloo
 
 Por ultimo, descargamos el archivo `zip` nuevamente y los subimos en `BloodHound`.
 
-#### ldapsearch
+####  11.2.4. <a name='ldapsearch'></a>ldapsearch
 Para enumerar a través del protoclo LDAP, podemos usar la herramienta `ldapsearch`:
 
 ```bash
@@ -4041,7 +4050,7 @@ ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erP
 ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erPass123!' -x -s base -b "DC=HACKLAB,DC=LOCAL" "(objectClass=*)" "*" +
 ```
 
-#### ldapdomaindump
+####  11.2.5. <a name='ldapdomaindump'></a>ldapdomaindump
 
 En caso de tener credenciales válidas podemos hacer uso de `ldapdomaindump`:
 
@@ -4051,18 +4060,18 @@ ldapdomaindump -u 'HACKLAB.local\thomas.brown' -p 'Password123' 192.168.56.10
 
 Esto generará unos archivos `json`, `grep`, `html` que con un servidor web podemos ver en el navegador.
 
-### Grupos Privilegiados
+###  11.3. <a name='grupos-privilegiados'></a>Grupos Privilegiados
 
-#### Account Operators
-#### Server Operators
-#### DnsAdmins
-#### Backup Operators
+####  11.3.1. <a name='account-operators'></a>Account Operators
+####  11.3.2. <a name='server-operators'></a>Server Operators
+####  11.3.3. <a name='dnsadmins'></a>DnsAdmins
+####  11.3.4. <a name='backup-operators'></a>Backup Operators
 
-###  11.3. <a name='kerberos'></a>Kerberos
+###  11.4. <a name='kerberos'></a>Kerberos
 
 ![Kerberos](./img/kerberos.webp)
 
-#### ¿Qué es Kerberos?
+####  11.4.1. <a name='¿qué-es-kerberos?'></a>¿Qué es Kerberos?
 
 Kerberos es un protocolo de **autenticación**, pero no de autorización. Esto significa que su función es verificar la identidad de un usuario mediante una contraseña conocida solo por él, sin definir a qué recursos o servicios puede acceder.  
 
@@ -4130,7 +4139,7 @@ A continuación se muestra un resumen de los mensajes siguiendo la secuencia de 
 
 ![Kerberos Flow](./img/kerberos_flow.png)
 
-#### AS-REPRoasting
+####  11.4.2. <a name='as-reproasting'></a>AS-REPRoasting
 
 **AS-REPRoasting** es uno de los ataques más básicos contra Kerberos y tiene como objetivo cuentas sin **preautenticación habilitada**. Aunque es poco común en entornos bien configurados, es uno de los pocos ataques de Kerberos que **no requiere autenticación previa**.  
 
@@ -4185,7 +4194,7 @@ john --wordlist=rockyou.txt hashes.asreproast
 
 - Revisión de políticas de seguridad.
 
-#### Kerberoasting  
+####  11.4.3. <a name='kerberoasting'></a>Kerberoasting  
 
 > Un **Service Principal Name (SPN)** es un identificador único de una instancia de servicio. Los SPN son utilizados por la autenticación Kerberos para asociar una instancia de servicio con una cuenta de inicio de sesión de servicio.  
 > — [MSDN](https://docs.microsoft.com/windows/desktop/AD/service-principal-names)  
@@ -4322,7 +4331,7 @@ Enlaces a las distintas herramientas y recursos.
 | CeWL                          | [https://github.com/digininja/cewl](https://github.com/digininja/cewl)                                             |
 | API Wordlist                  | https://github.com/chrislockard/api_wordlist/blob/master/api_seen_in_wild.txt                                      |
 
-###  12.7. <a name='escalación-de-privilegios-4'></a>Escalación de Privilegios
+###  12.7. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
 
 
 | Nombre   | URL                                                      |
