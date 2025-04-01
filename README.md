@@ -73,6 +73,7 @@ Apuntes para la certificación OSCP.
         * 5.1.1. [Fuff](#fuff)
         * 5.1.2. [Gobuster](#gobuster)
         * 5.1.3. [Wfuzz](#wfuzz)
+        * 5.1.4. [GitTools](#gittools)
     * 5.2. [Enumeración de CMS](#enumeración-de-cms)
         * 5.2.1. [Wordpress](#wordpress)
         * 5.2.2. [Joomla](#joomla)
@@ -1061,7 +1062,7 @@ wfuzz -X POST -u "http://<RHOST>:<RPORT>/login.php" -d "username=FUZZ&password=<
 wfuzz -X POST -u "http://<RHOST>:<RPORT>/login.php" -d "username=FUZZ&password=<PASSWORD>" -w /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt --ss "Username or Password Invalid"
 ```
 
-#### GitTools
+####  5.1.4. <a name='gittools'></a>GitTools
 
 ```bash
 ./gitdumper.sh http://<RHOST>/.git/ website
