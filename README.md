@@ -1065,7 +1065,7 @@ wfuzz -X POST -u "http://<RHOST>:<RPORT>/login.php" -d "username=FUZZ&password=<
 ####  5.1.4. <a name='gittools'></a>GitTools
 
 ```bash
-./python3 git-dumper.py http://<RHOST>/.git/ website
+python3 git-dumper.py http://<RHOST>/.git/ website
 ./extractor.sh website
 ```
 
