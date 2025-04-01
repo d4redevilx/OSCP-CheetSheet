@@ -1061,6 +1061,13 @@ wfuzz -X POST -u "http://<RHOST>:<RPORT>/login.php" -d "username=FUZZ&password=<
 wfuzz -X POST -u "http://<RHOST>:<RPORT>/login.php" -d "username=FUZZ&password=<PASSWORD>" -w /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt --ss "Username or Password Invalid"
 ```
 
+#### GitTools
+
+```bash
+./gitdumper.sh http://<RHOST>/.git/ website
+./extractor.sh website
+```
+
 ###  5.2. <a name='enumeración-de-cms'></a>Enumeración de CMS
 
 ####  5.2.1. <a name='wordpress'></a>Wordpress
@@ -4280,19 +4287,21 @@ Enlaces a las distintas herramientas y recursos.
 
 ###  12.3. <a name='web-1'></a>Web
 
-| Nombre                     | URL                                                     |
-| -------------------------- | ------------------------------------------------------- |
-| ffuf                       | https://github.com/ffuf/ffuf                            |
-| Gobuster                   | https://github.com/OJ/gobuster                          |
-| PayloadAllTheThings        | https://github.com/swisskyrepo/PayloadsAllTheThings     |
-| Wfuzz                      | https://github.com/xmendez/wfuzz                        |
-| WhatWeb                    | https://github.com/urbanadventurer/WhatWeb              |
-| WPScan                     | https://github.com/wpscanteam/wpscan                    |
-| PHP Filter Chain Generator | https://github.com/synacktiv/php_filter_chain_generator |
-| Leaky Paths                | https://github.com/ayoubfathi/leaky-paths               |
-| Joomscan                   | https://github.com/OWASP/joomscan                       |
-| Droopescan                 | https://github.com/SamJoan/droopescan                   |
-| Magescan                   | https://github.com/steverobbins/magescan                |
+| Nombre                     | URL                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------- |
+| ffuf                       | https://github.com/ffuf/ffuf                                                 |
+| Gobuster                   | https://github.com/OJ/gobuster                                               |
+| PayloadAllTheThings        | https://github.com/swisskyrepo/PayloadsAllTheThings                          |
+| Wfuzz                      | https://github.com/xmendez/wfuzz                                             |
+| WhatWeb                    | https://github.com/urbanadventurer/WhatWeb                                   |
+| WPScan                     | https://github.com/wpscanteam/wpscan                                         |
+| PHP Filter Chain Generator | https://github.com/synacktiv/php_filter_chain_generator                      |
+| Leaky Paths                | https://github.com/ayoubfathi/leaky-paths                                    |
+| Joomscan                   | https://github.com/OWASP/joomscan                                            |
+| Droopescan                 | https://github.com/SamJoan/droopescan                                        |
+| Magescan                   | https://github.com/steverobbins/magescan                                     |
+| Git-Dumper                 | https://github.com/arthaud/git-dumper                                        |
+| Extractor                  | https://github.com/internetwache/GitTools/blob/master/Extractor/extractor.sh |
 
 ###  12.4. <a name='bases-de-datos'></a>Bases de datos
 
