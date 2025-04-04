@@ -1693,7 +1693,6 @@ whoami all
 whoami /priv
 whoami /groups
 
-# Usuarios Locales
 net users
 net user <USER>
 net user <USER> /domain
