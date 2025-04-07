@@ -1538,7 +1538,7 @@ john <FILE> --wordlist=/ruta/de/la/wordlist/wordlist.txt --format=crypt
 john <FILE> --rules --wordlist=/ruta/de/la/wordlist/wordlist.txt
 john --show <FILE>
 
-# /etc/passwd
+# /etc/passwd - /etc/shadow
 unshadow passwd shadow > hashes
 john --wordlist-/usr/share/wordlists/rockyou.txt hashes
 ```
