@@ -1551,6 +1551,8 @@ laZagne.exe all
 
 ###  7.7. <a name='mimikatz'></a>Mimikatz
 
+[Mimikatz](https://github.com/gentilkiwi/mimikatz) es una herramienta que permite extraer contraseñas en texto claro, hash, código PIN y tickets kerberos de la memoria. A su vez, también puede realizar pass-the-hash, pass-the-ticket o construir Golden tickets.
+
 ```bash
 # Comandos comunes
 token::elevate
