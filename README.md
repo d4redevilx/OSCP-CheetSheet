@@ -4876,6 +4876,35 @@ Para restaurar desde una copia de seguridad:
 Restore-GPO -Name "NombreGPO" -Path "C:\Ruta\Backup"
 ```
 
+### Habilitar DONT-REQ-PRE-AUTH
+
+```powershell
+# Nombre del usuario a modificar
+$user = "usuario.test"
+
+# Obtener el objeto del usuario
+$u = Get-ADUser -Identity $user -Properties userAccountControl
+
+# Mostrar los flags actuales
+Write-Host "UAC antes: $($u.userAccountControl)"
+
+# Agregar la flag de DONT_REQUIRE_PREAUTH
+$newUAC = $u.userAccountControl -bor 0x400000
+
+# Aplicar el nuevo valor
+Set-ADUser -Identity $user -Replace @{userAccountControl=$newUAC}
+
+# Verificar
+(Get-ADUser -Identity $user -Properties userAccountControl).userAccountControl
+```
+
+### Deshabilitar DONT-REQ-PRE-AUTH
+
+```powershell
+$newUAC = $u.userAccountControl -band -bnot 0x400000
+Set-ADUser -Identity $user -Replace @{userAccountControl=$newUAC}
+```
+
 ###  11.2. <a name='enumeración-3'></a>Enumeración
 
 Si no tenemos un usuario con el que empezar las pruebas (que suele ser el caso), tendremos que encontrar una manera de establecer un punto de apoyo en el dominio, ya sea obteniendo credenciales en texto claro o un hash de contraseña NTLM para un usuario, un shell SYSTEM en un host unido al dominio, o un shell en el contexto de una cuenta de usuario de dominio. Obtener un usuario válido con credenciales es crítico en las primeras etapas de una prueba de penetración interna. Este acceso (incluso al nivel más bajo) abre muchas oportunidades para realizar enumeraciones e incluso ataques.
@@ -5223,6 +5252,38 @@ john --format=krb5tgs --wordlist=/usr/share/wordlists/rockyou.txt hashes.kerbero
 ###  11.6. <a name='movimiento-lateral-1'></a>Movimiento Lateral
 
 ###  11.7. <a name='post-explotación'></a>Post Explotación
+
+## Apéndice
+
+### 🎯 Flags de userAccountControl (AD)
+
+| Flag Name                        | Valor (Decimal) | Valor (Hexadecimal) | Descripción                                                                 |
+|----------------------------------|------------------|----------------------|-----------------------------------------------------------------------------|
+| SCRIPT                           | 1                | 0x0001               | Script de inicio asociado a la cuenta.                                     |
+| ACCOUNTDISABLE                   | 2                | 0x0002               | Cuenta deshabilitada.                                                      |
+| HOMEDIR_REQUIRED                 | 8                | 0x0008               | Requiere un home directory.                                                |
+| LOCKOUT                          | 16               | 0x0010               | Cuenta bloqueada.                                                          |
+| PASSWD_NOTREQD                   | 32               | 0x0020               | No se requiere contraseña. (ojo, útil en algunos ataques)                  |
+| PASSWD_CANT_CHANGE               | —                | —                    | No es una flag directa, se controla vía ACLs.                              |
+| ENCRYPTED_TEXT_PWD_ALLOWED       | 128              | 0x0080               | Permite contraseñas en texto claro. (inseguro)                             |
+| TEMP_DUPLICATE_ACCOUNT           | 256              | 0x0100               | Cuenta temporal de replicación.                                            |
+| NORMAL_ACCOUNT                   | 512              | 0x0200               | Cuenta de usuario estándar.                                                |
+| INTERDOMAIN_TRUST_ACCOUNT        | 2048             | 0x0800               | Cuenta de confianza entre dominios.                                        |
+| WORKSTATION_TRUST_ACCOUNT        | 4096             | 0x1000               | Cuenta de equipo (join a dominio).                                         |
+| SERVER_TRUST_ACCOUNT             | 8192             | 0x2000               | Controlador de dominio.                                                    |
+| DONT_EXPIRE_PASSWORD             | 65536            | 0x10000              | La contraseña no expira nunca.                                             |
+| MNS_LOGON_ACCOUNT                | 131072           | 0x20000              | Cuenta para cluster MNS.                                                   |
+| SMARTCARD_REQUIRED               | 262144           | 0x40000              | Requiere autenticación con smartcard.                                      |
+| TRUSTED_FOR_DELEGATION           | 524288           | 0x80000              | Esta cuenta puede hacer delegación (Unconstrained Delegation).             |
+| NOT_DELEGATED                    | 1048576          | 0x100000             | No puede ser usada para delegación.                                        |
+| USE_DES_KEY_ONLY                 | 2097152          | 0x200000             | Sólo usa DES (inseguro, deprecated).                                       |
+| DONT_REQUIRE_PREAUTH             | 4194304          | 0x400000             | ⚠️ **No requiere preautenticación Kerberos** (usado en AS-REP Roasting).   |
+| PASSWORD_EXPIRED                 | 8388608          | 0x800000             | La contraseña expiró.                                                      |
+| TRUSTED_TO_AUTH_FOR_DELEGATION  | 16777216         | 0x1000000            | Constrained delegation (S4U2Self).                                         |
+| PARTIAL_SECRETS_ACCOUNT          | 67108864         | 0x4000000            | Cuenta protegida con secretos parciales (Windows 10/2016+).                |
+
+> 💡 Podemos combinar múltiples flags con OR binario (`-bor`) y removerlas con AND + NOT (`-band -bnot`).
+
 
 ##  12. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
 
