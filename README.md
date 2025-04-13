@@ -5272,13 +5272,13 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 
 ###  12.1. <a name='🎯-flags-de-useraccountcontrol-(ad)'></a>🎯 Flags de userAccountControl (AD)
 
-| Flag Name                        | Valor (Decimal) | Valor (Hexadecimal) | Descripción                                                                 |
-|----------------------------------|------------------|----------------------|-----------------------------------------------------------------------------|
+| Flag Name                        | Valor (Decimal) | Valor (Hexadecimal) | Descripción                                                                  |
+|----------------------------------|------------------|----------------------|----------------------------------------------------------------------------|
 | SCRIPT                           | 1                | 0x0001               | Script de inicio asociado a la cuenta.                                     |
 | ACCOUNTDISABLE                   | 2                | 0x0002               | Cuenta deshabilitada.                                                      |
 | HOMEDIR_REQUIRED                 | 8                | 0x0008               | Requiere un home directory.                                                |
 | LOCKOUT                          | 16               | 0x0010               | Cuenta bloqueada.                                                          |
-| PASSWD_NOTREQD                   | 32               | 0x0020               | No se requiere contraseña. (ojo, útil en algunos ataques)                  |
+| PASSWD_NOTREQD                   | 32               | 0x0020               | No se requiere contraseña. (útil en algunos ataques)                       |
 | PASSWD_CANT_CHANGE               | —                | —                    | No es una flag directa, se controla vía ACLs.                              |
 | ENCRYPTED_TEXT_PWD_ALLOWED       | 128              | 0x0080               | Permite contraseñas en texto claro. (inseguro)                             |
 | TEMP_DUPLICATE_ACCOUNT           | 256              | 0x0100               | Cuenta temporal de replicación.                                            |
@@ -5294,7 +5294,7 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 | USE_DES_KEY_ONLY                 | 2097152          | 0x200000             | Sólo usa DES (inseguro, deprecated).                                       |
 | DONT_REQUIRE_PREAUTH             | 4194304          | 0x400000             | ⚠️ **No requiere preautenticación Kerberos** (usado en AS-REP Roasting).   |
 | PASSWORD_EXPIRED                 | 8388608          | 0x800000             | La contraseña expiró.                                                      |
-| TRUSTED_TO_AUTH_FOR_DELEGATION  | 16777216         | 0x1000000            | Constrained delegation (S4U2Self).                                         |
+| TRUSTED_TO_AUTH_FOR_DELEGATION  | 16777216         | 0x1000000            | Constrained delegation (S4U2Self).                                          |
 | PARTIAL_SECRETS_ACCOUNT          | 67108864         | 0x4000000            | Cuenta protegida con secretos parciales (Windows 10/2016+).                |
 
 > 💡 Podemos combinar múltiples flags con OR binario (`-bor`) y removerlas con AND + NOT (`-band -bnot`).
