@@ -201,7 +201,8 @@ Apuntes para la certificación OSCP.
     * 11.8. [Movimiento Lateral](#movimiento-lateral-1)
     * 11.9. [Post Explotación](#post-explotación)
 * 12. [Apéndice](#apéndice)
-    * 12.1. [🎯 Flags de userAccountControl (AD)](#🎯-flags-de-useraccountcontrol-(ad))
+    * 12.1. [🛡️ Permisos delegables en Active Directory](#🛡️-permisos-delegables-en-active-directory)
+    * 12.2. [🎯 Flags de userAccountControl (AD)](#🎯-flags-de-useraccountcontrol-(ad))
 * 13. [Herramientas y Recursos](#herramientas-y-recursos)
     * 13.1. [Pivoting](#pivoting-1)
     * 13.2. [Information Gathering](#information-gathering-1)
@@ -5270,7 +5271,19 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 
 ##  12. <a name='apéndice'></a>Apéndice
 
-###  12.1. <a name='🎯-flags-de-useraccountcontrol-(ad)'></a>🎯 Flags de userAccountControl (AD)
+###  12.1. <a name='🛡️-permisos-delegables-en-active-directory'></a>🛡️ Permisos delegables en Active Directory
+
+| Permiso               | Descripción                                                                    |
+| --------------------- | ------------------------------------------------------------------------------ |
+| `GenericAll`          | Permisos completos sobre el objeto. Puede hacer cualquier acción.              |
+| `GenericWrite`        | Puede modificar ciertos atributos del objeto (no todos).                       |
+| `WriteOwner`          | Puede cambiar el propietario del objeto.                                       |
+| `WriteDACL`           | Puede modificar la lista de control de accesos (DACL) del objeto.              |
+| `AllExtendedRights`   | Puede cambiar o resetear la contraseña, y ejecutar otras acciones extendidas.  |
+| `ForceChangePassword` | Puede cambiar la contraseña del objeto sin conocer la actual.                  |
+| `Self`                | Puede agregarse a sí mismo en ciertos atributos, como por ejemplo, a un grupo. |
+
+###  12.2. <a name='🎯-flags-de-useraccountcontrol-(ad)'></a>🎯 Flags de userAccountControl (AD)
 
 | Flag Name                        | Valor (Decimal) | Valor (Hexadecimal) | Descripción                                                                  |
 |----------------------------------|------------------|----------------------|----------------------------------------------------------------------------|
