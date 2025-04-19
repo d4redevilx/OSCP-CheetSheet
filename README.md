@@ -5095,7 +5095,7 @@ Por defecto, los miembros de Account Operators pueden:
 - Atributos “sensibles” como adminCount = 1 (si está bien protegido)
 - Cuentas fuera del scope delegado (como en OUs personalizadas)
 
-##### ¿Cómo podés abusarlo para escalar privilegios?
+##### Explotación
 
 ###### Ejemplo 1 – Crear un usuario + agregarlo a RBCD
 
