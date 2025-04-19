@@ -5141,7 +5141,7 @@ Add-ADGroupMember -Identity 'Server Operators' -Members hacker
 
 Desde aquí, podemos abusar del grupo (como Backup Operators para leer SAM/NTDS.dit).
 
-###### Asignar SPN a un usuario - Kerberoasting
+###### Ejemplo 4 - Asignar SPN a un usuario - Kerberoasting
 
 ```powershell
 Import-module .\PowerView.ps1
