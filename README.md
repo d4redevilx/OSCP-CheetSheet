@@ -5080,14 +5080,14 @@ Get-NetGroupMember -GroupName "Account Operators"
 
 Por defecto, los miembros de Account Operators pueden:
 
-✅ Crear, modificar y eliminar cuentas de usuarios en los siguientes contenedores:
+- ✅ Crear, modificar y eliminar cuentas de usuarios en los siguientes contenedores:
 
-- `CN=Users`
-- `CN=Computers`
+    - `CN=Users`
+    - `CN=Computers`
 
-✅ Agregar usuarios a grupos locales (¡no de dominio!)
-✅ Leer y escribir muchos atributos de cuentas de usuario (como userAccountControl, description, etc.)
-✅ Resetear contraseñas de cuentas que no sean administradores.
+- ✅ Agregar usuarios a grupos locales (¡no de dominio!)
+- ✅ Leer y escribir muchos atributos de cuentas de usuario (como userAccountControl, description, etc.)
+- ✅ Resetear contraseñas de cuentas que no sean administradores.
 
 ❌ No pueden tocar:
 
