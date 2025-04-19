@@ -5273,6 +5273,8 @@ Bloodhound
 
 ####  11.5.4. <a name='backup-operators'></a>Backup Operators
 
+Ver [Backup Operators](#backupoperators---sebackupprivilege-y-serestoreprivilege).
+
 ###  11.6. <a name='kerberos'></a>Kerberos
 
 ![Kerberos](./img/kerberos.webp)
