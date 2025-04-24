@@ -5183,7 +5183,7 @@ Ya que podemos escribir sobre el servicio o hacer RDP, podemos ejecutarte como `
 net localgroup administrators hacker /add
 ```
 
-###### Meter payloads en tareas programadas (Scheduled Tasks
+###### Meter payloads en tareas programadas (Scheduled Tasks)
 
 Podemos escribir en `C:\Windows\Tasks`, lo que se puede usar para ejecución diferida o persistencia.
 
