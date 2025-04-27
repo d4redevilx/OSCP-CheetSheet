@@ -197,9 +197,8 @@ Apuntes para la certificación OSCP.
         * 11.6.1. [¿Qué es Kerberos?](#¿qué-es-kerberos?)
         * 11.6.2. [AS-REPRoasting](#as-reproasting)
         * 11.6.3. [Kerberoasting](#kerberoasting)
-    * 11.7. [Enumeración](#enumeración-4)
-    * 11.8. [Movimiento Lateral](#movimiento-lateral-1)
-    * 11.9. [Post Explotación](#post-explotación)
+    * 11.7. [Movimiento Lateral](#movimiento-lateral-1)
+    * 11.8. [Post Explotación](#post-explotación)
 * 12. [Apéndice](#apéndice)
     * 12.1. [🛡️ Permisos delegables en Active Directory](#🛡️-permisos-delegables-en-active-directory)
     * 12.2. [🎯 Flags de userAccountControl (AD)](#🎯-flags-de-useraccountcontrol-(ad))
@@ -5475,9 +5474,9 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 
 - No ejecutar las cuentas de Servicio como Administrador del Dominio.
 
-###  11.8. <a name='movimiento-lateral-1'></a>Movimiento Lateral
+###  11.7. <a name='movimiento-lateral-1'></a>Movimiento Lateral
 
-###  11.9. <a name='post-explotación'></a>Post Explotación
+###  11.8. <a name='post-explotación'></a>Post Explotación
 
 ##  12. <a name='apéndice'></a>Apéndice
 
