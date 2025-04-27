@@ -5295,7 +5295,7 @@ Kerberos involucra varios componentes encargados de gestionar la autenticación 
 
 - **Key Distribution Center (KDC)**: Servicio central de Kerberos responsable de distribuir tickets a los clientes. Se ejecuta en el Controlador de Dominio (DC) e incluye:
 
-    - **Authentication Service (AS)**: Emite los Ticket Granting Tickets (TGTs), que permiten solicitar acceso a servicios sin necesidad de volver a introducir credenciales.
+- **Authentication Service (AS)**: Emite los Ticket Granting Tickets (TGTs), que permiten solicitar acceso a servicios sin necesidad de volver a introducir credenciales.
 
 Para garantizar la seguridad, Kerberos cifra y firma varias estructuras, como los tickets, evitando que sean manipuladas por terceros. En Active Directory, se manejan las siguientes claves de cifrado:
 
@@ -5474,13 +5474,6 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 - Privilegios mínimos: Otorgar a los usuarios únicamente los privilegios necesarios para realizar sus tareas específicas y restringir cualquier privilegio adicional que no sea esencial para evitar posibles riesgos de seguridad. Este enfoque ayuda a reducir la superficie de ataque y a limitar el impacto de posibles violaciones de seguridad.
 
 - No ejecutar las cuentas de Servicio como Administrador del Dominio.
-
-###  11.7. <a name='enumeración-4'></a>Enumeración
-
-```powershell
-[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
-
-```
 
 ###  11.8. <a name='movimiento-lateral-1'></a>Movimiento Lateral
 
