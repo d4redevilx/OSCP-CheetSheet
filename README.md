@@ -466,6 +466,12 @@ done; wait
 seq 1 65535 | xargs -P 500 -I {} proxychains nmap -sT -p{} -open -T5 -Pn -n <RHOST> -vvv -oN servicesScan 2>&1 | grep "tcp open"
 ```
 
+```bash
+echo $TOP_200 | tr ',' '\n' | xargs -P 500 -I {} proxychains nmap -sT -p{} --open -T5 -Pn -n <RHOST> 2>&/dev/null | grep "tcp open" | tee open_ports.txt
+echo $TOP_500 | tr ',' '\n' | xargs -P 500 -I {} proxychains nmap -sT -p{} --open -T5 -Pn -n <RHOST> 2>&/dev/null | grep "tcp open" | tee open_ports.txt
+echo $TOP_1000 | tr ',' '\n' | xargs -P 500 -I {} proxychains nmap -sT -p{} --open -T5 -Pn -n <RHOST> 2>&/dev/null | grep "tcp open" | tee open_ports.txt
+```
+
 ##  4. <a name='servicios-comunes'></a>Servicios Comunes
 
 ###  4.1. <a name='ftp-(21)'></a>FTP (21)
