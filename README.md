@@ -5348,7 +5348,7 @@ El argumento `--no-bruteforce` se emplea para evitar la prueba de todas las cont
 La primera forma de enumerar con Bloodhound, es hacerlo desde la máquina atacante utilizando `bloodhound.py`.
 
 ```bash
-python3 bloodhound.py -u 'thomas.brown' -p 'MySup3erPass123!' -d HACKLAB.local -ns 192.168.56.10 -ns 192.168.56.10 --zip -c All
+python3 bloodhound.py -u 'thomas.brown' -p 'MySup3erPass123!' -d HACKLAB.local -ns 192.168.56.10 --zip -c All
 ```
 
 ##### Opción 2
