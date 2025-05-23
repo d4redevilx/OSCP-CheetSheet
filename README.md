@@ -72,7 +72,7 @@ Apuntes para la certificación OSCP.
         * 4.7.1. [xfreerdp](#xfreerdp)
         * 4.7.2. [Netexec](#netexec-3)
 * 5. [Web](#web)
-    * 5.1. [Enumeración Windows](#enumeración-windows)
+    * 5.1. [Enumeración Web](#enumeración-web)
         * 5.1.1. [Fuff](#fuff)
         * 5.1.2. [Gobuster](#gobuster)
         * 5.1.3. [Wfuzz](#wfuzz)
@@ -1106,7 +1106,7 @@ nxc rpd <RHOST> -u <USER> -p <PASSWORD> --res <RESOLUTION>
 ```
 ##  5. <a name='web'></a>Web
 
-###  5.1. <a name='enumeración-windows'></a>Enumeración Windows
+###  5.1. <a name='enumeración-web'></a>Enumeración Web
 
 ####  5.1.1. <a name='fuff'></a>Fuff
 
