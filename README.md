@@ -72,7 +72,7 @@ Apuntes para la certificación OSCP.
         * 4.7.1. [xfreerdp](#xfreerdp)
         * 4.7.2. [Netexec](#netexec-3)
 * 5. [Web](#web)
-    * 5.1. [Enumeración](#enumeración)
+    * 5.1. [Enumeración Windows](#enumeración-windows)
         * 5.1.1. [Fuff](#fuff)
         * 5.1.2. [Gobuster](#gobuster)
         * 5.1.3. [Wfuzz](#wfuzz)
@@ -83,10 +83,10 @@ Apuntes para la certificación OSCP.
         * 5.2.3. [Drupal](#drupal)
         * 5.2.4. [Magento](#magento)
     * 5.3. [Local File Inclusion (LFI)](#local-file-inclusion-(lfi))
-        * 5.3.1 [Hasta PHP 5.3](#hasta-php53)
-        * 5.3.2 [PHP Wrappers](#lfi-php-wrappers)
-        * 5.3.3 [Archivos Linux](#lfi-linux)
-        * 5.3.4 [Archivos Windows](#lfi-windows)
+        * 5.3.1. [Hasta php 5.3](#hasta-php-5.3)
+        * 5.3.2. [php://filter Wrapper](#php://filter-wrapper)
+        * 5.3.3. [Archivos Linux](#archivos-linux)
+        * 5.3.4. [Archivos Windows](#archivos-windows)
     * 5.4. [SQL Injection](#sql-injection)
         * 5.4.1. [MySQL](#mysql)
         * 5.4.2. [MSSQL](#mssql)
@@ -167,10 +167,10 @@ Apuntes para la certificación OSCP.
         * 9.3.5. [Evil-WinRM](#evil-winrm)
 * 10. [Escalación de Privilegios](#escalación-de-privilegios)
     * 10.1. [Windows](#windows-2)
-        * 10.1.1. [Enumeración](#enumeración-1)
+        * 10.1.1. [Enumeración](#enumeración)
         * 10.1.2. [Escalación de Privilegios](#escalación-de-privilegios-1)
     * 10.2. [Linux](#linux-2)
-        * 10.2.1. [Enumeración](#enumeración-2)
+        * 10.2.1. [Enumeración](#enumeración-1)
         * 10.2.2. [Escalación de Privilegios](#escalación-de-privilegios-2)
     * 10.3. [Técnicas de explotación de trabajos Cron](#técnicas-de-explotación-de-trabajos-cron)
 * 11. [Active Directory](#active-directory)
@@ -185,7 +185,7 @@ Apuntes para la certificación OSCP.
         * 11.1.8. [GPO (Group Policy Object)](#gpo-(group-policy-object))
     * 11.2. [Habilitar DONT-REQ-PRE-AUTH](#habilitar-dont-req-pre-auth)
     * 11.3. [Deshabilitar DONT-REQ-PRE-AUTH](#deshabilitar-dont-req-pre-auth)
-    * 11.4. [Enumeración](#enumeración-3)
+    * 11.4. [Enumeración](#enumeración-2)
         * 11.4.1. [Kerbrute](#kerbrute)
         * 11.4.2. [Password Spraying](#password-spraying)
         * 11.4.3. [BloodHound](#bloodhound)
@@ -1106,7 +1106,7 @@ nxc rpd <RHOST> -u <USER> -p <PASSWORD> --res <RESOLUTION>
 ```
 ##  5. <a name='web'></a>Web
 
-###  5.1. <a name='enumeración'></a>Enumeración Windows
+###  5.1. <a name='enumeración-windows'></a>Enumeración Windows
 
 ####  5.1.1. <a name='fuff'></a>Fuff
 
@@ -1237,19 +1237,19 @@ http://<RHOST>/<FILE>.php?file=../../../../../../../../etc/passwd
 http://<RHOST>/<FILE>/php?file=../../../../../../../../../../etc/passwd
 ```
 
-#### 5.3.1. <a name='hasta-php-53'></a>Hasta php 5.3
+####  5.3.1. <a name='hasta-php-5.3'></a>Hasta php 5.3
 
 ```
 http://<RHOST>/<FILE>/php?file=../../../../../../../../../../etc/passwd%00
 ```
 
-#### 5.3.2. <a name='lfi-php-wrappers'></a>php://filter Wrapper
+####  5.3.2. <a name='php://filter-wrapper'></a>php://filter Wrapper
 
 ```
 url=php://filter/convert.base64-encode/resource=app.php
 ```
 
-#### 5.3.3. <a name='lfi-linux'></a>Archivos Linux
+####  5.3.3. <a name='archivos-linux'></a>Archivos Linux
 
 ```
 /app/etc/local.xml
@@ -1527,7 +1527,7 @@ url=php://filter/convert.base64-encode/resource=app.php
 ~/.xsession
 ```
 
-#### 5.3.4. <a name='lfi-windows'></a>Archivos Windows
+####  5.3.4. <a name='archivos-windows'></a>Archivos Windows
 
 ```
 C:/Users/Administrator/NTUser.dat
@@ -2929,7 +2929,7 @@ evil-winrm -i 192.168.56.10 -u elliot -p Password123
 
 ###  10.1. <a name='windows-2'></a>Windows
 
-####  10.1.1. <a name='enumeración-1'></a>Enumeración
+####  10.1.1. <a name='enumeración'></a>Enumeración
 
 ##### Sistema
 
@@ -4078,7 +4078,7 @@ También podemos utilizar `SeTakeOwnershipPrivilege` para modificar la propiedad
 
 ###  10.2. <a name='linux-2'></a>Linux
 
-####  10.2.1. <a name='enumeración-2'></a>Enumeración
+####  10.2.1. <a name='enumeración-1'></a>Enumeración
 
 ##### Sistema
 
@@ -5302,7 +5302,7 @@ $newUAC = $u.userAccountControl -band -bnot 0x400000
 Set-ADUser -Identity $user -Replace @{userAccountControl=$newUAC}
 ```
 
-###  11.4. <a name='enumeración-3'></a>Enumeración
+###  11.4. <a name='enumeración-2'></a>Enumeración
 
 Si no tenemos un usuario con el que empezar las pruebas (que suele ser el caso), tendremos que encontrar una manera de establecer un punto de apoyo en el dominio, ya sea obteniendo credenciales en texto claro o un hash de contraseña NTLM para un usuario, un shell SYSTEM en un host unido al dominio, o un shell en el contexto de una cuenta de usuario de dominio. Obtener un usuario válido con credenciales es crítico en las primeras etapas de una prueba de penetración interna. Este acceso (incluso al nivel más bajo) abre muchas oportunidades para realizar enumeraciones e incluso ataques.
 
@@ -5575,8 +5575,6 @@ Podemos escribir en `C:\Windows\Tasks`, lo que se puede usar para ejecución dif
 Los usuarios que son miembros del grupo **DnsAdmins** tienen la capacidad de abusar de una característica del protocolo de gestión DNS de Microsoft para hacer que el servidor DNS cargue cualquier DLL especificada. El servicio que a su vez, ejecuta la DLL se realiza en el contexto de SYSTEM y podría utilizarse en un controlador de dominio (desde donde se ejecuta DNS normalmente) para obtener privilegios de administrador de dominio.
 
 En el siguiente ejemplo, el usuario `ryan` pertenece al grupo `DnsAdmins`.
-
-##### Enumeración
 
 PowerShell
 
