@@ -5447,8 +5447,6 @@ netexec ldap <RHOST> -u '<USERNAME>' --use-kcache --bloodhound --dns-tcp --dns-s
 
 Es un grupo incorporado de Active Directory pensado para delegar la gestión de cuentas de usuarios y grupos estándar, sin dar acceso completo de administración del dominio.
 
-##### Enumeración
-
 ```powershell
 net group "Account Operators" /domain
 ```
