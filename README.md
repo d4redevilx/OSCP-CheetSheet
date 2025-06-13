@@ -2928,7 +2928,7 @@ evil-winrm -i 192.168.56.10 -u elliot -p Password123
 
 ##  10. <a name='ejecución-remota-de-código-via-windows-library-files'></a>Ejecución remota de código via Windows Library Files
 
-En primer lugar, instalamos la libreria `wsgidav` el cual nos permitira crear una instancia de uns servidor webdav en Python.
+En primer lugar, instalamos la libreria `wsgidav` la cual nos permitira crear una instancia de uns servidor webdav en Python.
 
 ```c
 pip3 install wsgidav
@@ -3073,13 +3073,12 @@ Recibimos la conexión y ganamos acceso a la máquina objetivo.
 
 ![](/img/RCE-windows-Library2.png)
 
+Ganamos acceso a la máquina objetivo.
+
 ![](/img/RCE-windows-Library3.png)
 
 >Los archivos automatic_configuration, config.Library-ms, body.txt y powercat.ps1 deben estar en la carpeta webdav.
 
-Ganamos acceso a la máquina objetivo.
-
-![](/img/RCE-windows-Library4.png)
 
 ##  11. <a name='escalación-de-privilegios'></a>Escalación de Privilegios
 
